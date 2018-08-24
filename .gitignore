@@ -45,7 +45,17 @@ compile_commands.json
 CTestTestfile.cmake
 
 # Build
-build/
+build
 
 # Google Test
-tests/lib
+tests/lib/googletest-release-1.8.0
+
+# pcg rng
+include/pcg-cpp-0.98
+
+# Alex code
+main 
+SweepRule.cpp
+
+# VS Code files
+.vscode

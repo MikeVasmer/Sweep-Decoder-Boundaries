@@ -25,7 +25,8 @@ include_directories(src)
 # nclude_directories(${Boost_INCLUDE_DIRS})
 
 # Link to my library
-add_library(SweepLib src/factorial.cpp src/factorial.h)
+set(LIB_FILES src/lattice.h src/lattice.cpp)
+add_library(SweepLib ${LIB_FILES})
 target_link_libraries(RhombicSweep SweepLib)
 
 if (test)
@@ -38,7 +39,7 @@ if (test)
     # Include googletest libraries
     include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR} src)
     # Add test executable
-    add_executable(testRhombicSweep tests/test.cpp)
+    add_executable(testRhombicSweep tests/test_lattice.cpp)
     # Standard googletest linking
     target_link_libraries(testRhombicSweep gtest gtest_main)
     # Link to my library
