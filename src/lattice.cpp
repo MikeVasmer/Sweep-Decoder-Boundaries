@@ -249,7 +249,6 @@ void Lattice::addFace(int vertexIndex, int faceIndex, vstr directions, vint sign
 
     faceToVertices.push_back(vertices);
     faceToEdges.push_back(edges);
-    //for (vint::const_iterator iv = vertices.begin(); iv != vertices.end(); ++iv)
     for (auto const& vertex : vertices)
     {
         vertexToFaces[vertex].push_back(face);
@@ -339,4 +338,9 @@ vvint Lattice::getFaceToVertices()
 vvint Lattice::getFaceToEdges()
 {
     return faceToEdges;
+}
+
+std::vector<std::vector<faceS>> Lattice::getVertexToFaces()
+{
+    return vertexToFaces;
 }

@@ -329,28 +329,165 @@ TEST(createFaces, HandlesValidInputRhombic)
     ASSERT_EQ(faceToVertices[1], vertices);
     edges = {0, 6, 1518, 1722};
     ASSERT_EQ(faceToEdges[1], edges);
+
+    vertices = {0, 7, 216, 396};
+    ASSERT_EQ(faceToVertices[2], vertices);
+    edges = {0, 2, 1514, 2772};
+    ASSERT_EQ(faceToEdges[2], edges);
+
+    vertices = {0, 186, 396, 401};
+    ASSERT_EQ(faceToVertices[3], vertices);
+    edges = {2, 1308, 2809, 2813};
+    ASSERT_EQ(faceToEdges[3], edges);
+
+    vertices = {0, 181, 396, 426};
+    ASSERT_EQ(faceToVertices[4], vertices);
+    edges = {2, 1271, 2984, 2986};
+    ASSERT_EQ(faceToEdges[4], edges);
+
+    vertices = {0, 31, 246, 426};
+    ASSERT_EQ(faceToVertices[5], vertices);
+    edges = {6, 221, 2986, 2988};
+    ASSERT_EQ(faceToEdges[5], edges);
+
+    vertices = {167, 168, 347, 383};
+    ASSERT_EQ(faceToVertices[500], vertices);
+    edges = {1169, 1171, 2429, 2683};
+    ASSERT_EQ(faceToEdges[500], edges);
+
+    vertices = {137, 167, 346, 347};
+    ASSERT_EQ(faceToVertices[501], vertices);
+    edges = {965, 1171, 2424, 2428};
+    ASSERT_EQ(faceToEdges[501], edges);
+
+    vint faceIndices = {0, 1, 2, 3, 4, 5, 35, 104, 124, 201, 553, 630};
+    int i = 0;
+    auto vertexToFaces = latticeRhombic.getVertexToFaces();
+    for (auto face : vertexToFaces[0])
+    {
+        ASSERT_EQ(face.faceIndex, faceIndices[i]);
+        ++i;
+    }
+
+    faceIndices = {240, 259, 350, 366, 367, 368, 369, 370, 371, 389, 459, 478};
+    i = 0;
+    for (auto face : vertexToFaces[123])
+    {
+        ASSERT_EQ(face.faceIndex, faceIndices[i]);
+        ++i;
+    }
+
+    faceIndices = {0, 1, 2, 111, 130, 131};
+    i = 0;
+    for (auto face : vertexToFaces[216])
+    {
+        ASSERT_EQ(face.faceIndex, faceIndices[i]);
+        ++i;
+    }
+
+    faceIndices = {132, 145, 149, 236, 237, 238};
+    i = 0;
+    for (auto face : vertexToFaces[259])
+    {
+        ASSERT_EQ(face.faceIndex, faceIndices[i]);
+        ++i;
+    }
+}
+
+TEST(createFaces, correctMaxEdgeIndex)
+{
+    vint ls = {4, 6, 8, 10};
+    for (auto l : ls)
+    {
+        std::string type = "rhombic";
+        Lattice latticeRhombic = Lattice(l, type);
+        latticeRhombic.createFaces();
+        vvint faceToEdges = latticeRhombic.getFaceToEdges();  
+        int maxEdgeIndex = 0;
+        for (auto edges : faceToEdges)
+        {
+            for (auto edgeIndex : edges)
+            {
+                if (edgeIndex > maxEdgeIndex)
+                    maxEdgeIndex = edgeIndex;
+            }
+        }
+        ASSERT_EQ(maxEdgeIndex, 7 * (2 * l * l * l - 1));
+    }
+}
+
+TEST(createFaces, correctMaxVertexIndex)
+{
+    vint ls = {4, 6, 8, 10};
+    for (auto l : ls)
+    {
+        std::string type = "rhombic";
+        Lattice latticeRhombic = Lattice(l, type);
+        latticeRhombic.createFaces();
+        vvint faceToVertices = latticeRhombic.getFaceToVertices();
+        int maxVertexIndex = 0;
+        for (auto vertices : faceToVertices)
+        {
+            for (auto vertexIndex : vertices)
+            {
+                if (vertexIndex > maxVertexIndex)
+                    maxVertexIndex = vertexIndex;
+            }
+        }
+        ASSERT_EQ(maxVertexIndex, (2 * l * l * l - 1));
+    }
 }
 
 TEST(createFaces, correctNumberOfFaces)
 {
-    // Checked this on 28/08/18 with the preallocation turned off
+    // Checked this on 29/08/18 with the preallocation turned off
     // Preallocation is turned on by default for speed purposes
-    int l = 6;
-    std::string type = "bcc";
-    Lattice latticeBCC = Lattice(l, type);
-    latticeBCC.createFaces();
-    vvint faceToVertices = latticeBCC.getFaceToVertices();
-    vvint faceToEdges = latticeBCC.getFaceToEdges();
-    ASSERT_EQ(faceToVertices.size(), 24 * l * l * l);
-    ASSERT_EQ(faceToEdges.size(), 24 * l * l * l);
+    vint ls = {4, 6, 8, 10};
+    for (auto l : ls)
+    {
+        std::string type = "bcc";
+        Lattice latticeBCC = Lattice(l, type);
+        latticeBCC.createFaces();
+        vvint faceToVertices = latticeBCC.getFaceToVertices();
+        vvint faceToEdges = latticeBCC.getFaceToEdges();
+        ASSERT_EQ(faceToVertices.size(), 24 * l * l * l);
+        ASSERT_EQ(faceToEdges.size(), 24 * l * l * l);
 
-    l = 4;
-    type = "rhombic";
-    Lattice latticeRhombic = Lattice(l, type);
-    latticeRhombic.createFaces();
-    faceToVertices = latticeRhombic.getFaceToVertices();
-    faceToEdges = latticeRhombic.getFaceToEdges();
-    ASSERT_EQ(faceToVertices.size(), 3 * l * l * l);
-    ASSERT_EQ(faceToEdges.size(), 3 * l * l * l);
-    
+        type = "rhombic";
+        Lattice latticeRhombic = Lattice(l, type);
+        latticeRhombic.createFaces();
+        faceToVertices = latticeRhombic.getFaceToVertices();
+        faceToEdges = latticeRhombic.getFaceToEdges();
+        ASSERT_EQ(faceToVertices.size(), 3 * l * l * l);
+        ASSERT_EQ(faceToEdges.size(), 3 * l * l * l);
+    }
+}
+
+TEST(createFaces, eachVertexinCorrectNumberOfFacesRhombicLattice)
+{
+    vint ls = {4, 6, 8, 10};
+    for (auto l : ls)
+    {
+        std::string type = "rhombic";
+        Lattice latticeRhombic = Lattice(l, type);
+        latticeRhombic.createFaces();
+        auto vertexToFaces = latticeRhombic.getVertexToFaces();
+        for (int i = 0; i <  2 * l * l * l; ++i)
+        {
+            auto faces = vertexToFaces[i];
+            cartesian4 coordinate = latticeRhombic.indexToCoordinate(i);
+            if (coordinate.w == 1)
+            {
+                ASSERT_EQ(faces.size(), 6);    
+            }
+            else if ((coordinate.x + coordinate.y + coordinate.z) % 2 == 0)
+            {
+                ASSERT_EQ(faces.size(), 12);
+            }
+            else
+            {
+                ASSERT_EQ(faces.size(), 0);
+            }  
+        }
+    }    
 }

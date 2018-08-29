@@ -58,6 +58,7 @@ class Lattice {
         void createFaces();
         vvint getFaceToVertices();
         vvint getFaceToEdges();
+        std::vector<std::vector<faceS>> getVertexToFaces();
 };
 
 #endif
