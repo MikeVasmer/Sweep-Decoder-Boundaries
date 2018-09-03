@@ -3,6 +3,7 @@
 #include <iostream>
 #include <cmath>
 #include <algorithm>
+#include <map>
 
 int sgn(int x) { return (x > 0) - (x < 0); }
 
@@ -31,8 +32,8 @@ Lattice::Lattice(int length, std::string latticeType) : l(length), type(latticeT
         faceToVertices.reserve(3 * l * l * l);
         faceToEdges.reserve(3 * l * l * l);
         // Not all vertices present in this lattice, but all w=1 faces
-        // are present, so the possible vertex indices go from 
-        // 0 to l^3 -1 
+        // are present, so the possible vertex indices go from
+        // 0 to l^3 -1
         vertexToFaces.assign(2 * l * l * l, {});
     }
 }
@@ -199,7 +200,7 @@ int Lattice::getEdgeIndex(int vertexIndex, std::string direction, int sign)
         edgeIndex = vertexIndex;
     }
     // Numbering is an arbitrary convention
-    if (direction == "xyz") 
+    if (direction == "xyz")
         edgeIndex = 7 * edgeIndex;
     else if (direction == "x")
         edgeIndex = 7 * edgeIndex + 1;
@@ -222,7 +223,6 @@ void Lattice::addFace(int vertexIndex, int faceIndex, vstr directions, vint sign
     vint edges;
     if (type == "rhombic")
     {
-        // int sign = 1;
         int neighbourVertex = neighbour(vertexIndex, directions[0], signs[0]);
         vertices = {vertexIndex, neighbourVertex,
                     neighbour(vertexIndex, directions[1], signs[1]),
@@ -234,7 +234,6 @@ void Lattice::addFace(int vertexIndex, int faceIndex, vstr directions, vint sign
     }
     else if (type == "bcc")
     {
-        // int sign = 1;
         vertices = {vertexIndex, neighbour(vertexIndex, directions[0], signs[0]),
                     neighbour(vertexIndex, directions[1], signs[1])};
         edges = {getEdgeIndex(vertexIndex, directions[0], signs[0]),
@@ -249,7 +248,7 @@ void Lattice::addFace(int vertexIndex, int faceIndex, vstr directions, vint sign
 
     faceToVertices.push_back(vertices);
     faceToEdges.push_back(edges);
-    for (auto const& vertex : vertices)
+    for (auto const &vertex : vertices)
     {
         vertexToFaces[vertex].push_back(face);
     }
@@ -257,9 +256,6 @@ void Lattice::addFace(int vertexIndex, int faceIndex, vstr directions, vint sign
 
 void Lattice::createFaces()
 {
-    // faceToVertices.clear();
-    // faceToEdges.clear();
-    // vertexToFaces.clear();
     if (type == "rhombic")
     {
         int faceIndex = 0;
@@ -269,23 +265,23 @@ void Lattice::createFaces()
             if ((coordinate.x + coordinate.y + coordinate.z) % 2 == 0)
             {
                 vint signs = {1, 1, 1, 1};
-                addFace(vertexIndex, faceIndex, {"xyz", "yz", "yz", "xyz"}, 
+                addFace(vertexIndex, faceIndex, {"xyz", "yz", "yz", "xyz"},
                         signs);
                 faceIndex++;
-                addFace(vertexIndex, faceIndex, {"xyz", "xz", "xz", "xyz"}, 
+                addFace(vertexIndex, faceIndex, {"xyz", "xz", "xz", "xyz"},
                         signs);
                 faceIndex++;
-                addFace(vertexIndex, faceIndex, {"xyz", "xy", "xy", "xyz"}, 
+                addFace(vertexIndex, faceIndex, {"xyz", "xy", "xy", "xyz"},
                         signs);
                 faceIndex++;
                 signs = {1, -1, -1, 1};
-                addFace(vertexIndex, faceIndex, {"xy", "xz", "xz", "xy"}, 
+                addFace(vertexIndex, faceIndex, {"xy", "xz", "xz", "xy"},
                         signs);
                 faceIndex++;
-                addFace(vertexIndex, faceIndex, {"xy", "yz", "yz", "xy"}, 
+                addFace(vertexIndex, faceIndex, {"xy", "yz", "yz", "xy"},
                         signs);
                 faceIndex++;
-                addFace(vertexIndex, faceIndex, {"xz", "yz", "yz", "xz"}, 
+                addFace(vertexIndex, faceIndex, {"xz", "yz", "yz", "xz"},
                         signs);
                 faceIndex++;
             }
@@ -293,11 +289,6 @@ void Lattice::createFaces()
     }
     else if (type == "bcc")
     {
-
-        // faceToVertices.reserve(24 * l * l * l);
-        // faceToEdges.reserve(24 * l * l * l);
-        // vertexToFaces.assign(2 * l * l * l, {});
-
         int faceIndex = 0;
         for (int vertexIndex = 0; vertexIndex < 2 * l * l * l; ++vertexIndex)
         {
@@ -343,4 +334,184 @@ vvint Lattice::getFaceToEdges()
 std::vector<std::vector<faceS>> Lattice::getVertexToFaces()
 {
     return vertexToFaces;
+}
+
+void Lattice::createUpEdgesMap()
+{
+    std::vector<std::string> directionList = {"xyz", "xy", "xz", "yz",
+                                              "-xyz", "-xy", "-xz", "-yz"};
+    for (auto direction : directionList)
+    {
+        vvint vertexToUpEdges;
+        vertexToUpEdges.assign(2 * l * l * l, {});
+        for (int vertexIndex = 0; vertexIndex < 2 * l * l * l; ++vertexIndex)
+        {
+            cartesian4 coordinate = indexToCoordinate(vertexIndex);
+            if (coordinate.w == 0)
+            {
+                if ((coordinate.x + coordinate.y + coordinate.z) % 2 == 0)
+                {
+                    if (direction == "xyz")
+                    {
+                        // Third argument is sign
+                        vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xyz", 1));
+                        vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xy", 1));
+                        vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xz", 1));
+                        vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "yz", 1));
+                    }
+                    else if (direction == "yz")
+                    {
+                        vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "yz", 1));
+                        vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xyz", 1));
+                        vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xy", -1));
+                        vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xz", -1));
+                    }
+                    else if (direction == "xz")
+                    {
+                        vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xyz", 1));
+                        vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xz", 1));
+                        vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xy", -1));
+                        vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "yz", -1));
+                    }
+                    else if (direction == "xy")
+                    {
+                        vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xyz", 1));
+                        vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xy", 1));
+                        vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xz", -1));
+                        vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "yz", -1));
+                    }
+                    else if (direction == "-xyz")
+                    {
+                        vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xyz", -1));
+                        vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xz", -1));
+                        vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xy", -1));
+                        vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "yz", -1));
+                    }
+                    else if (direction == "-yz")
+                    {
+                        vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xy", 1));
+                        vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xz", 1));
+                        vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xyz", -1));
+                        vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "yz", -1));
+                    }
+                    else if (direction == "-xz")
+                    {
+                        vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xy", 1));
+                        vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "yz", 1));
+                        vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xyz", -1));
+                        vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xz", -1));
+                    }
+                    else if (direction == "-xy")
+                    {
+                        vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xz", 1));
+                        vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "yz", 1));
+                        vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xyz", -1));
+                        vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xy", -1));
+                    }
+                }
+            }
+            else
+            {
+                if ((coordinate.x + coordinate.y + coordinate.z) % 2 == 0)
+                {
+                    if (direction == "xy" || direction == "xz" || direction == "yz" || direction == "-xyz")
+                    {
+                        // Only one up edge, so return an empty vector as no sweep will happen here.
+                    }
+                    else
+                    {
+                        if (direction == "xyz")
+                        {
+                            vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xy", 1));
+                            vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xz", 1));
+                            vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "yz", 1));
+                        }
+                        else if (direction == "-xy")
+                        {
+                            vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xyz", -1));
+                            vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xz", 1));
+                            vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "yz", 1));
+                        }
+                        else if (direction == "-xz")
+                        {
+                            vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xyz", -1));
+                            vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xy", 1));
+                            vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "yz", 1));
+                        }
+                        else if (direction == "-yz")
+                        {
+                            vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xyz", -1));
+                            vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xz", 1));
+                            vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xy", 1));
+                        }
+                    }
+                }
+                else
+                {
+                    if (direction == "-xy" || direction == "-xz" || direction == "-yz" || direction == "xyz")
+                    {
+                        // Only one up edge, so return an empty vector as no sweep will happen here.
+                    }
+                    else
+                    {
+                        if (direction == "-xyz")
+                        {
+                            vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xy", -1));
+                            vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xz", -1));
+                            vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "yz", -1));
+                        }
+                        else if (direction == "xy")
+                        {
+                            vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xyz", 1));
+                            vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xz", -1));
+                            vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "yz", -1));
+                        }
+                        else if (direction == "xz")
+                        {
+                            vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xyz", 1));
+                            vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xy", -1));
+                            vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "yz", -1));
+                        }
+                        else if (direction == "yz")
+                        {
+                            vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xyz", 1));
+                            vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xz", -1));
+                            vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xy", -1));
+                        }
+                    }
+                }
+            }
+        }
+        upEdgesMap.insert(std::pair<std::string, vvint>(direction, vertexToUpEdges));
+    }
+}
+
+std::map<std::string, vvint> Lattice::getUpEdgesMap()
+{
+    return upEdgesMap;
+}
+
+int Lattice::findFace(vint vertices)
+{
+    if (vertices.size() != 4)
+    {
+        throw std::invalid_argument("Vertex list must contain exactly four vertices.");
+    }
+    std::sort(vertices.begin(), vertices.end());
+    auto v0Faces = vertexToFaces[vertices[0]];
+    // auto v1Faces = vertexToFaces[vertices[1]];
+    // auto v2Faces = vertexToFaces[vertices[2]];
+    // auto v3Faces = vertexToFaces[vertices[3]];
+    for (auto face : v0Faces)
+    {
+        // if (std::find(v1Faces.begin(), v1Faces.end(), face) != v1Faces.end())
+        // {
+        //     return face.faceIndex;
+        // }
+        if (face.vertices == vertices)
+        {
+            return face.faceIndex;
+        }
+    }
+    throw std::invalid_argument("Input vertices do not correspond to a face.");
 }

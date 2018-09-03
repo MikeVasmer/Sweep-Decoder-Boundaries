@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <map>
 
 typedef std::vector<int> vint;
 typedef std::vector<double> vdbl;
@@ -41,6 +42,7 @@ class Lattice {
         vvint faceToVertices;
         vvint faceToEdges;
         std::vector<std::vector<faceS>> vertexToFaces;
+        std::map<std::string, vvint> upEdgesMap;
         void addFace(int vertexIndex, int faceIndex, vstr directions, vint signs);
 
     public:
@@ -59,6 +61,9 @@ class Lattice {
         vvint getFaceToVertices();
         vvint getFaceToEdges();
         std::vector<std::vector<faceS>> getVertexToFaces();
+        void createUpEdgesMap();
+        std::map<std::string, vvint> getUpEdgesMap();
+        int findFace(vint vertices);
 };
 
 #endif

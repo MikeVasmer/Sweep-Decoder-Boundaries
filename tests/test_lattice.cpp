@@ -6,25 +6,25 @@ TEST(Lattice, ExceptsInvalidLatticeSizes)
 {
     int l = 2;
     std::string type = "cubic";
-    ASSERT_ANY_THROW(Lattice lat(l, type));
+    EXPECT_THROW(Lattice lat(l, type), std::invalid_argument);
     l = 0;
-    ASSERT_ANY_THROW(Lattice lat(l, type));
+    EXPECT_THROW(Lattice lat(l, type), std::invalid_argument);
     l = -1;
-    ASSERT_ANY_THROW(Lattice lat(l, type));
+    EXPECT_THROW(Lattice lat(l, type), std::invalid_argument);
 }
 
 TEST(Lattice, ExceptsInvalidType)
 {
     int l = 3;
     std::string type = "rectified";
-    ASSERT_ANY_THROW(Lattice lat(l, type));
+    EXPECT_THROW(Lattice lat(l, type), std::invalid_argument);
 }
 
 TEST(Lattice, ExceptsInvalidLengthAndTypeCombination)
 {
     int l = 3;
     std::string type = "rhombic";
-    ASSERT_ANY_THROW(Lattice lat(l, type));
+    EXPECT_THROW(Lattice lat(l, type), std::invalid_argument);
 }
 
 TEST(indexToCoordinateTest, HandlesPositiveInput)
@@ -34,13 +34,13 @@ TEST(indexToCoordinateTest, HandlesPositiveInput)
     Lattice lattice = Lattice(l, type);
     cartesian4 coordinate = {0, 0, 0, 0};
     int vertexIndex = 0;
-    ASSERT_EQ(lattice.indexToCoordinate(vertexIndex), coordinate);
+    EXPECT_EQ(lattice.indexToCoordinate(vertexIndex), coordinate);
     coordinate = {1, 2, 3, 0};
     vertexIndex = 57;
-    ASSERT_EQ(lattice.indexToCoordinate(vertexIndex), coordinate);
+    EXPECT_EQ(lattice.indexToCoordinate(vertexIndex), coordinate);
     coordinate = {0, 1, 0, 1};
     vertexIndex = 68;
-    ASSERT_EQ(lattice.indexToCoordinate(vertexIndex), coordinate);
+    EXPECT_EQ(lattice.indexToCoordinate(vertexIndex), coordinate);
 }
 
 TEST(indexToCoordinateTest, ExceptsNegativeInput)
@@ -49,7 +49,7 @@ TEST(indexToCoordinateTest, ExceptsNegativeInput)
     std::string type = "rhombic";
     Lattice lattice = Lattice(l, type);
     int vertexIndex = -1;
-    ASSERT_ANY_THROW(lattice.indexToCoordinate(vertexIndex));
+    EXPECT_THROW(lattice.indexToCoordinate(vertexIndex), std::invalid_argument);
 }
 
 TEST(coordinateToIndex, ExceptsInvalidCoordinates)
@@ -57,12 +57,12 @@ TEST(coordinateToIndex, ExceptsInvalidCoordinates)
     int l = 4;
     std::string type = "cubic";
     Lattice lattice = Lattice(l, type);
-    ASSERT_ANY_THROW(lattice.coordinateToIndex({0, 0, 0, 2}));
-    ASSERT_ANY_THROW(lattice.coordinateToIndex({0, 0, 0, -1}));
-    ASSERT_ANY_THROW(lattice.coordinateToIndex({-1, 0, 0, 1}));
-    ASSERT_ANY_THROW(lattice.coordinateToIndex({2, -1, 0, 0}));
-    ASSERT_ANY_THROW(lattice.coordinateToIndex({3, 0, -1, 1}));
-    ASSERT_ANY_THROW(lattice.coordinateToIndex({-1, -1, -1, -1}));
+    EXPECT_THROW(lattice.coordinateToIndex({0, 0, 0, 2}), std::invalid_argument);
+    EXPECT_THROW(lattice.coordinateToIndex({0, 0, 0, -1}), std::invalid_argument);
+    EXPECT_THROW(lattice.coordinateToIndex({-1, 0, 0, 1}), std::invalid_argument);
+    EXPECT_THROW(lattice.coordinateToIndex({2, -1, 0, 0}), std::invalid_argument);
+    EXPECT_THROW(lattice.coordinateToIndex({3, 0, -1, 1}), std::invalid_argument);
+    EXPECT_THROW(lattice.coordinateToIndex({-1, -1, -1, -1}), std::invalid_argument);
 }
 
 TEST(coordinateToIndex, HandlesPositiveInput)
@@ -72,13 +72,13 @@ TEST(coordinateToIndex, HandlesPositiveInput)
     Lattice lattice = Lattice(l, type);
     int vertexIndex = 64;
     cartesian4 coordinate = {0, 0, 0, 1};
-    ASSERT_EQ(lattice.indexToCoordinate(vertexIndex), coordinate);
+    EXPECT_EQ(lattice.indexToCoordinate(vertexIndex), coordinate);
     vertexIndex = 42;
     coordinate = {2, 2, 2, 0};
-    ASSERT_EQ(lattice.indexToCoordinate(vertexIndex), coordinate);
+    EXPECT_EQ(lattice.indexToCoordinate(vertexIndex), coordinate);
     vertexIndex = 105;
     coordinate = {1, 2, 2, 1};
-    ASSERT_EQ(lattice.indexToCoordinate(vertexIndex), coordinate);
+    EXPECT_EQ(lattice.indexToCoordinate(vertexIndex), coordinate);
 }
 
 TEST(neighbour, ExceptsInvalidSigns)
@@ -88,10 +88,10 @@ TEST(neighbour, ExceptsInvalidSigns)
     Lattice latticeCubic = Lattice(l, type);
     int vertexIndex = 0;
     std::string direction = "x";
-    ASSERT_ANY_THROW(latticeCubic.neighbour(vertexIndex, direction, 0));
-    ASSERT_ANY_THROW(latticeCubic.neighbour(vertexIndex, direction, -0));
-    ASSERT_ANY_THROW(latticeCubic.neighbour(vertexIndex, direction, 7));
-    ASSERT_ANY_THROW(latticeCubic.neighbour(vertexIndex, direction, -6));
+    EXPECT_THROW(latticeCubic.neighbour(vertexIndex, direction, 0), std::invalid_argument);
+    EXPECT_THROW(latticeCubic.neighbour(vertexIndex, direction, -0), std::invalid_argument);
+    EXPECT_THROW(latticeCubic.neighbour(vertexIndex, direction, 7), std::invalid_argument);
+    EXPECT_THROW(latticeCubic.neighbour(vertexIndex, direction, -6), std::invalid_argument);
 }
 
 TEST(neighbour, ExceptsInvalidDirections)
@@ -102,7 +102,7 @@ TEST(neighbour, ExceptsInvalidDirections)
     int vertexIndex = 0;
     int sign = 1;
     std::string direction = "north";
-    ASSERT_ANY_THROW(latticeBCC.neighbour(vertexIndex, direction, sign));
+    EXPECT_THROW(latticeBCC.neighbour(vertexIndex, direction, sign), std::invalid_argument);
 }
 
 TEST(neighbour, ExceptsInvalidLatticeDirectionCombinations)
@@ -112,16 +112,16 @@ TEST(neighbour, ExceptsInvalidLatticeDirectionCombinations)
     Lattice latticeCubic = Lattice(l, type);
     int vertexIndex = 0;
     int sign = 1;
-    ASSERT_ANY_THROW(latticeCubic.neighbour(vertexIndex, "xy", sign));
-    ASSERT_ANY_THROW(latticeCubic.neighbour(vertexIndex, "xz", sign));
-    ASSERT_ANY_THROW(latticeCubic.neighbour(vertexIndex, "yz", sign));
-    ASSERT_ANY_THROW(latticeCubic.neighbour(vertexIndex, "xyz", sign));
+    EXPECT_THROW(latticeCubic.neighbour(vertexIndex, "xy", sign), std::invalid_argument);
+    EXPECT_THROW(latticeCubic.neighbour(vertexIndex, "xz", sign), std::invalid_argument);
+    EXPECT_THROW(latticeCubic.neighbour(vertexIndex, "yz", sign), std::invalid_argument);
+    EXPECT_THROW(latticeCubic.neighbour(vertexIndex, "xyz", sign), std::invalid_argument);
 
     type = "rhombic";
     Lattice latticeRhombic = Lattice(l, type);
-    ASSERT_ANY_THROW(latticeRhombic.neighbour(vertexIndex, "x", sign));
-    ASSERT_ANY_THROW(latticeRhombic.neighbour(vertexIndex, "y", sign));
-    ASSERT_ANY_THROW(latticeRhombic.neighbour(vertexIndex, "z", sign));
+    EXPECT_THROW(latticeRhombic.neighbour(vertexIndex, "x", sign), std::invalid_argument);
+    EXPECT_THROW(latticeRhombic.neighbour(vertexIndex, "y", sign), std::invalid_argument);
+    EXPECT_THROW(latticeRhombic.neighbour(vertexIndex, "z", sign), std::invalid_argument);
 }
 
 TEST(neighbour, HandlesValidInput)
@@ -131,36 +131,36 @@ TEST(neighbour, HandlesValidInput)
     Lattice latticeBCC = Lattice(l, type);
     int vertexIndex = 0;
     int sign = 1;
-    ASSERT_EQ(latticeBCC.neighbour(vertexIndex, "x", sign), 1);
-    ASSERT_EQ(latticeBCC.neighbour(vertexIndex, "y", sign), 4);
-    ASSERT_EQ(latticeBCC.neighbour(vertexIndex, "z", sign), 16);
-    ASSERT_EQ(latticeBCC.neighbour(vertexIndex, "x", -sign), 3);
-    ASSERT_EQ(latticeBCC.neighbour(vertexIndex, "y", -sign), 12);
-    ASSERT_EQ(latticeBCC.neighbour(vertexIndex, "z", -sign), 48);
-    ASSERT_EQ(latticeBCC.neighbour(vertexIndex, "xy", sign), 112);
-    ASSERT_EQ(latticeBCC.neighbour(vertexIndex, "yz", sign), 67);
-    ASSERT_EQ(latticeBCC.neighbour(vertexIndex, "xz", sign), 76);
-    ASSERT_EQ(latticeBCC.neighbour(vertexIndex, "xy", -sign), 79);
-    ASSERT_EQ(latticeBCC.neighbour(vertexIndex, "yz", -sign), 124);
-    ASSERT_EQ(latticeBCC.neighbour(vertexIndex, "xz", -sign), 115);
-    ASSERT_EQ(latticeBCC.neighbour(vertexIndex, "xyz", sign), 64);
-    ASSERT_EQ(latticeBCC.neighbour(vertexIndex, "xyz", -sign), 127);
+    EXPECT_EQ(latticeBCC.neighbour(vertexIndex, "x", sign), 1);
+    EXPECT_EQ(latticeBCC.neighbour(vertexIndex, "y", sign), 4);
+    EXPECT_EQ(latticeBCC.neighbour(vertexIndex, "z", sign), 16);
+    EXPECT_EQ(latticeBCC.neighbour(vertexIndex, "x", -sign), 3);
+    EXPECT_EQ(latticeBCC.neighbour(vertexIndex, "y", -sign), 12);
+    EXPECT_EQ(latticeBCC.neighbour(vertexIndex, "z", -sign), 48);
+    EXPECT_EQ(latticeBCC.neighbour(vertexIndex, "xy", sign), 112);
+    EXPECT_EQ(latticeBCC.neighbour(vertexIndex, "yz", sign), 67);
+    EXPECT_EQ(latticeBCC.neighbour(vertexIndex, "xz", sign), 76);
+    EXPECT_EQ(latticeBCC.neighbour(vertexIndex, "xy", -sign), 79);
+    EXPECT_EQ(latticeBCC.neighbour(vertexIndex, "yz", -sign), 124);
+    EXPECT_EQ(latticeBCC.neighbour(vertexIndex, "xz", -sign), 115);
+    EXPECT_EQ(latticeBCC.neighbour(vertexIndex, "xyz", sign), 64);
+    EXPECT_EQ(latticeBCC.neighbour(vertexIndex, "xyz", -sign), 127);
 
     vertexIndex = 64;
-    ASSERT_EQ(latticeBCC.neighbour(vertexIndex, "x", sign), 65);
-    ASSERT_EQ(latticeBCC.neighbour(vertexIndex, "y", sign), 68);
-    ASSERT_EQ(latticeBCC.neighbour(vertexIndex, "z", sign), 80);
-    ASSERT_EQ(latticeBCC.neighbour(vertexIndex, "x", -sign), 67);
-    ASSERT_EQ(latticeBCC.neighbour(vertexIndex, "y", -sign), 76);
-    ASSERT_EQ(latticeBCC.neighbour(vertexIndex, "z", -sign), 112);
-    ASSERT_EQ(latticeBCC.neighbour(vertexIndex, "xy", sign), 5);
-    ASSERT_EQ(latticeBCC.neighbour(vertexIndex, "yz", sign), 20);
-    ASSERT_EQ(latticeBCC.neighbour(vertexIndex, "xz", sign), 17);
-    ASSERT_EQ(latticeBCC.neighbour(vertexIndex, "xy", -sign), 16);
-    ASSERT_EQ(latticeBCC.neighbour(vertexIndex, "yz", -sign), 1);
-    ASSERT_EQ(latticeBCC.neighbour(vertexIndex, "xz", -sign), 4);
-    ASSERT_EQ(latticeBCC.neighbour(vertexIndex, "xyz", sign), 21);
-    ASSERT_EQ(latticeBCC.neighbour(vertexIndex, "xyz", -sign), 0);
+    EXPECT_EQ(latticeBCC.neighbour(vertexIndex, "x", sign), 65);
+    EXPECT_EQ(latticeBCC.neighbour(vertexIndex, "y", sign), 68);
+    EXPECT_EQ(latticeBCC.neighbour(vertexIndex, "z", sign), 80);
+    EXPECT_EQ(latticeBCC.neighbour(vertexIndex, "x", -sign), 67);
+    EXPECT_EQ(latticeBCC.neighbour(vertexIndex, "y", -sign), 76);
+    EXPECT_EQ(latticeBCC.neighbour(vertexIndex, "z", -sign), 112);
+    EXPECT_EQ(latticeBCC.neighbour(vertexIndex, "xy", sign), 5);
+    EXPECT_EQ(latticeBCC.neighbour(vertexIndex, "yz", sign), 20);
+    EXPECT_EQ(latticeBCC.neighbour(vertexIndex, "xz", sign), 17);
+    EXPECT_EQ(latticeBCC.neighbour(vertexIndex, "xy", -sign), 16);
+    EXPECT_EQ(latticeBCC.neighbour(vertexIndex, "yz", -sign), 1);
+    EXPECT_EQ(latticeBCC.neighbour(vertexIndex, "xz", -sign), 4);
+    EXPECT_EQ(latticeBCC.neighbour(vertexIndex, "xyz", sign), 21);
+    EXPECT_EQ(latticeBCC.neighbour(vertexIndex, "xyz", -sign), 0);
 }
 
 TEST(getEdgeIndex, ExceptsInvalidDirections)
@@ -171,7 +171,7 @@ TEST(getEdgeIndex, ExceptsInvalidDirections)
     int vertexIndex = 0;
     int sign = 1;
     std::string direction = "north";
-    ASSERT_ANY_THROW(latticeBCC.getEdgeIndex(vertexIndex, direction, sign));
+    EXPECT_THROW(latticeBCC.getEdgeIndex(vertexIndex, direction, sign), std::invalid_argument);
 }
 
 TEST(getEdgeIndex, ExceptsInvalidLatticeDirectionCombinations)
@@ -181,16 +181,16 @@ TEST(getEdgeIndex, ExceptsInvalidLatticeDirectionCombinations)
     Lattice latticeCubic = Lattice(l, type);
     int vertexIndex = 5;
     int sign = 1;
-    ASSERT_ANY_THROW(latticeCubic.getEdgeIndex(vertexIndex, "xy", sign));
-    ASSERT_ANY_THROW(latticeCubic.getEdgeIndex(vertexIndex, "xz", sign));
-    ASSERT_ANY_THROW(latticeCubic.getEdgeIndex(vertexIndex, "yz", sign));
-    ASSERT_ANY_THROW(latticeCubic.getEdgeIndex(vertexIndex, "xyz", sign));
+    EXPECT_THROW(latticeCubic.getEdgeIndex(vertexIndex, "xy", sign), std::invalid_argument);
+    EXPECT_THROW(latticeCubic.getEdgeIndex(vertexIndex, "xz", sign), std::invalid_argument);
+    EXPECT_THROW(latticeCubic.getEdgeIndex(vertexIndex, "yz", sign), std::invalid_argument);
+    EXPECT_THROW(latticeCubic.getEdgeIndex(vertexIndex, "xyz", sign), std::invalid_argument);
 
     type = "rhombic";
     Lattice latticeRhombic = Lattice(l, type);
-    ASSERT_ANY_THROW(latticeRhombic.getEdgeIndex(vertexIndex, "x", sign));
-    ASSERT_ANY_THROW(latticeRhombic.getEdgeIndex(vertexIndex, "y", sign));
-    ASSERT_ANY_THROW(latticeRhombic.getEdgeIndex(vertexIndex, "z", sign));
+    EXPECT_THROW(latticeRhombic.getEdgeIndex(vertexIndex, "x", sign), std::invalid_argument);
+    EXPECT_THROW(latticeRhombic.getEdgeIndex(vertexIndex, "y", sign), std::invalid_argument);
+    EXPECT_THROW(latticeRhombic.getEdgeIndex(vertexIndex, "z", sign), std::invalid_argument);
 }
 
 TEST(getEdgeIndex, ExceptsInvalidSigns)
@@ -200,10 +200,10 @@ TEST(getEdgeIndex, ExceptsInvalidSigns)
     Lattice latticeCubic = Lattice(l, type);
     int vertexIndex = 56;
     std::string direction = "yz";
-    ASSERT_ANY_THROW(latticeCubic.getEdgeIndex(vertexIndex, direction, 0));
-    ASSERT_ANY_THROW(latticeCubic.getEdgeIndex(vertexIndex, direction, -0));
-    ASSERT_ANY_THROW(latticeCubic.getEdgeIndex(vertexIndex, direction, 7));
-    ASSERT_ANY_THROW(latticeCubic.getEdgeIndex(vertexIndex, direction, -6));
+    EXPECT_THROW(latticeCubic.getEdgeIndex(vertexIndex, direction, 0), std::invalid_argument);
+    EXPECT_THROW(latticeCubic.getEdgeIndex(vertexIndex, direction, -0), std::invalid_argument);
+    EXPECT_THROW(latticeCubic.getEdgeIndex(vertexIndex, direction, 7), std::invalid_argument);
+    EXPECT_THROW(latticeCubic.getEdgeIndex(vertexIndex, direction, -6), std::invalid_argument);
 }
 
 TEST(getEdgeIndex, HandlesValidInput)
@@ -213,22 +213,22 @@ TEST(getEdgeIndex, HandlesValidInput)
     Lattice latticeBCC = Lattice(l, type);
     int vertexIndex = 3;
     int sign = 1;
-    ASSERT_EQ(latticeBCC.getEdgeIndex(vertexIndex, "x", sign), 22);
-    ASSERT_EQ(latticeBCC.getEdgeIndex(vertexIndex, "y", sign), 24);
-    ASSERT_EQ(latticeBCC.getEdgeIndex(vertexIndex, "z", sign), 26);
-    ASSERT_EQ(latticeBCC.getEdgeIndex(vertexIndex, "xy", sign), 23);
-    ASSERT_EQ(latticeBCC.getEdgeIndex(vertexIndex, "xz", sign), 27);
-    ASSERT_EQ(latticeBCC.getEdgeIndex(vertexIndex, "yz", sign), 25);
-    ASSERT_EQ(latticeBCC.getEdgeIndex(vertexIndex, "xyz", sign), 21);
+    EXPECT_EQ(latticeBCC.getEdgeIndex(vertexIndex, "x", sign), 22);
+    EXPECT_EQ(latticeBCC.getEdgeIndex(vertexIndex, "y", sign), 24);
+    EXPECT_EQ(latticeBCC.getEdgeIndex(vertexIndex, "z", sign), 26);
+    EXPECT_EQ(latticeBCC.getEdgeIndex(vertexIndex, "xy", sign), 23);
+    EXPECT_EQ(latticeBCC.getEdgeIndex(vertexIndex, "xz", sign), 27);
+    EXPECT_EQ(latticeBCC.getEdgeIndex(vertexIndex, "yz", sign), 25);
+    EXPECT_EQ(latticeBCC.getEdgeIndex(vertexIndex, "xyz", sign), 21);
 
     vertexIndex = 7;
-    ASSERT_EQ(latticeBCC.getEdgeIndex(vertexIndex, "x", -sign), 43);
-    ASSERT_EQ(latticeBCC.getEdgeIndex(vertexIndex, "y", -sign), 10);
-    ASSERT_EQ(latticeBCC.getEdgeIndex(vertexIndex, "z", -sign), 1314);
-    ASSERT_EQ(latticeBCC.getEdgeIndex(vertexIndex, "xy", -sign), 1514);
-    ASSERT_EQ(latticeBCC.getEdgeIndex(vertexIndex, "xz", -sign), 2820);
-    ASSERT_EQ(latticeBCC.getEdgeIndex(vertexIndex, "yz", -sign), 2783);
-    ASSERT_EQ(latticeBCC.getEdgeIndex(vertexIndex, "xyz", -sign), 2772);
+    EXPECT_EQ(latticeBCC.getEdgeIndex(vertexIndex, "x", -sign), 43);
+    EXPECT_EQ(latticeBCC.getEdgeIndex(vertexIndex, "y", -sign), 10);
+    EXPECT_EQ(latticeBCC.getEdgeIndex(vertexIndex, "z", -sign), 1314);
+    EXPECT_EQ(latticeBCC.getEdgeIndex(vertexIndex, "xy", -sign), 1514);
+    EXPECT_EQ(latticeBCC.getEdgeIndex(vertexIndex, "xz", -sign), 2820);
+    EXPECT_EQ(latticeBCC.getEdgeIndex(vertexIndex, "yz", -sign), 2783);
+    EXPECT_EQ(latticeBCC.getEdgeIndex(vertexIndex, "xyz", -sign), 2772);
 }
 
 TEST(createFaces, HandlesValidInputBCC)
@@ -241,74 +241,74 @@ TEST(createFaces, HandlesValidInputBCC)
     vvint faceToEdges = latticeBCC.getFaceToEdges();
 
     vint vertices = {0, 1, 64};
-    ASSERT_EQ(faceToVertices[0], vertices);
+    EXPECT_EQ(faceToVertices[0], vertices);
     vint edges = {0, 1, 11};
-    ASSERT_EQ(faceToEdges[0], edges);
+    EXPECT_EQ(faceToEdges[0], edges);
 
     vertices = {0, 64, 112};
-    ASSERT_EQ(faceToVertices[1], vertices);
+    EXPECT_EQ(faceToVertices[1], vertices);
     edges = {0, 2, 789};
-    ASSERT_EQ(faceToEdges[1], edges);
+    EXPECT_EQ(faceToEdges[1], edges);
 
     vertices = {0, 4, 64};
-    ASSERT_EQ(faceToVertices[2], vertices);
+    EXPECT_EQ(faceToVertices[2], vertices);
     edges = {0, 3, 34};
-    ASSERT_EQ(faceToEdges[2], edges);
+    EXPECT_EQ(faceToEdges[2], edges);
 
     vertices = {0, 64, 67};
-    ASSERT_EQ(faceToVertices[3], vertices);
+    EXPECT_EQ(faceToVertices[3], vertices);
     edges = {0, 4, 470};
-    ASSERT_EQ(faceToEdges[3], edges);
+    EXPECT_EQ(faceToEdges[3], edges);
 
     vertices = {0, 16, 64};
-    ASSERT_EQ(faceToVertices[4], vertices);
+    EXPECT_EQ(faceToVertices[4], vertices);
     edges = {0, 5, 114};
-    ASSERT_EQ(faceToEdges[4], edges);
+    EXPECT_EQ(faceToEdges[4], edges);
 
     vertices = {0, 64, 76};
-    ASSERT_EQ(faceToVertices[5], vertices);
+    EXPECT_EQ(faceToVertices[5], vertices);
     edges = {0, 6, 535};
-    ASSERT_EQ(faceToEdges[5], edges);
+    EXPECT_EQ(faceToEdges[5], edges);
 
     vertices = {0, 1, 112};
-    ASSERT_EQ(faceToVertices[6], vertices);
+    EXPECT_EQ(faceToVertices[6], vertices);
     edges = {1, 2, 790};
-    ASSERT_EQ(faceToEdges[6], edges);
+    EXPECT_EQ(faceToEdges[6], edges);
 
     vertices = {0, 1, 76};
-    ASSERT_EQ(faceToVertices[7], vertices);
+    EXPECT_EQ(faceToVertices[7], vertices);
     edges = {1, 6, 534};
-    ASSERT_EQ(faceToEdges[7], edges);
+    EXPECT_EQ(faceToEdges[7], edges);
 
     vertices = {0, 4, 112};
-    ASSERT_EQ(faceToVertices[8], vertices);
+    EXPECT_EQ(faceToVertices[8], vertices);
     edges = {2, 3, 788};
-    ASSERT_EQ(faceToEdges[8], edges);
+    EXPECT_EQ(faceToEdges[8], edges);
 
     vertices = {0, 4, 67};
-    ASSERT_EQ(faceToVertices[9], vertices);
+    EXPECT_EQ(faceToVertices[9], vertices);
     edges = {3, 4, 471};
-    ASSERT_EQ(faceToEdges[9], edges);
+    EXPECT_EQ(faceToEdges[9], edges);
 
     vertices = {0, 16, 76};
-    ASSERT_EQ(faceToVertices[10], vertices);
+    EXPECT_EQ(faceToVertices[10], vertices);
     edges = {5, 6, 536};
-    ASSERT_EQ(faceToEdges[10], edges);
+    EXPECT_EQ(faceToEdges[10], edges);
     
     vertices = {0, 16, 67};
-    ASSERT_EQ(faceToVertices[11], vertices);
+    EXPECT_EQ(faceToVertices[11], vertices);
     edges = {4, 5, 475};
-    ASSERT_EQ(faceToEdges[11], edges);
+    EXPECT_EQ(faceToEdges[11], edges);
 
     vertices = {9, 72, 73};
-    ASSERT_EQ(faceToVertices[111], vertices);
+    EXPECT_EQ(faceToVertices[111], vertices);
     edges = {63, 67, 505};
-    ASSERT_EQ(faceToEdges[111], edges);
+    EXPECT_EQ(faceToEdges[111], edges);
 
     vertices = {20, 21, 64};
-    ASSERT_EQ(faceToVertices[771], vertices);
+    EXPECT_EQ(faceToVertices[771], vertices);
     edges = {141, 448, 452};
-    ASSERT_EQ(faceToEdges[771], edges);
+    EXPECT_EQ(faceToEdges[771], edges);
 }
 
 TEST(createFaces, HandlesValidInputRhombic)
@@ -321,51 +321,51 @@ TEST(createFaces, HandlesValidInputRhombic)
     vvint faceToEdges = latticeRhombic.getFaceToEdges();
 
     vint vertices = {0, 42, 216, 221};
-    ASSERT_EQ(faceToVertices[0], vertices);
+    EXPECT_EQ(faceToVertices[0], vertices);
     vint edges = {0, 4, 1516, 1547};
-    ASSERT_EQ(faceToEdges[0], edges);
+    EXPECT_EQ(faceToEdges[0], edges);
 
     vertices = {0, 37, 216, 246};
-    ASSERT_EQ(faceToVertices[1], vertices);
+    EXPECT_EQ(faceToVertices[1], vertices);
     edges = {0, 6, 1518, 1722};
-    ASSERT_EQ(faceToEdges[1], edges);
+    EXPECT_EQ(faceToEdges[1], edges);
 
     vertices = {0, 7, 216, 396};
-    ASSERT_EQ(faceToVertices[2], vertices);
+    EXPECT_EQ(faceToVertices[2], vertices);
     edges = {0, 2, 1514, 2772};
-    ASSERT_EQ(faceToEdges[2], edges);
+    EXPECT_EQ(faceToEdges[2], edges);
 
     vertices = {0, 186, 396, 401};
-    ASSERT_EQ(faceToVertices[3], vertices);
+    EXPECT_EQ(faceToVertices[3], vertices);
     edges = {2, 1308, 2809, 2813};
-    ASSERT_EQ(faceToEdges[3], edges);
+    EXPECT_EQ(faceToEdges[3], edges);
 
     vertices = {0, 181, 396, 426};
-    ASSERT_EQ(faceToVertices[4], vertices);
+    EXPECT_EQ(faceToVertices[4], vertices);
     edges = {2, 1271, 2984, 2986};
-    ASSERT_EQ(faceToEdges[4], edges);
+    EXPECT_EQ(faceToEdges[4], edges);
 
     vertices = {0, 31, 246, 426};
-    ASSERT_EQ(faceToVertices[5], vertices);
+    EXPECT_EQ(faceToVertices[5], vertices);
     edges = {6, 221, 2986, 2988};
-    ASSERT_EQ(faceToEdges[5], edges);
+    EXPECT_EQ(faceToEdges[5], edges);
 
     vertices = {167, 168, 347, 383};
-    ASSERT_EQ(faceToVertices[500], vertices);
+    EXPECT_EQ(faceToVertices[500], vertices);
     edges = {1169, 1171, 2429, 2683};
-    ASSERT_EQ(faceToEdges[500], edges);
+    EXPECT_EQ(faceToEdges[500], edges);
 
     vertices = {137, 167, 346, 347};
-    ASSERT_EQ(faceToVertices[501], vertices);
+    EXPECT_EQ(faceToVertices[501], vertices);
     edges = {965, 1171, 2424, 2428};
-    ASSERT_EQ(faceToEdges[501], edges);
+    EXPECT_EQ(faceToEdges[501], edges);
 
     vint faceIndices = {0, 1, 2, 3, 4, 5, 35, 104, 124, 201, 553, 630};
     int i = 0;
     auto vertexToFaces = latticeRhombic.getVertexToFaces();
     for (auto face : vertexToFaces[0])
     {
-        ASSERT_EQ(face.faceIndex, faceIndices[i]);
+        EXPECT_EQ(face.faceIndex, faceIndices[i]);
         ++i;
     }
 
@@ -373,7 +373,7 @@ TEST(createFaces, HandlesValidInputRhombic)
     i = 0;
     for (auto face : vertexToFaces[123])
     {
-        ASSERT_EQ(face.faceIndex, faceIndices[i]);
+        EXPECT_EQ(face.faceIndex, faceIndices[i]);
         ++i;
     }
 
@@ -381,7 +381,7 @@ TEST(createFaces, HandlesValidInputRhombic)
     i = 0;
     for (auto face : vertexToFaces[216])
     {
-        ASSERT_EQ(face.faceIndex, faceIndices[i]);
+        EXPECT_EQ(face.faceIndex, faceIndices[i]);
         ++i;
     }
 
@@ -389,7 +389,7 @@ TEST(createFaces, HandlesValidInputRhombic)
     i = 0;
     for (auto face : vertexToFaces[259])
     {
-        ASSERT_EQ(face.faceIndex, faceIndices[i]);
+        EXPECT_EQ(face.faceIndex, faceIndices[i]);
         ++i;
     }
 }
@@ -412,7 +412,7 @@ TEST(createFaces, correctMaxEdgeIndex)
                     maxEdgeIndex = edgeIndex;
             }
         }
-        ASSERT_EQ(maxEdgeIndex, 7 * (2 * l * l * l - 1));
+        EXPECT_EQ(maxEdgeIndex, 7 * (2 * l * l * l - 1));
     }
 }
 
@@ -434,7 +434,7 @@ TEST(createFaces, correctMaxVertexIndex)
                     maxVertexIndex = vertexIndex;
             }
         }
-        ASSERT_EQ(maxVertexIndex, (2 * l * l * l - 1));
+        EXPECT_EQ(maxVertexIndex, (2 * l * l * l - 1));
     }
 }
 
@@ -450,16 +450,16 @@ TEST(createFaces, correctNumberOfFaces)
         latticeBCC.createFaces();
         vvint faceToVertices = latticeBCC.getFaceToVertices();
         vvint faceToEdges = latticeBCC.getFaceToEdges();
-        ASSERT_EQ(faceToVertices.size(), 24 * l * l * l);
-        ASSERT_EQ(faceToEdges.size(), 24 * l * l * l);
+        EXPECT_EQ(faceToVertices.size(), 24 * l * l * l);
+        EXPECT_EQ(faceToEdges.size(), 24 * l * l * l);
 
         type = "rhombic";
         Lattice latticeRhombic = Lattice(l, type);
         latticeRhombic.createFaces();
         faceToVertices = latticeRhombic.getFaceToVertices();
         faceToEdges = latticeRhombic.getFaceToEdges();
-        ASSERT_EQ(faceToVertices.size(), 3 * l * l * l);
-        ASSERT_EQ(faceToEdges.size(), 3 * l * l * l);
+        EXPECT_EQ(faceToVertices.size(), 3 * l * l * l);
+        EXPECT_EQ(faceToEdges.size(), 3 * l * l * l);
     }
 }
 
@@ -478,16 +478,157 @@ TEST(createFaces, eachVertexinCorrectNumberOfFacesRhombicLattice)
             cartesian4 coordinate = latticeRhombic.indexToCoordinate(i);
             if (coordinate.w == 1)
             {
-                ASSERT_EQ(faces.size(), 6);    
+                EXPECT_EQ(faces.size(), 6);    
             }
             else if ((coordinate.x + coordinate.y + coordinate.z) % 2 == 0)
             {
-                ASSERT_EQ(faces.size(), 12);
+                EXPECT_EQ(faces.size(), 12);
             }
             else
             {
-                ASSERT_EQ(faces.size(), 0);
+                EXPECT_EQ(faces.size(), 0);
             }  
         }
     }    
+}
+
+TEST(createUpEdgesMap, verticesHaveCorrectNumberOfUpEdges)
+{
+    vint ls = {4, 6, 8, 10};
+    for (auto l : ls)
+    {
+        std::string type = "rhombic";
+        Lattice latticeRhombic = Lattice(l, type);
+        latticeRhombic.createUpEdgesMap();
+        auto upEdgesMap = latticeRhombic.getUpEdgesMap();
+        std::vector<std::string> directionList = {"xyz", "-xy", "-xz", "-yz"};
+        for (auto direction : directionList)
+        {
+            vvint vertexToUpEdges = upEdgesMap[direction];
+            for (int i = 0; i <  2 * l * l * l; ++i)
+            {
+                cartesian4 coordinate = latticeRhombic.indexToCoordinate(i);
+                if (coordinate.w == 0)
+                {
+                    if ((coordinate.x + coordinate.y + coordinate.z) % 2 == 0)
+                    {
+                        EXPECT_EQ(vertexToUpEdges[i].size(), 4);
+                    }
+                    else 
+                    {
+                        EXPECT_EQ(vertexToUpEdges[i].size(), 0);
+                    }
+                }
+                else 
+                {
+                    if ((coordinate.x + coordinate.y + coordinate.z) % 2 == 0)
+                    {
+                        EXPECT_EQ(vertexToUpEdges[i].size(), 3);
+                    }
+                    else 
+                    {
+                        EXPECT_EQ(vertexToUpEdges[i].size(), 0);
+                    }
+                }
+            }
+        }
+        directionList = {"-xyz", "xy", "xz", "yz"};
+        for (auto direction : directionList)
+        {
+            vvint vertexToUpEdges = upEdgesMap["xy"];
+            for (int i = 0; i <  2 * l * l * l; ++i)
+            {
+                cartesian4 coordinate = latticeRhombic.indexToCoordinate(i);
+                if (coordinate.w == 0)
+                {
+                    if ((coordinate.x + coordinate.y + coordinate.z) % 2 == 0)
+                    {
+                        EXPECT_EQ(vertexToUpEdges[i].size(), 4);
+                    }
+                    else 
+                    {
+                        EXPECT_EQ(vertexToUpEdges[i].size(), 0);
+                    }
+                }
+                else 
+                {
+                    if ((coordinate.x + coordinate.y + coordinate.z) % 2 == 0)
+                    {
+                        EXPECT_EQ(vertexToUpEdges[i].size(), 0);
+                    }
+                    else 
+                    {
+                        EXPECT_EQ(vertexToUpEdges[i].size(), 3);
+                    }
+                }
+            }
+        }
+    }
+}
+
+TEST(creatUpEdgesMap, correctEdgesCreated)
+{
+    int l = 4;
+    std::string type = "rhombic";
+    Lattice latticeRhombic = Lattice(l, type);
+    latticeRhombic.createUpEdgesMap();
+    auto upEdgesMap = latticeRhombic.getUpEdgesMap();
+
+    vvint vertexToUpEdges = upEdgesMap["-xy"];
+    vint upEdges = vertexToUpEdges[0];
+    std::sort(upEdges.begin(), upEdges.end());
+    vint expectedEdges = {4, 6, 555, 889};
+    for (int i = 0; i < 4; ++i)
+    {
+        EXPECT_EQ(upEdges[i], expectedEdges[i]);
+    }
+    upEdges = vertexToUpEdges[64];
+    std::sort(upEdges.begin(), upEdges.end());
+    expectedEdges = {0, 452, 454};
+    for (int i = 0; i < 4; ++i)
+    {
+        EXPECT_EQ(upEdges[i], expectedEdges[i]);
+    }
+
+    vertexToUpEdges = upEdgesMap["yz"];
+    upEdges = vertexToUpEdges[0];
+    std::sort(upEdges.begin(), upEdges.end());
+    expectedEdges = {0, 4, 555, 811};
+    for (int i = 0; i < 4; ++i)
+    {
+        EXPECT_EQ(upEdges[i], expectedEdges[i]);
+    }
+    upEdges = vertexToUpEdges[65];
+    std::sort(upEdges.begin(), upEdges.end());
+    expectedEdges = {41, 121, 455};
+    for (int i = 0; i < 4; ++i)
+    {
+        EXPECT_EQ(upEdges[i], expectedEdges[i]);
+    }
+}
+
+TEST(findFace, ExceptsInvalidVertexListSize)
+{
+    int l = 8;
+    std::string type = "rhombic";
+    Lattice latticeRhombic = Lattice(l, type);
+    latticeRhombic.createFaces();
+    vint badVertexList = {1, 2, 3};
+    EXPECT_THROW(latticeRhombic.findFace(badVertexList), std::invalid_argument);
+    badVertexList = {1, 2, 3, 4, 5};
+    EXPECT_THROW(latticeRhombic.findFace(badVertexList), std::invalid_argument);
+}
+
+TEST(findFace, correctFacesFound)
+{
+    int l = 8;
+    std::string type = "rhombic";
+    Lattice latticeRhombic = Lattice(l, type);
+    latticeRhombic.createFaces();
+    vint expectedVertices = {0, 504, 1016, 1023};
+    EXPECT_EQ(latticeRhombic.findFace(expectedVertices), 1512);
+
+    expectedVertices = {0, 9, 512, 960};
+    EXPECT_EQ(latticeRhombic.findFace(expectedVertices), 2);
+
 }
