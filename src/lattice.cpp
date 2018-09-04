@@ -7,7 +7,7 @@
 
 int sgn(int x) { return (x > 0) - (x < 0); }
 
-Lattice::Lattice(int length, std::string latticeType) : l(length), type(latticeType)
+Lattice::Lattice(int length, const std::string &latticeType) : l(length), type(latticeType)
 {
     if (length < 3)
     {
@@ -35,6 +35,7 @@ Lattice::Lattice(int length, std::string latticeType) : l(length), type(latticeT
         // are present, so the possible vertex indices go from
         // 0 to l^3 -1
         vertexToFaces.assign(2 * l * l * l, {});
+        vertexToEdges.assign(2 * l * l * l, {});
     }
 }
 
@@ -55,7 +56,7 @@ cartesian4 Lattice::indexToCoordinate(int vertexIndex)
     return coordinate;
 }
 
-int Lattice::coordinateToIndex(cartesian4 coordinate)
+int Lattice::coordinateToIndex(const cartesian4 &coordinate)
 {
     if (coordinate.x < 0 || coordinate.y < 0 || coordinate.z < 0 || coordinate.w < 0 || coordinate.w > 1)
     {
@@ -64,7 +65,7 @@ int Lattice::coordinateToIndex(cartesian4 coordinate)
     return coordinate.w * l * l * l + coordinate.z * l * l + coordinate.y * l + coordinate.x;
 }
 
-int Lattice::neighbour(int vertexIndex, std::string direction, int sign)
+int Lattice::neighbour(int vertexIndex, const std::string &direction, int sign)
 {
     if (!(sign == 1 || sign == -1))
     {
@@ -164,7 +165,7 @@ int Lattice::neighbour(int vertexIndex, std::string direction, int sign)
     return coordinateToIndex(coordinate);
 }
 
-int Lattice::getEdgeIndex(int vertexIndex, std::string direction, int sign)
+int Lattice::getEdgeIndex(int vertexIndex, const std::string &direction, int sign)
 {
     if (!(sign == 1 || sign == -1))
     {
@@ -217,7 +218,7 @@ int Lattice::getEdgeIndex(int vertexIndex, std::string direction, int sign)
     return edgeIndex;
 }
 
-void Lattice::addFace(int vertexIndex, int faceIndex, vstr directions, vint signs)
+void Lattice::addFace(int vertexIndex, int faceIndex, const vstr &directions, const vint &signs)
 {
     vint vertices;
     vint edges;
@@ -248,7 +249,7 @@ void Lattice::addFace(int vertexIndex, int faceIndex, vstr directions, vint sign
 
     faceToVertices.push_back(vertices);
     faceToEdges.push_back(edges);
-    for (auto const &vertex : vertices)
+    for (const auto &vertex : vertices)
     {
         vertexToFaces[vertex].push_back(face);
     }
@@ -340,7 +341,7 @@ void Lattice::createUpEdgesMap()
 {
     std::vector<std::string> directionList = {"xyz", "xy", "xz", "yz",
                                               "-xyz", "-xy", "-xz", "-yz"};
-    for (auto direction : directionList)
+    for (const auto &direction : directionList)
     {
         vvint vertexToUpEdges;
         vertexToUpEdges.assign(2 * l * l * l, {});
@@ -491,7 +492,7 @@ std::map<std::string, vvint> Lattice::getUpEdgesMap()
     return upEdgesMap;
 }
 
-int Lattice::findFace(vint vertices)
+int Lattice::findFace(vint &vertices)
 {
     if (vertices.size() != 4)
     {
@@ -499,19 +500,62 @@ int Lattice::findFace(vint vertices)
     }
     std::sort(vertices.begin(), vertices.end());
     auto v0Faces = vertexToFaces[vertices[0]];
-    // auto v1Faces = vertexToFaces[vertices[1]];
-    // auto v2Faces = vertexToFaces[vertices[2]];
-    // auto v3Faces = vertexToFaces[vertices[3]];
-    for (auto face : v0Faces)
+    for (const auto &face : v0Faces)
     {
-        // if (std::find(v1Faces.begin(), v1Faces.end(), face) != v1Faces.end())
-        // {
-        //     return face.faceIndex;
-        // }
         if (face.vertices == vertices)
         {
             return face.faceIndex;
         }
     }
     throw std::invalid_argument("Input vertices do not correspond to a face.");
+}
+
+void Lattice::createVertexToEdges()
+{
+    for (int vertexIndex = 0; vertexIndex < 2 * l * l * l; ++vertexIndex)
+    {
+        cartesian4 coordinate = indexToCoordinate(vertexIndex);
+        if (coordinate.w == 0)
+        {
+            if ((coordinate.x + coordinate.y + coordinate.z) % 2 == 0)
+            {
+                int sign = 1;
+                vertexToEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xyz", sign));
+                vertexToEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xy", sign));
+                vertexToEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xz", sign));
+                vertexToEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "yz", sign));
+                sign = -1;
+                vertexToEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xyz", sign));
+                vertexToEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xy", sign));
+                vertexToEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xz", sign));
+                vertexToEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "yz", sign));
+            }
+        }
+        else
+        {
+            if ((coordinate.x + coordinate.y + coordinate.z) % 2 == 0)
+            {
+                int sign = 1;
+                vertexToEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xy", sign));
+                vertexToEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xz", sign));
+                vertexToEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "yz", sign));
+                sign = -1;
+                vertexToEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xyz", sign));
+            }
+            else
+            {
+                int sign = -1;
+                vertexToEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xy", sign));
+                vertexToEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xz", sign));
+                vertexToEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "yz", sign));
+                sign = 1;
+                vertexToEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xyz", sign));
+            }
+        }
+    }
+}
+
+vvint Lattice::getVertexToEdges()
+{
+    return vertexToEdges;
 }

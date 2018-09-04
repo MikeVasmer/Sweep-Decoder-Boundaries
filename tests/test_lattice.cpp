@@ -294,7 +294,7 @@ TEST(createFaces, HandlesValidInputBCC)
     EXPECT_EQ(faceToVertices[10], vertices);
     edges = {5, 6, 536};
     EXPECT_EQ(faceToEdges[10], edges);
-    
+
     vertices = {0, 16, 67};
     EXPECT_EQ(faceToVertices[11], vertices);
     edges = {4, 5, 475};
@@ -363,7 +363,7 @@ TEST(createFaces, HandlesValidInputRhombic)
     vint faceIndices = {0, 1, 2, 3, 4, 5, 35, 104, 124, 201, 553, 630};
     int i = 0;
     auto vertexToFaces = latticeRhombic.getVertexToFaces();
-    for (auto face : vertexToFaces[0])
+    for (const auto &face : vertexToFaces[0])
     {
         EXPECT_EQ(face.faceIndex, faceIndices[i]);
         ++i;
@@ -371,7 +371,7 @@ TEST(createFaces, HandlesValidInputRhombic)
 
     faceIndices = {240, 259, 350, 366, 367, 368, 369, 370, 371, 389, 459, 478};
     i = 0;
-    for (auto face : vertexToFaces[123])
+    for (const auto &face : vertexToFaces[123])
     {
         EXPECT_EQ(face.faceIndex, faceIndices[i]);
         ++i;
@@ -379,7 +379,7 @@ TEST(createFaces, HandlesValidInputRhombic)
 
     faceIndices = {0, 1, 2, 111, 130, 131};
     i = 0;
-    for (auto face : vertexToFaces[216])
+    for (const auto &face : vertexToFaces[216])
     {
         EXPECT_EQ(face.faceIndex, faceIndices[i]);
         ++i;
@@ -387,7 +387,7 @@ TEST(createFaces, HandlesValidInputRhombic)
 
     faceIndices = {132, 145, 149, 236, 237, 238};
     i = 0;
-    for (auto face : vertexToFaces[259])
+    for (const auto &face : vertexToFaces[259])
     {
         EXPECT_EQ(face.faceIndex, faceIndices[i]);
         ++i;
@@ -402,9 +402,9 @@ TEST(createFaces, correctMaxEdgeIndex)
         std::string type = "rhombic";
         Lattice latticeRhombic = Lattice(l, type);
         latticeRhombic.createFaces();
-        vvint faceToEdges = latticeRhombic.getFaceToEdges();  
+        vvint faceToEdges = latticeRhombic.getFaceToEdges();
         int maxEdgeIndex = 0;
-        for (auto edges : faceToEdges)
+        for (const auto &edges : faceToEdges)
         {
             for (auto edgeIndex : edges)
             {
@@ -426,7 +426,7 @@ TEST(createFaces, correctMaxVertexIndex)
         latticeRhombic.createFaces();
         vvint faceToVertices = latticeRhombic.getFaceToVertices();
         int maxVertexIndex = 0;
-        for (auto vertices : faceToVertices)
+        for (const auto &vertices : faceToVertices)
         {
             for (auto vertexIndex : vertices)
             {
@@ -472,13 +472,13 @@ TEST(createFaces, eachVertexinCorrectNumberOfFacesRhombicLattice)
         Lattice latticeRhombic = Lattice(l, type);
         latticeRhombic.createFaces();
         auto vertexToFaces = latticeRhombic.getVertexToFaces();
-        for (int i = 0; i <  2 * l * l * l; ++i)
+        for (int i = 0; i < 2 * l * l * l; ++i)
         {
             auto faces = vertexToFaces[i];
             cartesian4 coordinate = latticeRhombic.indexToCoordinate(i);
             if (coordinate.w == 1)
             {
-                EXPECT_EQ(faces.size(), 6);    
+                EXPECT_EQ(faces.size(), 6);
             }
             else if ((coordinate.x + coordinate.y + coordinate.z) % 2 == 0)
             {
@@ -487,9 +487,9 @@ TEST(createFaces, eachVertexinCorrectNumberOfFacesRhombicLattice)
             else
             {
                 EXPECT_EQ(faces.size(), 0);
-            }  
+            }
         }
-    }    
+    }
 }
 
 TEST(createUpEdgesMap, verticesHaveCorrectNumberOfUpEdges)
@@ -502,10 +502,10 @@ TEST(createUpEdgesMap, verticesHaveCorrectNumberOfUpEdges)
         latticeRhombic.createUpEdgesMap();
         auto upEdgesMap = latticeRhombic.getUpEdgesMap();
         std::vector<std::string> directionList = {"xyz", "-xy", "-xz", "-yz"};
-        for (auto direction : directionList)
+        for (const auto &direction : directionList)
         {
             vvint vertexToUpEdges = upEdgesMap[direction];
-            for (int i = 0; i <  2 * l * l * l; ++i)
+            for (int i = 0; i < 2 * l * l * l; ++i)
             {
                 cartesian4 coordinate = latticeRhombic.indexToCoordinate(i);
                 if (coordinate.w == 0)
@@ -514,18 +514,18 @@ TEST(createUpEdgesMap, verticesHaveCorrectNumberOfUpEdges)
                     {
                         EXPECT_EQ(vertexToUpEdges[i].size(), 4);
                     }
-                    else 
+                    else
                     {
                         EXPECT_EQ(vertexToUpEdges[i].size(), 0);
                     }
                 }
-                else 
+                else
                 {
                     if ((coordinate.x + coordinate.y + coordinate.z) % 2 == 0)
                     {
                         EXPECT_EQ(vertexToUpEdges[i].size(), 3);
                     }
-                    else 
+                    else
                     {
                         EXPECT_EQ(vertexToUpEdges[i].size(), 0);
                     }
@@ -533,10 +533,10 @@ TEST(createUpEdgesMap, verticesHaveCorrectNumberOfUpEdges)
             }
         }
         directionList = {"-xyz", "xy", "xz", "yz"};
-        for (auto direction : directionList)
+        for (const auto &direction : directionList)
         {
             vvint vertexToUpEdges = upEdgesMap["xy"];
-            for (int i = 0; i <  2 * l * l * l; ++i)
+            for (int i = 0; i < 2 * l * l * l; ++i)
             {
                 cartesian4 coordinate = latticeRhombic.indexToCoordinate(i);
                 if (coordinate.w == 0)
@@ -545,18 +545,18 @@ TEST(createUpEdgesMap, verticesHaveCorrectNumberOfUpEdges)
                     {
                         EXPECT_EQ(vertexToUpEdges[i].size(), 4);
                     }
-                    else 
+                    else
                     {
                         EXPECT_EQ(vertexToUpEdges[i].size(), 0);
                     }
                 }
-                else 
+                else
                 {
                     if ((coordinate.x + coordinate.y + coordinate.z) % 2 == 0)
                     {
                         EXPECT_EQ(vertexToUpEdges[i].size(), 0);
                     }
-                    else 
+                    else
                     {
                         EXPECT_EQ(vertexToUpEdges[i].size(), 3);
                     }
@@ -630,5 +630,63 @@ TEST(findFace, correctFacesFound)
 
     expectedVertices = {0, 9, 512, 960};
     EXPECT_EQ(latticeRhombic.findFace(expectedVertices), 2);
+}
 
+TEST(createVertexToEdges, correctEdgesCreated)
+{
+    int l = 6;
+    std::string type = "rhombic";
+    Lattice latticeRhombic = Lattice(l, type);
+    latticeRhombic.createVertexToEdges();
+    vint expectedEdges = {14, 16, 18, 20, 1731, 2785, 2989, 3000};
+    vvint vertexToEdges = latticeRhombic.getVertexToEdges();
+    vint edges = vertexToEdges[2];
+    EXPECT_EQ(edges.size(), expectedEdges.size());
+    std::sort(edges.begin(), edges.end());
+    for (int i = 0; i < edges.size(); ++i)
+    {
+        EXPECT_EQ(edges[i], expectedEdges[i]);
+    }
+
+    expectedEdges = {0, 1514, 1516, 1518};
+    edges = vertexToEdges[216];
+    EXPECT_EQ(edges.size(), expectedEdges.size());
+    std::sort(edges.begin(), edges.end());
+    for (int i = 0; i < edges.size(); ++i)
+    {
+        EXPECT_EQ(edges[i], expectedEdges[i]);
+    }
+
+    expectedEdges = {18, 55, 261, 1519};
+    edges = vertexToEdges[217];
+    EXPECT_EQ(edges.size(), expectedEdges.size());
+    std::sort(edges.begin(), edges.end());
+    for (int i = 0; i < edges.size(); ++i)
+    {
+        EXPECT_EQ(edges[i], expectedEdges[i]);
+    }
+}
+
+TEST(createVertexToEdges, correctNumberOfEdgesForEachVertex)
+{
+    int l = 6;
+    std::string type = "rhombic";
+    Lattice latticeRhombic = Lattice(l, type);
+    latticeRhombic.createVertexToEdges();
+    vvint vertexToEdges = latticeRhombic.getVertexToEdges();
+    for (int vertexIndex = 0; vertexIndex < 2 * l * l * l; ++vertexIndex)
+    {
+        cartesian4 coordinate = latticeRhombic.indexToCoordinate(vertexIndex);
+        if (coordinate.w == 0)
+        {
+            if ((coordinate.x + coordinate.y + coordinate.z) % 2 == 0)
+            {
+                EXPECT_EQ(vertexToEdges[vertexIndex].size(), 8);
+            }
+        }
+        else
+        {
+            EXPECT_EQ(vertexToEdges[vertexIndex].size(), 4);
+        }
+    }
 }
