@@ -7,7 +7,7 @@
 
 int sgn(int x) { return (x > 0) - (x < 0); }
 
-Lattice::Lattice(int length, const std::string &latticeType) : l(length), type(latticeType)
+Lattice::Lattice(const int length, const std::string &latticeType) : l(length), type(latticeType)
 {
     if (length < 3)
     {
@@ -39,9 +39,9 @@ Lattice::Lattice(int length, const std::string &latticeType) : l(length), type(l
     }
 }
 
-std::string Lattice::getType() { return type; }
+const std::string& Lattice::getType() const { return type; }
 
-cartesian4 Lattice::indexToCoordinate(int vertexIndex)
+cartesian4 Lattice::indexToCoordinate(const int vertexIndex)
 {
     if (vertexIndex < 0)
     {
@@ -65,7 +65,7 @@ int Lattice::coordinateToIndex(const cartesian4 &coordinate)
     return coordinate.w * l * l * l + coordinate.z * l * l + coordinate.y * l + coordinate.x;
 }
 
-int Lattice::neighbour(int vertexIndex, const std::string &direction, int sign)
+int Lattice::neighbour(const int vertexIndex, const std::string &direction, const int sign)
 {
     if (!(sign == 1 || sign == -1))
     {
@@ -165,7 +165,7 @@ int Lattice::neighbour(int vertexIndex, const std::string &direction, int sign)
     return coordinateToIndex(coordinate);
 }
 
-int Lattice::getEdgeIndex(int vertexIndex, const std::string &direction, int sign)
+int Lattice::edgeIndex(const int vertexIndex, const std::string &direction, const int sign)
 {
     if (!(sign == 1 || sign == -1))
     {
@@ -218,7 +218,7 @@ int Lattice::getEdgeIndex(int vertexIndex, const std::string &direction, int sig
     return edgeIndex;
 }
 
-void Lattice::addFace(int vertexIndex, int faceIndex, const vstr &directions, const vint &signs)
+void Lattice::addFace(const int vertexIndex, const int faceIndex, const vstr &directions, const vint &signs)
 {
     vint vertices;
     vint edges;
@@ -228,18 +228,18 @@ void Lattice::addFace(int vertexIndex, int faceIndex, const vstr &directions, co
         vertices = {vertexIndex, neighbourVertex,
                     neighbour(vertexIndex, directions[1], signs[1]),
                     neighbour(neighbourVertex, directions[2], signs[2])};
-        edges = {getEdgeIndex(vertexIndex, directions[0], signs[0]),
-                 getEdgeIndex(vertexIndex, directions[1], signs[1]),
-                 getEdgeIndex(neighbourVertex, directions[2], signs[2]),
-                 getEdgeIndex(vertices[2], directions[3], signs[3])};
+        edges = {edgeIndex(vertexIndex, directions[0], signs[0]),
+                 edgeIndex(vertexIndex, directions[1], signs[1]),
+                 edgeIndex(neighbourVertex, directions[2], signs[2]),
+                 edgeIndex(vertices[2], directions[3], signs[3])};
     }
     else if (type == "bcc")
     {
         vertices = {vertexIndex, neighbour(vertexIndex, directions[0], signs[0]),
                     neighbour(vertexIndex, directions[1], signs[1])};
-        edges = {getEdgeIndex(vertexIndex, directions[0], signs[0]),
-                 getEdgeIndex(vertexIndex, directions[1], signs[1]),
-                 getEdgeIndex(vertices[1], directions[2], signs[2])};
+        edges = {edgeIndex(vertexIndex, directions[0], signs[0]),
+                 edgeIndex(vertexIndex, directions[1], signs[1]),
+                 edgeIndex(vertices[1], directions[2], signs[2])};
     }
     faceS face;
     std::sort(vertices.begin(), vertices.end());
@@ -322,17 +322,17 @@ void Lattice::createFaces()
     }
 }
 
-vvint Lattice::getFaceToVertices()
+const vvint& Lattice::getFaceToVertices() const
 {
     return faceToVertices;
 }
 
-vvint Lattice::getFaceToEdges()
+const vvint& Lattice::getFaceToEdges() const
 {
     return faceToEdges;
 }
 
-std::vector<std::vector<faceS>> Lattice::getVertexToFaces()
+const std::vector<std::vector<faceS>>& Lattice::getVertexToFaces() const
 {
     return vertexToFaces;
 }
@@ -355,59 +355,59 @@ void Lattice::createUpEdgesMap()
                     if (direction == "xyz")
                     {
                         // Third argument is sign
-                        vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xyz", 1));
-                        vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xy", 1));
-                        vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xz", 1));
-                        vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "yz", 1));
+                        vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "xyz", 1));
+                        vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "xy", 1));
+                        vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "xz", 1));
+                        vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "yz", 1));
                     }
                     else if (direction == "yz")
                     {
-                        vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "yz", 1));
-                        vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xyz", 1));
-                        vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xy", -1));
-                        vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xz", -1));
+                        vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "yz", 1));
+                        vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "xyz", 1));
+                        vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "xy", -1));
+                        vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "xz", -1));
                     }
                     else if (direction == "xz")
                     {
-                        vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xyz", 1));
-                        vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xz", 1));
-                        vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xy", -1));
-                        vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "yz", -1));
+                        vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "xyz", 1));
+                        vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "xz", 1));
+                        vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "xy", -1));
+                        vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "yz", -1));
                     }
                     else if (direction == "xy")
                     {
-                        vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xyz", 1));
-                        vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xy", 1));
-                        vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xz", -1));
-                        vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "yz", -1));
+                        vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "xyz", 1));
+                        vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "xy", 1));
+                        vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "xz", -1));
+                        vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "yz", -1));
                     }
                     else if (direction == "-xyz")
                     {
-                        vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xyz", -1));
-                        vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xz", -1));
-                        vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xy", -1));
-                        vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "yz", -1));
+                        vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "xyz", -1));
+                        vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "xz", -1));
+                        vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "xy", -1));
+                        vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "yz", -1));
                     }
                     else if (direction == "-yz")
                     {
-                        vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xy", 1));
-                        vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xz", 1));
-                        vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xyz", -1));
-                        vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "yz", -1));
+                        vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "xy", 1));
+                        vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "xz", 1));
+                        vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "xyz", -1));
+                        vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "yz", -1));
                     }
                     else if (direction == "-xz")
                     {
-                        vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xy", 1));
-                        vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "yz", 1));
-                        vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xyz", -1));
-                        vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xz", -1));
+                        vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "xy", 1));
+                        vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "yz", 1));
+                        vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "xyz", -1));
+                        vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "xz", -1));
                     }
                     else if (direction == "-xy")
                     {
-                        vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xz", 1));
-                        vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "yz", 1));
-                        vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xyz", -1));
-                        vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xy", -1));
+                        vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "xz", 1));
+                        vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "yz", 1));
+                        vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "xyz", -1));
+                        vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "xy", -1));
                     }
                 }
             }
@@ -423,27 +423,27 @@ void Lattice::createUpEdgesMap()
                     {
                         if (direction == "xyz")
                         {
-                            vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xy", 1));
-                            vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xz", 1));
-                            vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "yz", 1));
+                            vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "xy", 1));
+                            vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "xz", 1));
+                            vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "yz", 1));
                         }
                         else if (direction == "-xy")
                         {
-                            vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xyz", -1));
-                            vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xz", 1));
-                            vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "yz", 1));
+                            vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "xyz", -1));
+                            vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "xz", 1));
+                            vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "yz", 1));
                         }
                         else if (direction == "-xz")
                         {
-                            vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xyz", -1));
-                            vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xy", 1));
-                            vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "yz", 1));
+                            vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "xyz", -1));
+                            vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "xy", 1));
+                            vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "yz", 1));
                         }
                         else if (direction == "-yz")
                         {
-                            vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xyz", -1));
-                            vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xz", 1));
-                            vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xy", 1));
+                            vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "xyz", -1));
+                            vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "xz", 1));
+                            vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "xy", 1));
                         }
                     }
                 }
@@ -457,27 +457,27 @@ void Lattice::createUpEdgesMap()
                     {
                         if (direction == "-xyz")
                         {
-                            vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xy", -1));
-                            vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xz", -1));
-                            vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "yz", -1));
+                            vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "xy", -1));
+                            vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "xz", -1));
+                            vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "yz", -1));
                         }
                         else if (direction == "xy")
                         {
-                            vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xyz", 1));
-                            vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xz", -1));
-                            vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "yz", -1));
+                            vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "xyz", 1));
+                            vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "xz", -1));
+                            vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "yz", -1));
                         }
                         else if (direction == "xz")
                         {
-                            vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xyz", 1));
-                            vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xy", -1));
-                            vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "yz", -1));
+                            vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "xyz", 1));
+                            vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "xy", -1));
+                            vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "yz", -1));
                         }
                         else if (direction == "yz")
                         {
-                            vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xyz", 1));
-                            vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xz", -1));
-                            vertexToUpEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xy", -1));
+                            vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "xyz", 1));
+                            vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "xz", -1));
+                            vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "xy", -1));
                         }
                     }
                 }
@@ -520,15 +520,15 @@ void Lattice::createVertexToEdges()
             if ((coordinate.x + coordinate.y + coordinate.z) % 2 == 0)
             {
                 int sign = 1;
-                vertexToEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xyz", sign));
-                vertexToEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xy", sign));
-                vertexToEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xz", sign));
-                vertexToEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "yz", sign));
+                vertexToEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "xyz", sign));
+                vertexToEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "xy", sign));
+                vertexToEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "xz", sign));
+                vertexToEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "yz", sign));
                 sign = -1;
-                vertexToEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xyz", sign));
-                vertexToEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xy", sign));
-                vertexToEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xz", sign));
-                vertexToEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "yz", sign));
+                vertexToEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "xyz", sign));
+                vertexToEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "xy", sign));
+                vertexToEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "xz", sign));
+                vertexToEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "yz", sign));
             }
         }
         else
@@ -536,26 +536,26 @@ void Lattice::createVertexToEdges()
             if ((coordinate.x + coordinate.y + coordinate.z) % 2 == 0)
             {
                 int sign = 1;
-                vertexToEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xy", sign));
-                vertexToEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xz", sign));
-                vertexToEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "yz", sign));
+                vertexToEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "xy", sign));
+                vertexToEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "xz", sign));
+                vertexToEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "yz", sign));
                 sign = -1;
-                vertexToEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xyz", sign));
+                vertexToEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "xyz", sign));
             }
             else
             {
                 int sign = -1;
-                vertexToEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xy", sign));
-                vertexToEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xz", sign));
-                vertexToEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "yz", sign));
+                vertexToEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "xy", sign));
+                vertexToEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "xz", sign));
+                vertexToEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "yz", sign));
                 sign = 1;
-                vertexToEdges[vertexIndex].push_back(getEdgeIndex(vertexIndex, "xyz", sign));
+                vertexToEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "xyz", sign));
             }
         }
     }
 }
 
-vvint Lattice::getVertexToEdges()
+const vvint& Lattice::getVertexToEdges() const
 {
     return vertexToEdges;
 }

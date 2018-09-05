@@ -163,7 +163,7 @@ TEST(neighbour, HandlesValidInput)
     EXPECT_EQ(latticeBCC.neighbour(vertexIndex, "xyz", -sign), 0);
 }
 
-TEST(getEdgeIndex, ExceptsInvalidDirections)
+TEST(edgeIndex, ExceptsInvalidDirections)
 {
     int l = 5;
     std::string type = "bcc";
@@ -171,64 +171,64 @@ TEST(getEdgeIndex, ExceptsInvalidDirections)
     int vertexIndex = 0;
     int sign = 1;
     std::string direction = "north";
-    EXPECT_THROW(latticeBCC.getEdgeIndex(vertexIndex, direction, sign), std::invalid_argument);
+    EXPECT_THROW(latticeBCC.edgeIndex(vertexIndex, direction, sign), std::invalid_argument);
 }
 
-TEST(getEdgeIndex, ExceptsInvalidLatticeDirectionCombinations)
+TEST(edgeIndex, ExceptsInvalidLatticeDirectionCombinations)
 {
     int l = 6;
     std::string type = "cubic";
     Lattice latticeCubic = Lattice(l, type);
     int vertexIndex = 5;
     int sign = 1;
-    EXPECT_THROW(latticeCubic.getEdgeIndex(vertexIndex, "xy", sign), std::invalid_argument);
-    EXPECT_THROW(latticeCubic.getEdgeIndex(vertexIndex, "xz", sign), std::invalid_argument);
-    EXPECT_THROW(latticeCubic.getEdgeIndex(vertexIndex, "yz", sign), std::invalid_argument);
-    EXPECT_THROW(latticeCubic.getEdgeIndex(vertexIndex, "xyz", sign), std::invalid_argument);
+    EXPECT_THROW(latticeCubic.edgeIndex(vertexIndex, "xy", sign), std::invalid_argument);
+    EXPECT_THROW(latticeCubic.edgeIndex(vertexIndex, "xz", sign), std::invalid_argument);
+    EXPECT_THROW(latticeCubic.edgeIndex(vertexIndex, "yz", sign), std::invalid_argument);
+    EXPECT_THROW(latticeCubic.edgeIndex(vertexIndex, "xyz", sign), std::invalid_argument);
 
     type = "rhombic";
     Lattice latticeRhombic = Lattice(l, type);
-    EXPECT_THROW(latticeRhombic.getEdgeIndex(vertexIndex, "x", sign), std::invalid_argument);
-    EXPECT_THROW(latticeRhombic.getEdgeIndex(vertexIndex, "y", sign), std::invalid_argument);
-    EXPECT_THROW(latticeRhombic.getEdgeIndex(vertexIndex, "z", sign), std::invalid_argument);
+    EXPECT_THROW(latticeRhombic.edgeIndex(vertexIndex, "x", sign), std::invalid_argument);
+    EXPECT_THROW(latticeRhombic.edgeIndex(vertexIndex, "y", sign), std::invalid_argument);
+    EXPECT_THROW(latticeRhombic.edgeIndex(vertexIndex, "z", sign), std::invalid_argument);
 }
 
-TEST(getEdgeIndex, ExceptsInvalidSigns)
+TEST(edgeIndex, ExceptsInvalidSigns)
 {
     int l = 4;
     std::string type = "rhombic";
     Lattice latticeCubic = Lattice(l, type);
     int vertexIndex = 56;
     std::string direction = "yz";
-    EXPECT_THROW(latticeCubic.getEdgeIndex(vertexIndex, direction, 0), std::invalid_argument);
-    EXPECT_THROW(latticeCubic.getEdgeIndex(vertexIndex, direction, -0), std::invalid_argument);
-    EXPECT_THROW(latticeCubic.getEdgeIndex(vertexIndex, direction, 7), std::invalid_argument);
-    EXPECT_THROW(latticeCubic.getEdgeIndex(vertexIndex, direction, -6), std::invalid_argument);
+    EXPECT_THROW(latticeCubic.edgeIndex(vertexIndex, direction, 0), std::invalid_argument);
+    EXPECT_THROW(latticeCubic.edgeIndex(vertexIndex, direction, -0), std::invalid_argument);
+    EXPECT_THROW(latticeCubic.edgeIndex(vertexIndex, direction, 7), std::invalid_argument);
+    EXPECT_THROW(latticeCubic.edgeIndex(vertexIndex, direction, -6), std::invalid_argument);
 }
 
-TEST(getEdgeIndex, HandlesValidInput)
+TEST(edgeIndex, HandlesValidInput)
 {
     int l = 6;
     std::string type = "bcc";
     Lattice latticeBCC = Lattice(l, type);
     int vertexIndex = 3;
     int sign = 1;
-    EXPECT_EQ(latticeBCC.getEdgeIndex(vertexIndex, "x", sign), 22);
-    EXPECT_EQ(latticeBCC.getEdgeIndex(vertexIndex, "y", sign), 24);
-    EXPECT_EQ(latticeBCC.getEdgeIndex(vertexIndex, "z", sign), 26);
-    EXPECT_EQ(latticeBCC.getEdgeIndex(vertexIndex, "xy", sign), 23);
-    EXPECT_EQ(latticeBCC.getEdgeIndex(vertexIndex, "xz", sign), 27);
-    EXPECT_EQ(latticeBCC.getEdgeIndex(vertexIndex, "yz", sign), 25);
-    EXPECT_EQ(latticeBCC.getEdgeIndex(vertexIndex, "xyz", sign), 21);
+    EXPECT_EQ(latticeBCC.edgeIndex(vertexIndex, "x", sign), 22);
+    EXPECT_EQ(latticeBCC.edgeIndex(vertexIndex, "y", sign), 24);
+    EXPECT_EQ(latticeBCC.edgeIndex(vertexIndex, "z", sign), 26);
+    EXPECT_EQ(latticeBCC.edgeIndex(vertexIndex, "xy", sign), 23);
+    EXPECT_EQ(latticeBCC.edgeIndex(vertexIndex, "xz", sign), 27);
+    EXPECT_EQ(latticeBCC.edgeIndex(vertexIndex, "yz", sign), 25);
+    EXPECT_EQ(latticeBCC.edgeIndex(vertexIndex, "xyz", sign), 21);
 
     vertexIndex = 7;
-    EXPECT_EQ(latticeBCC.getEdgeIndex(vertexIndex, "x", -sign), 43);
-    EXPECT_EQ(latticeBCC.getEdgeIndex(vertexIndex, "y", -sign), 10);
-    EXPECT_EQ(latticeBCC.getEdgeIndex(vertexIndex, "z", -sign), 1314);
-    EXPECT_EQ(latticeBCC.getEdgeIndex(vertexIndex, "xy", -sign), 1514);
-    EXPECT_EQ(latticeBCC.getEdgeIndex(vertexIndex, "xz", -sign), 2820);
-    EXPECT_EQ(latticeBCC.getEdgeIndex(vertexIndex, "yz", -sign), 2783);
-    EXPECT_EQ(latticeBCC.getEdgeIndex(vertexIndex, "xyz", -sign), 2772);
+    EXPECT_EQ(latticeBCC.edgeIndex(vertexIndex, "x", -sign), 43);
+    EXPECT_EQ(latticeBCC.edgeIndex(vertexIndex, "y", -sign), 10);
+    EXPECT_EQ(latticeBCC.edgeIndex(vertexIndex, "z", -sign), 1314);
+    EXPECT_EQ(latticeBCC.edgeIndex(vertexIndex, "xy", -sign), 1514);
+    EXPECT_EQ(latticeBCC.edgeIndex(vertexIndex, "xz", -sign), 2820);
+    EXPECT_EQ(latticeBCC.edgeIndex(vertexIndex, "yz", -sign), 2783);
+    EXPECT_EQ(latticeBCC.edgeIndex(vertexIndex, "xyz", -sign), 2772);
 }
 
 TEST(createFaces, HandlesValidInputBCC)

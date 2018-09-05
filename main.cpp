@@ -1,6 +1,7 @@
 #include <iostream>
 #include "lattice.h"
 #include "code.h"
+#include <chrono>
 
 int main()
 {
@@ -60,6 +61,12 @@ int main()
     //     std::cout << "Vertex: " << v << std::endl;
     //     code.checkExtremalVertex(v, "-yz");
     // }
+
+    auto start = std::chrono::high_resolution_clock::now();
+    Code code = Code(40, "rhombic", 0.1, 0.1);
+    auto finish = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> elapsed = finish - start;
+    std::cout << "Elapsed time: " << elapsed.count() << " s\n";
 
     return 0;
 }
