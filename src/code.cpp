@@ -35,7 +35,7 @@ Code::Code(const int ll, const std::string &lType, const double dataP, const dou
     if (lType == "rhombic")
     {
         syndrome.assign(2 * 7 * l * l * l, 0);
-        flipBit.assign(3 * l * l * l, 0);
+        flipBits.assign(3 * l * l * l, 0);
     }
     lattice.createFaces();
     lattice.createUpEdgesMap();
@@ -78,17 +78,22 @@ void Code::setError(const vint &err)
     }
 }
 
-const vint& Code::getSyndrome() const
+void Code::setSyndrome(vint synd)
+{
+    syndrome = synd;
+}
+
+const vint &Code::getSyndrome() const
 {
     return syndrome;
 }
 
-Lattice& Code::getLattice()
+Lattice &Code::getLattice()
 {
     return lattice;
 }
 
-const vint& Code::getError() const
+const vint &Code::getError() const
 {
     return error;
 }
@@ -133,50 +138,50 @@ void Code::sweep(const std::string &direction, bool greedy)
     if (direction == "xyz")
     {
         edgeDirections = {"xy", "yz", "xz"};
-        signsFullVertex = {{1, 1, 1}, {1, 1, 1}, {1, 1, 1}};
-        signsHalfVertex = {{1, 1, 1}, {1, 1, 1}, {1, 1, 1}};
+        // signsFullVertex = {{1, 1, 1}, {1, 1, 1}, {1, 1, 1}};
+        // signsHalfVertex = {{1, 1, 1}, {1, 1, 1}, {1, 1, 1}};
     }
     else if (direction == "xy")
     {
-        edgeDirections = {"xyz", "xz", "yz"};
-        signsFullVertex = {{1, 1, 1}, {1, -1, -1}, {1, -1, -1}};
-        signsHalfVertex = {{1, -1, 1}, {1, -1, 1}, {-1, -1, -1}};
+        edgeDirections = {"xyz", "-xz", "-yz"};
+        // signsFullVertex = {{1, 1, 1}, {1, -1, -1}, {1, -1, -1}};
+        // signsHalfVertex = {{1, -1, -1}, {1, -1, 1}, {-1, -1, -1}};
     }
     else if (direction == "xz")
     {
-        edgeDirections = {"xyz", "xy", "yz"};
-        signsFullVertex = {{1, 1, 1}, {1, -1, -1}, {1, -1, -1}};
-        signsHalfVertex = {{1, -1, -1}, {1, -1, -1}, {-1, -1, -1}};
+        edgeDirections = {"xyz", "-xy", "-yz"};
+        // signsFullVertex = {{1, 1, 1}, {1, -1, -1}, {1, -1, -1}};
+        // signsHalfVertex = {{1, -1, -1}, {1, -1, -1}, {-1, -1, -1}};
     }
     else if (direction == "yz")
     {
-        edgeDirections = {"xyz", "xy", "xz"};
-        signsFullVertex = {{1, 1, 1}, {1, -1, -1}, {1, -1, -1}};
-        signsHalfVertex = {{1, -1, -1}, {1, -1, -1}, {-1, -1, -1}};
+        edgeDirections = {"xyz", "-xy", "-xz"};
+        // signsFullVertex = {{1, 1, 1}, {1, -1, -1}, {1, -1, -1}};
+        // signsHalfVertex = {{1, -1, -1}, {1, -1, -1}, {-1, -1, -1}};
     }
     else if (direction == "-xyz")
     {
-        edgeDirections = {"xy", "yz", "xz"};
-        signsFullVertex = {{-1, -1, -1}, {-1, -1, -1}, {-1, -1, -1}};
-        signsHalfVertex = {{-1, -1, -1}, {-1, -1, -1}, {-1, -1, -1}};
+        edgeDirections = {"-xy", "-yz", "-xz"};
+        // signsFullVertex = {{-1, -1, -1}, {-1, -1, -1}, {-1, -1, -1}};
+        // signsHalfVertex = {{-1, -1, -1}, {-1, -1, -1}, {-1, -1, -1}};
     }
     else if (direction == "-xy")
     {
-        edgeDirections = {"xyz", "xz", "yz"};
-        signsFullVertex = {{-1, -1, -1}, {-1, 1, 1}, {-1, 1, 1}};
-        signsHalfVertex = {{-1, 1, 1}, {-1, 1, 1}, {1, 1, 1}};
+        edgeDirections = {"-xyz", "xz", "yz"};
+        // signsFullVertex = {{-1, -1, -1}, {-1, 1, 1}, {-1, 1, 1}};
+        // signsHalfVertex = {{-1, 1, 1}, {-1, 1, 1}, {1, 1, 1}};
     }
     else if (direction == "-xz")
     {
-        edgeDirections = {"xyz", "xy", "yz"};
-        signsFullVertex = {{-1, -1, -1}, {-1, 1, 1}, {-1, 1, 1}};
-        signsHalfVertex = {{-1, 1, 1}, {-1, 1, 1}, {1, 1, 1}};
+        edgeDirections = {"-xyz", "xy", "yz"};
+        // signsFullVertex = {{-1, -1, -1}, {-1, 1, 1}, {-1, 1, 1}};
+        // signsHalfVertex = {{-1, 1, 1}, {-1, 1, 1}, {1, 1, 1}};
     }
     else if (direction == "-yz")
     {
-        edgeDirections = {"xyz", "xy", "xz"};
-        signsFullVertex = {{-1, -1, -1}, {-1, 1, 1}, {-1, 1, 1}};
-        signsHalfVertex = {{-1, 1, 1}, {-1, 1, 1}, {1, 1, 1}};
+        edgeDirections = {"-xyz", "xy", "xz"};
+        // signsFullVertex = {{-1, -1, -1}, {-1, 1, 1}, {-1, 1, 1}};
+        // signsHalfVertex = {{-1, 1, 1}, {-1, 1, 1}, {1, 1, 1}};
     }
     else
     {
@@ -191,12 +196,12 @@ void Code::sweep(const std::string &direction, bool greedy)
                 continue;
             }
         }
-        vstr upEdgesInSyndrome = findUpEdgesInSynd(vertexIndex, direction);
-        if (upEdgesInSyndrome.size() > 4)
+        vstr sweepEdges = findSweepEdges(vertexIndex, direction);
+        if (sweepEdges.size() > 4)
         {
             throw std::length_error("More than four up-edges found for a vertex.");
         }
-        if (upEdgesInSyndrome.size() == 0 || upEdgesInSyndrome.size() == 1)
+        if (sweepEdges.size() == 0 || sweepEdges.size() == 1)
         {
             continue;
         }
@@ -205,30 +210,30 @@ void Code::sweep(const std::string &direction, bool greedy)
         {
             if ((coordinate.x + coordinate.y + coordinate.z) % 2 == 0)
             {
-                sweepFullVertex(vertexIndex, upEdgesInSyndrome, direction, edgeDirections, signsFullVertex);
+                sweepFullVertex(vertexIndex, sweepEdges, direction, edgeDirections);
             }
-            else 
+            else
             {
                 throw std::invalid_argument("Odd w=0 vertex (ie not present in rhombic lattice) has up-edges.");
             }
         }
         else
         {
-            sweepHalfVertex(vertexIndex, upEdgesInSyndrome, direction, edgeDirections, signsHalfVertex);
+            sweepHalfVertex(vertexIndex, sweepEdges, direction, edgeDirections);
         }
     }
-    // Update the error here using the flipBit
+    // Update the error here using the flipBits
 }
 
 void Code::localFlip(vint &vertices)
 {
     int faceIndex = lattice.findFace(vertices);
-    flipBit[faceIndex] = (flipBit[faceIndex] + 1) % 2;
+    flipBits[faceIndex] = (flipBits[faceIndex] + 1) % 2;
 }
 
-vstr Code::findUpEdgesInSynd(const int vertexIndex, const std::string &direction)
+vstr Code::findSweepEdges(const int vertexIndex, const std::string &direction)
 {
-    vstr upEdgesInSyndrome;
+    vstr sweepEdges;
     auto upEdgesMap = lattice.getUpEdgesMap();
     vint upEdges = upEdgesMap[direction][vertexIndex];
     for (const int edge : upEdges)
@@ -237,35 +242,35 @@ vstr Code::findUpEdgesInSynd(const int vertexIndex, const std::string &direction
         {
             if (lattice.edgeIndex(vertexIndex, "xyz", 1) == edge)
             {
-                upEdgesInSyndrome.push_back("xyz");
+                sweepEdges.push_back("xyz");
             }
             else if (lattice.edgeIndex(vertexIndex, "xyz", -1) == edge)
             {
-                upEdgesInSyndrome.push_back("-xyz");
+                sweepEdges.push_back("-xyz");
             }
             else if (lattice.edgeIndex(vertexIndex, "xy", 1) == edge)
             {
-                upEdgesInSyndrome.push_back("xy");
+                sweepEdges.push_back("xy");
             }
             else if (lattice.edgeIndex(vertexIndex, "xy", -1) == edge)
             {
-                upEdgesInSyndrome.push_back("-xy");
+                sweepEdges.push_back("-xy");
             }
             else if (lattice.edgeIndex(vertexIndex, "yz", 1) == edge)
             {
-                upEdgesInSyndrome.push_back("yz");
+                sweepEdges.push_back("yz");
             }
             else if (lattice.edgeIndex(vertexIndex, "yz", -1) == edge)
             {
-                upEdgesInSyndrome.push_back("-yz");
+                sweepEdges.push_back("-yz");
             }
             else if (lattice.edgeIndex(vertexIndex, "xz", 1) == edge)
             {
-                upEdgesInSyndrome.push_back("xz");
+                sweepEdges.push_back("xz");
             }
             else if (lattice.edgeIndex(vertexIndex, "xz", -1) == edge)
             {
-                upEdgesInSyndrome.push_back("-xz");
+                sweepEdges.push_back("-xz");
             }
             else
             {
@@ -273,11 +278,29 @@ vstr Code::findUpEdgesInSynd(const int vertexIndex, const std::string &direction
             }
         }
     }
-    return upEdgesInSyndrome;
+    return sweepEdges;
 }
 
-vint Code::faceVertices(const int vertexIndex, const vstr &directions, const vint &signs)
+vint Code::faceVertices(const int vertexIndex, vstr directions)
 {
+    if (directions.size() != 3)
+    {
+        throw std::invalid_argument("Number of directions not equal to three.");
+    }
+    vint signs;
+    signs.reserve(3);
+    for (int i = 0; i < 3; ++i)
+    {
+        if (directions[i].at(0) == '-')
+        {
+            signs.push_back(-1);
+            directions[i] = directions[i].substr(1, directions[i].size() - 1);
+        }
+        else
+        {
+            signs.push_back(1);
+        }
+    }
     if (signs[1] != signs[2] || directions[1] != directions[2])
     {
         throw std::invalid_argument("Second and third directions (& signs) must be the same otherwise the vertices do not form a face.");
@@ -290,57 +313,48 @@ vint Code::faceVertices(const int vertexIndex, const vstr &directions, const vin
     return vertices;
 }
 
-vint& Code::getFlipBit()
+vint &Code::getFlipBits()
 {
-    return flipBit;
+    return flipBits;
 }
 
-void Code::sweepFullVertex(const int vertexIndex, vstr &upEdgesInSyndrome, const std::string &sweepDirection, const vstr &edges, const vvint &signs)
+void Code::sweepFullVertex(const int vertexIndex, vstr &sweepEdges, const std::string &sweepDirection, const vstr &upEdgeDirections)
 {
-    std::string edge0 = edges[0];
-    std::string edge1 = edges[1];
-    std::string edge2 = edges[2];
-    vint signs0 = signs[0];
-    vint signs1 = signs[1];
-    vint signs2 = signs[2];
+    std::string edge0 = upEdgeDirections[0];
+    std::string edge1 = upEdgeDirections[1];
+    std::string edge2 = upEdgeDirections[2];
     cartesian4 coordinate = lattice.indexToCoordinate(vertexIndex);
-    auto sweepDirectionIndex = std::find(upEdgesInSyndrome.begin(), upEdgesInSyndrome.end(), sweepDirection);
-    if (upEdgesInSyndrome.size() == 4)
+    auto sweepDirectionIndex = std::distance(sweepEdges.begin(), std::find(sweepEdges.begin(), sweepEdges.end(), sweepDirection));
+    if (sweepEdges.size() == 4)
     {
-        vint vertices = faceVertices(vertexIndex,
-                                        {sweepDirection, edge0, edge0}, signs0);
+        vint vertices = faceVertices(vertexIndex, {sweepDirection, edge0, edge0});
         localFlip(vertices);
-        vertices = faceVertices(vertexIndex,
-                                    {sweepDirection, edge1, edge1}, signs1);
+        vertices = faceVertices(vertexIndex, {sweepDirection, edge1, edge1});
         localFlip(vertices);
-        vertices = faceVertices(vertexIndex,
-                                    {sweepDirection, edge2, edge2}, signs2);
+        vertices = faceVertices(vertexIndex, {sweepDirection, edge2, edge2});
         localFlip(vertices);
     }
-    else if (sweepDirectionIndex != upEdgesInSyndrome.end())
+    else if (sweepDirectionIndex < sweepEdges.size())
     {
-        upEdgesInSyndrome.erase(sweepDirectionIndex);
-        if (upEdgesInSyndrome.size() == 2)
+        sweepEdges.erase(sweepEdges.begin() + sweepDirectionIndex);
+        if (sweepEdges.size() == 2)
         {
             int delIndex = distInt0To1(pcg);
-            upEdgesInSyndrome.erase(upEdgesInSyndrome.begin() + delIndex);
+            sweepEdges.erase(sweepEdges.begin() + delIndex);
         }
-        if (upEdgesInSyndrome[0] == edge0)
+        if (sweepEdges[0] == edge0)
         {
-            vint vertices = faceVertices(vertexIndex,
-                                            {sweepDirection, edge0, edge0}, signs0);
+            vint vertices = faceVertices(vertexIndex, {sweepDirection, edge0, edge0});
             localFlip(vertices);
         }
-        else if (upEdgesInSyndrome[0] == edge2)
+        else if (sweepEdges[0] == edge2)
         {
-            vint vertices = faceVertices(vertexIndex,
-                                            {sweepDirection, edge2, edge2}, signs2);
+            vint vertices = faceVertices(vertexIndex, {sweepDirection, edge2, edge2});
             localFlip(vertices);
         }
-        else if (upEdgesInSyndrome[0] == edge1)
+        else if (sweepEdges[0] == edge1)
         {
-            vint vertices = faceVertices(vertexIndex,
-                                            {sweepDirection, edge1, edge1}, signs1);
+            vint vertices = faceVertices(vertexIndex, {sweepDirection, edge1, edge1});
             localFlip(vertices);
         }
         else
@@ -350,39 +364,33 @@ void Code::sweepFullVertex(const int vertexIndex, vstr &upEdgesInSyndrome, const
     }
     else
     {
-        if (upEdgesInSyndrome.size() == 3)
+        if (sweepEdges.size() == 3)
         {
             int delIndex = distInt0To2(pcg);
-            upEdgesInSyndrome.erase(upEdgesInSyndrome.begin() + delIndex);
+            sweepEdges.erase(sweepEdges.begin() + delIndex);
         }
-        if ((upEdgesInSyndrome[0] == edge0 && upEdgesInSyndrome[1] == edge2) ||
-            (upEdgesInSyndrome[0] == edge2 && upEdgesInSyndrome[1] == edge0))
+        if ((sweepEdges[0] == edge0 && sweepEdges[1] == edge2) ||
+            (sweepEdges[0] == edge2 && sweepEdges[1] == edge0))
         {
-            vint vertices = faceVertices(vertexIndex,
-                                            {sweepDirection, edge0, edge0}, signs0);
+            vint vertices = faceVertices(vertexIndex, {sweepDirection, edge0, edge0});
             localFlip(vertices);
-            vertices = faceVertices(vertexIndex,
-                                        {sweepDirection, edge2, edge2}, signs2);
+            vertices = faceVertices(vertexIndex, {sweepDirection, edge2, edge2});
             localFlip(vertices);
         }
-        else if ((upEdgesInSyndrome[0] == edge0 && upEdgesInSyndrome[1] == edge1) ||
-                    (upEdgesInSyndrome[0] == edge1 && upEdgesInSyndrome[1] == edge0))
+        else if ((sweepEdges[0] == edge0 && sweepEdges[1] == edge1) ||
+                 (sweepEdges[0] == edge1 && sweepEdges[1] == edge0))
         {
-            vint vertices = faceVertices(vertexIndex,
-                                            {sweepDirection, edge0, edge0}, signs0);
+            vint vertices = faceVertices(vertexIndex, {sweepDirection, edge0, edge0});
             localFlip(vertices);
-            vertices = faceVertices(vertexIndex,
-                                        {sweepDirection, edge1, edge1}, signs1);
+            vertices = faceVertices(vertexIndex, {sweepDirection, edge1, edge1});
             localFlip(vertices);
         }
-        else if ((upEdgesInSyndrome[0] == edge1 && upEdgesInSyndrome[1] == edge2) ||
-                    (upEdgesInSyndrome[0] == edge2 && upEdgesInSyndrome[1] == edge1))
+        else if ((sweepEdges[0] == edge1 && sweepEdges[1] == edge2) ||
+                 (sweepEdges[0] == edge2 && sweepEdges[1] == edge1))
         {
-            vint vertices = faceVertices(vertexIndex,
-                                            {sweepDirection, edge1, edge1}, signs1);
+            vint vertices = faceVertices(vertexIndex, {sweepDirection, edge1, edge1});
             localFlip(vertices);
-            vertices = faceVertices(vertexIndex,
-                                        {sweepDirection, edge2, edge2}, signs2);
+            vertices = faceVertices(vertexIndex, {sweepDirection, edge2, edge2});
             localFlip(vertices);
         }
         else
@@ -392,42 +400,46 @@ void Code::sweepFullVertex(const int vertexIndex, vstr &upEdgesInSyndrome, const
     }
 }
 
-void Code::sweepHalfVertex(const int vertexIndex, vstr &upEdgesInSyndrome, const std::string &sweepDirection, const vstr &edges, const vvint &signs)
+void Code::sweepHalfVertex(const int vertexIndex, vstr &sweepEdges, const std::string &sweepDirection, const vstr &upEdgeDirections)
 {
-    std::string edge0 = edges[0];
-    std::string edge1 = edges[1];
-    std::string edge2 = edges[2];
-    vint signs01 = signs[0];
-    vint signs02 = signs[1];
-    vint signs12 = signs[2];
-    if (upEdgesInSyndrome.size() == 3)
+    std::string edge0 = upEdgeDirections[0];
+    std::string edge1 = upEdgeDirections[1];
+    std::string edge2 = upEdgeDirections[2];
+    if (sweepEdges.size() == 3)
     {
         int delIndex = distInt0To2(pcg);
-        upEdgesInSyndrome.erase(upEdgesInSyndrome.begin() + delIndex);
+        sweepEdges.erase(sweepEdges.begin() + delIndex);
     }
-    if ((upEdgesInSyndrome[0] == edge0 && upEdgesInSyndrome[1] == edge2) ||
-        (upEdgesInSyndrome[0] == edge2 && upEdgesInSyndrome[1] == edge0))
+    if ((sweepEdges[0] == edge0 && sweepEdges[1] == edge2) ||
+        (sweepEdges[0] == edge2 && sweepEdges[1] == edge0))
     {
-        vint vertices = faceVertices(vertexIndex,
-                                        {edge0, edge2, edge2}, signs02);
+        vint vertices = faceVertices(vertexIndex, {edge0, edge2, edge2});
         localFlip(vertices);
     }
-    else if ((upEdgesInSyndrome[0] == edge0 && upEdgesInSyndrome[1] == edge1) ||
-                (upEdgesInSyndrome[0] == edge1 && upEdgesInSyndrome[1] == edge0))
+    else if ((sweepEdges[0] == edge0 && sweepEdges[1] == edge1) ||
+             (sweepEdges[0] == edge1 && sweepEdges[1] == edge0))
     {
-        vint vertices = faceVertices(vertexIndex,
-                                        {edge0, edge1, edge1}, signs01);
+        vint vertices = faceVertices(vertexIndex, {edge0, edge1, edge1});
         localFlip(vertices);
     }
-    else if ((upEdgesInSyndrome[0] == edge1 && upEdgesInSyndrome[1] == edge2) ||
-                (upEdgesInSyndrome[0] == edge2 && upEdgesInSyndrome[1] == edge1))
+    else if ((sweepEdges[0] == edge1 && sweepEdges[1] == edge2) ||
+             (sweepEdges[0] == edge2 && sweepEdges[1] == edge1))
     {
-        vint vertices = faceVertices(vertexIndex,
-                                        {edge2, edge1, edge1}, signs12);
+        vint vertices = faceVertices(vertexIndex, {edge2, edge1, edge1});
         localFlip(vertices);
     }
     else
     {
         throw std::invalid_argument("Invalid up-edges for even w=1 vertex.");
     }
+}
+
+void Code::clearSyndrome()
+{
+    syndrome.assign(2 * 7 * l * l * l, 0);
+}
+
+void Code::clearFlipBits()
+{
+    flipBits.assign(3 * l * l * l, 0);
 }
