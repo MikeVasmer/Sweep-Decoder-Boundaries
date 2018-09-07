@@ -469,20 +469,6 @@ TEST(sweepFullVertex, handlesQubitErrorsXY)
             EXPECT_EQ(flipBits[i], 0);    
         }
     }
-    sweepEdges = code.findSweepEdges(27, "-xz");
-    code.clearFlipBits();
-    code.sweepFullVertex(27, sweepEdges, "-xz", {"-xyz", "xy", "yz"});
-    for (int i = 0; i < flipBits.size(); ++i)
-    {
-        if (i == 81)
-        {
-            EXPECT_EQ(flipBits[i], 1);    
-        }
-        else
-        {
-            EXPECT_EQ(flipBits[i], 0);    
-        }
-    }
     // xy xyz face of vertex 27
     code.clearSyndrome();
     code.clearFlipBits();
@@ -501,20 +487,6 @@ TEST(sweepFullVertex, handlesQubitErrorsXY)
             EXPECT_EQ(flipBits[i], 0);    
         }
     }
-    sweepEdges = code.findSweepEdges(27, "xyz");
-    code.clearFlipBits();
-    code.sweepFullVertex(27, sweepEdges, "xyz", {"xy", "yz", "xz"});
-    for (int i = 0; i < flipBits.size(); ++i)
-    {
-        if (i == 80)
-        {
-            EXPECT_EQ(flipBits[i], 1);    
-        }
-        else
-        {
-            EXPECT_EQ(flipBits[i], 0);    
-        }
-    }
     // xy -yz face of vertex 27
     code.clearSyndrome();
     code.clearFlipBits();
@@ -522,20 +494,6 @@ TEST(sweepFullVertex, handlesQubitErrorsXY)
     code.calculateSyndrome();
     sweepEdges = code.findSweepEdges(27, "xy");
     code.sweepFullVertex(27, sweepEdges, "xy", {"xyz", "-xz", "-yz"});
-    for (int i = 0; i < flipBits.size(); ++i)
-    {
-        if (i == 82)
-        {
-            EXPECT_EQ(flipBits[i], 1);    
-        }
-        else
-        {
-            EXPECT_EQ(flipBits[i], 0);    
-        }
-    }
-    sweepEdges = code.findSweepEdges(27, "-yz");
-    code.clearFlipBits();
-    code.sweepFullVertex(27, sweepEdges, "-yz", {"-xyz", "xy", "xz"});
     for (int i = 0; i < flipBits.size(); ++i)
     {
         if (i == 82)
@@ -567,20 +525,6 @@ TEST(sweepFullVertex, handlesQubitErrorsXY)
             EXPECT_EQ(flipBits[i], 0);    
         }
     }
-    sweepEdges = code.findSweepEdges(27, "-xyz");
-    code.clearFlipBits();
-    code.sweepFullVertex(27, sweepEdges, "-xyz", {"-xy", "-yz", "-xz"});
-    for (int i = 0; i < flipBits.size(); ++i)
-    {
-        if (i == 18 || i == 31)
-        {
-            EXPECT_EQ(flipBits[i], 1);    
-        }
-        else
-        {
-            EXPECT_EQ(flipBits[i], 0);    
-        }
-    }
     // xy -yz and xy xyz faces of vertex 27
     code.clearSyndrome();
     code.clearFlipBits();
@@ -599,20 +543,6 @@ TEST(sweepFullVertex, handlesQubitErrorsXY)
             EXPECT_EQ(flipBits[i], 0);    
         }
     }
-    sweepEdges = code.findSweepEdges(27, "xz");
-    code.clearFlipBits();
-    code.sweepFullVertex(27, sweepEdges, "xz", {"xyz", "-xy", "-yz"});
-    for (int i = 0; i < flipBits.size(); ++i)
-    {
-        if (i == 79 || i == 83)
-        {
-            EXPECT_EQ(flipBits[i], 1);    
-        }
-        else
-        {
-            EXPECT_EQ(flipBits[i], 0);    
-        }
-    }
     // xy -xz and xy xyz faces of vertex 27
     code.clearSyndrome();
     code.clearFlipBits();
@@ -623,20 +553,6 @@ TEST(sweepFullVertex, handlesQubitErrorsXY)
     for (int i = 0; i < flipBits.size(); ++i)
     {
         if (i == 80 || i == 81)
-        {
-            EXPECT_EQ(flipBits[i], 1);    
-        }
-        else
-        {
-            EXPECT_EQ(flipBits[i], 0);    
-        }
-    }
-    sweepEdges = code.findSweepEdges(27, "yz");
-    code.clearFlipBits();
-    code.sweepFullVertex(27, sweepEdges, "yz", {"xyz", "-xy", "-xz"});
-    for (int i = 0; i < flipBits.size(); ++i)
-    {
-        if (i == 78 || i == 95)
         {
             EXPECT_EQ(flipBits[i], 1);    
         }
@@ -666,6 +582,8 @@ TEST(sweepFullVertex, handlesMeasurementErrorsXY)
     vint &flipBits = code.getFlipBits();
     code.sweepFullVertex(27, sweepEdges, "xy", {"xyz", "-xz", "-yz"});
     EXPECT_TRUE(flipBits[80] ^ flipBits[82]); 
+    // std::cout << "80 = " << flipBits[80] << ", 82 = " << flipBits[82] << std::endl;
+    // std::cout << "XOR = " << (flipBits[80] ^ flipBits[82]) << std::endl;
     for (int i = 0; i < flipBits.size(); ++i)
     {
         if (i == 80 || i == 82)
@@ -686,6 +604,8 @@ TEST(sweepFullVertex, handlesMeasurementErrorsXY)
     sweepEdges = code.findSweepEdges(27, "xy");
     code.sweepFullVertex(27, sweepEdges, "xy", {"xyz", "-xz", "-yz"});
     EXPECT_TRUE(flipBits[81] ^ flipBits[82]); 
+    // std::cout << "80 = " << flipBits[81] << ", 82 = " << flipBits[82] << std::endl;
+    // std::cout << "XOR = " << (flipBits[81] ^ flipBits[82]) << std::endl;
     for (int i = 0; i < flipBits.size(); ++i)
     {
         if (i == 81 || i == 82)
@@ -706,9 +626,34 @@ TEST(sweepFullVertex, handlesMeasurementErrorsXY)
     sweepEdges = code.findSweepEdges(27, "xy");
     code.sweepFullVertex(27, sweepEdges, "xy", {"xyz", "-xz", "-yz"});
     EXPECT_TRUE(flipBits[80] ^ flipBits[81]); 
+    // std::cout << "80 = " << flipBits[80] << ", 81 = " << flipBits[81] << std::endl;
+    // std::cout << "XOR = " << (flipBits[80] ^ flipBits[81]) << std::endl;
     for (int i = 0; i < flipBits.size(); ++i)
     {
         if (i == 80 || i == 81)
+        {   
+        }
+        else
+        {
+            EXPECT_EQ(flipBits[i], 0);    
+        }
+    }
+    // xyz, -xz, -yz edges of vertex 27
+    code.clearFlipBits();
+    syndrome.assign(14 * l * l * l, 0);
+    syndrome[501] = 1;
+    syndrome[189] = 1;
+    syndrome[524] = 1;
+    code.setSyndrome(syndrome);
+    sweepEdges = code.findSweepEdges(27, "xy");
+    code.sweepFullVertex(27, sweepEdges, "xy", {"xyz", "-xz", "-yz"});
+    EXPECT_TRUE((flipBits[80] && flipBits[81]) ^
+                (flipBits[80] && flipBits[82]) ^
+                (flipBits[81] && flipBits[82])); 
+    // std::cout << "80 = " << flipBits[80] << ", 81 = " << flipBits[81] << ", 82 = " << flipBits[82] << std::endl;
+    for (int i = 0; i < flipBits.size(); ++i)
+    {
+        if (i == 80 || i == 81 || i == 82)
         {   
         }
         else
@@ -729,6 +674,7 @@ TEST(sweepFullVertex, handlesMeasurementErrorsXY)
     sweepEdges = code.findSweepEdges(27, "xy");
     code.sweepFullVertex(27, sweepEdges, "xy", {"xyz", "-xz", "-yz"});
     EXPECT_TRUE(flipBits[80] && flipBits[81] && flipBits[82]); 
+    // std::cout << "80 = " << flipBits[80] << ", 81 = " << flipBits[81] << ", 82 = " << flipBits[82] << std::endl;
     for (int i = 0; i < flipBits.size(); ++i)
     {
         if (i == 80 || i == 81 || i == 82)
@@ -766,20 +712,6 @@ TEST(sweepHalfVertex, handlesQubitErrorsXY)
             EXPECT_EQ(flipBits[i], 0);    
         }
     }
-    sweepEdges = code.findSweepEdges(283, "yz");
-    code.clearFlipBits();
-    code.sweepHalfVertex(283, sweepEdges, "yz", {"xyz", "-xy", "-xz"});
-    for (int i = 0; i < flipBits.size(); ++i)
-    {
-        if (i == 109)
-        {
-            EXPECT_EQ(flipBits[i], 1);    
-        }
-        else
-        {
-            EXPECT_EQ(flipBits[i], 0);    
-        }
-    }
     // xyx -yz face of vertex 283
     code.clearSyndrome();
     code.clearFlipBits();
@@ -787,20 +719,6 @@ TEST(sweepHalfVertex, handlesQubitErrorsXY)
     code.calculateSyndrome();
     sweepEdges = code.findSweepEdges(283, "xy");
     code.sweepHalfVertex(283, sweepEdges, "xy", {"xyz", "-xz", "-yz"});
-    for (int i = 0; i < flipBits.size(); ++i)
-    {
-        if (i == 204)
-        {
-            EXPECT_EQ(flipBits[i], 1);    
-        }
-        else
-        {
-            EXPECT_EQ(flipBits[i], 0);    
-        }
-    }
-    sweepEdges = code.findSweepEdges(283, "xz");
-    code.clearFlipBits();
-    code.sweepHalfVertex(283, sweepEdges, "xz", {"xyz", "-xy", "-yz"});
     for (int i = 0; i < flipBits.size(); ++i)
     {
         if (i == 204)
@@ -830,21 +748,7 @@ TEST(sweepHalfVertex, handlesQubitErrorsXY)
             EXPECT_EQ(flipBits[i], 0);    
         }
     }
-    sweepEdges = code.findSweepEdges(283, "-xyz");
-    code.clearFlipBits();
-    code.sweepHalfVertex(283, sweepEdges, "-xyz", {"-xy", "-xz", "-yz"});
-    for (int i = 0; i < flipBits.size(); ++i)
-    {
-        if (i == 113)
-        {
-            EXPECT_EQ(flipBits[i], 1);    
-        }
-        else
-        {
-            EXPECT_EQ(flipBits[i], 0);    
-        }
-    }
-
+   
     // Two errors
     // xyz -xz, -xz -yz faces of vertex 283
     code.clearSyndrome();
@@ -853,20 +757,6 @@ TEST(sweepHalfVertex, handlesQubitErrorsXY)
     code.calculateSyndrome();
     sweepEdges = code.findSweepEdges(283, "xy");
     code.sweepHalfVertex(283, sweepEdges, "xy", {"xyz", "-xz", "-yz"});
-    for (int i = 0; i < flipBits.size(); ++i)
-    {
-        if (i == 204)
-        {
-            EXPECT_EQ(flipBits[i], 1);    
-        }
-        else
-        {
-            EXPECT_EQ(flipBits[i], 0);    
-        }
-    }
-    sweepEdges = code.findSweepEdges(283, "xz");
-    code.clearFlipBits();
-    code.sweepHalfVertex(283, sweepEdges, "xz", {"xyz", "-xy", "-yz"});
     for (int i = 0; i < flipBits.size(); ++i)
     {
         if (i == 204)
@@ -896,20 +786,6 @@ TEST(sweepHalfVertex, handlesQubitErrorsXY)
             EXPECT_EQ(flipBits[i], 0);    
         }
     }
-    sweepEdges = code.findSweepEdges(283, "-xyz");
-    code.clearFlipBits();
-    code.sweepHalfVertex(283, sweepEdges, "-xyz", {"-xy", "-xz", "-yz"});
-    for (int i = 0; i < flipBits.size(); ++i)
-    {
-        if (i == 113)
-        {
-            EXPECT_EQ(flipBits[i], 1);    
-        }
-        else
-        {
-            EXPECT_EQ(flipBits[i], 0);    
-        }
-    }
     // xyz -yz, -xz -yz faces of vertex 283
     code.clearSyndrome();
     code.clearFlipBits();
@@ -917,20 +793,6 @@ TEST(sweepHalfVertex, handlesQubitErrorsXY)
     code.calculateSyndrome();
     sweepEdges = code.findSweepEdges(283, "xy");
     code.sweepHalfVertex(283, sweepEdges, "xy", {"xyz", "-xz", "-yz"});
-    for (int i = 0; i < flipBits.size(); ++i)
-    {
-        if (i == 109)
-        {
-            EXPECT_EQ(flipBits[i], 1);    
-        }
-        else
-        {
-            EXPECT_EQ(flipBits[i], 0);    
-        }
-    }
-    sweepEdges = code.findSweepEdges(283, "yz");
-    code.clearFlipBits();
-    code.sweepHalfVertex(283, sweepEdges, "yz", {"xyz", "-xy", "-xz"});
     for (int i = 0; i < flipBits.size(); ++i)
     {
         if (i == 109)
@@ -963,6 +825,8 @@ TEST(sweepHalfVertex, handlesMeasurementErrorsXY)
     code.sweepHalfVertex(283, sweepEdges, "xy", {"xyz", "-xz", "-yz"});
     auto &flipBits = code.getFlipBits();
     EXPECT_TRUE(flipBits[109] ^ flipBits[113] ^ flipBits[204]);
+    // std::cout << "109 = " << flipBits[109] << ", 113 = " << flipBits[113] << ", 204 = " << flipBits[204] << std::endl;
+    // std::cout << "XOR = " << (flipBits[109] ^ flipBits[113] ^ flipBits[204]) << std::endl;
     for (int i = 0; i < flipBits.size(); ++i)
     {
         if (i == 109 || i == 113 || i == 204)
@@ -973,8 +837,471 @@ TEST(sweepHalfVertex, handlesMeasurementErrorsXY)
             EXPECT_EQ(flipBits[i], 0);    
         }
     }
-    sweepEdges = code.findSweepEdges(283, "yz");
+}
+
+TEST(sweepFullVertex, handlesQubitErrorsMinusXY)
+{
+    int l = 4;
+    std::string type = "rhombic";
+    double p = 0.1;
+    Code code = Code(l, type, p, p);
+    
+}
+
+TEST(sweepFullVertex, handlesQubitErrorsXZ)
+{
+    int l = 4;
+    std::string type = "rhombic";
+    double p = 0.1;
+    Code code = Code(l, type, p, p);
+
+    // Two errors
+    // xy -yz and xy xyz faces of vertex 27
+    code.setError({80, 82});
+    code.calculateSyndrome();
+    auto sweepEdges = code.findSweepEdges(27, "xz");
+    auto &flipBits = code.getFlipBits();
+    code.sweepFullVertex(27, sweepEdges, "xz", {"xyz", "-xy", "-yz"});
+    for (int i = 0; i < flipBits.size(); ++i)
+    {
+        if (i == 79 || i == 83)
+        {
+            EXPECT_EQ(flipBits[i], 1);    
+        }
+        else
+        {
+            EXPECT_EQ(flipBits[i], 0);    
+        }
+    }
+    // xz -yz and xz -xy faces of vertex 27
+    code.clearSyndrome();
     code.clearFlipBits();
+    code.setError({83, 117});
+    code.calculateSyndrome();
+    sweepEdges = code.findSweepEdges(27, "xz");
+    code.sweepFullVertex(27, sweepEdges, "xz", {"xyz", "-xy", "-yz"});
+    for (int i = 0; i < flipBits.size(); ++i)
+    {
+        if (i == 83 || i == 117)
+        {
+            EXPECT_EQ(flipBits[i], 1);    
+        }
+        else
+        {
+            EXPECT_EQ(flipBits[i], 0);    
+        }
+    }
+    // xz xyz and xz -xy faces of vertex 27
+    code.clearSyndrome();
+    code.clearFlipBits();
+    code.setError({79, 117});
+    code.calculateSyndrome();
+    sweepEdges = code.findSweepEdges(27, "xz");
+    code.sweepFullVertex(27, sweepEdges, "xz", {"xyz", "-xy", "-yz"});
+    for (int i = 0; i < flipBits.size(); ++i)
+    {
+        if (i == 79 || i == 117)
+        {
+            EXPECT_EQ(flipBits[i], 1);    
+        }
+        else
+        {
+            EXPECT_EQ(flipBits[i], 0);    
+        }
+    }
+
+    // One error
+    // xz -yz face of vertex 27
+    code.clearSyndrome();
+    code.clearFlipBits();
+    code.setError({83});
+    code.calculateSyndrome();
+    sweepEdges = code.findSweepEdges(27, "xz");
+    code.sweepFullVertex(27, sweepEdges, "xz", {"xyz", "-xy", "-yz"});
+    for (int i = 0; i < flipBits.size(); ++i)
+    {
+        if (i == 83)
+        {
+            EXPECT_EQ(flipBits[i], 1);    
+        }
+        else
+        {
+            EXPECT_EQ(flipBits[i], 0);    
+        }
+    }
+    // xz xyz face of vertex 27
+    code.clearSyndrome();
+    code.clearFlipBits();
+    code.setError({79});
+    code.calculateSyndrome();
+    sweepEdges = code.findSweepEdges(27, "xz");
+    code.sweepFullVertex(27, sweepEdges, "xz", {"xyz", "-xy", "-yz"});
+    for (int i = 0; i < flipBits.size(); ++i)
+    {
+        if (i == 79)
+        {
+            EXPECT_EQ(flipBits[i], 1);    
+        }
+        else
+        {
+            EXPECT_EQ(flipBits[i], 0);    
+        }
+    }
+    // xz -xy face of vertex 27
+    code.clearSyndrome();
+    code.clearFlipBits();
+    code.setError({117});
+    code.calculateSyndrome();
+    sweepEdges = code.findSweepEdges(27, "xz");
+    code.sweepFullVertex(27, sweepEdges, "xz", {"xyz", "-xy", "-yz"});
+    for (int i = 0; i < flipBits.size(); ++i)
+    {
+        if (i == 117)
+        {
+            EXPECT_EQ(flipBits[i], 1);    
+        }
+        else
+        {
+            EXPECT_EQ(flipBits[i], 0);    
+        }
+    }
+}
+
+TEST(sweepFullVertex, handlesMeasurementErrorsXZ)
+{
+    int l = 4;
+    std::string type = "rhombic";
+    double p = 0.1;
+    Code code = Code(l, type, p, p);
+
+    // 3 sweep edges around vertex
+    // xz, xyz, -yz edges of vertex 27
+    vint syndrome;
+    syndrome.assign(14 * l * l * l, 0);
+    syndrome[189] = 1;
+    syndrome[195] = 1;
+    syndrome[501] = 1;
+    code.setSyndrome(syndrome);
+    vstr sweepEdges = code.findSweepEdges(27, "xz");
+    vint &flipBits = code.getFlipBits();
+    code.sweepFullVertex(27, sweepEdges, "xz", {"xyz", "-xy", "-yz"});
+    EXPECT_TRUE(flipBits[79] ^ flipBits[83]); 
+    for (int i = 0; i < flipBits.size(); ++i)
+    {
+        if (i == 79 || i == 83)
+        {   
+        }
+        else
+        {
+            EXPECT_EQ(flipBits[i], 0);    
+        }
+    }
+    // // xz, -xy, -yz edges of vertex 27
+    code.clearFlipBits();
+    syndrome.assign(14 * l * l * l, 0);
+    syndrome[195] = 1;
+    syndrome[501] = 1;
+    syndrome[604] = 1;
+    code.setSyndrome(syndrome);
+    sweepEdges = code.findSweepEdges(27, "xz");
+    code.sweepFullVertex(27, sweepEdges, "xz", {"xyz", "-xy", "-yz"});
+    EXPECT_TRUE(flipBits[83] ^ flipBits[117]); 
+    for (int i = 0; i < flipBits.size(); ++i)
+    {
+        if (i == 83 || i == 117)
+        {   
+        }
+        else
+        {
+            EXPECT_EQ(flipBits[i], 0);    
+        }
+    }
+    // // xz, xyz, -xy edges of vertex 27
+    code.clearFlipBits();
+    syndrome.assign(14 * l * l * l, 0);
+    syndrome[195] = 1;
+    syndrome[189] = 1;
+    syndrome[604] = 1;
+    code.setSyndrome(syndrome);
+    sweepEdges = code.findSweepEdges(27, "xz");
+    code.sweepFullVertex(27, sweepEdges, "xz", {"xyz", "-xy", "-yz"});
+    EXPECT_TRUE(flipBits[79] ^ flipBits[117]); 
+    for (int i = 0; i < flipBits.size(); ++i)
+    {
+        if (i == 79 || i == 117)
+        {   
+        }
+        else
+        {
+            EXPECT_EQ(flipBits[i], 0);    
+        }
+    }
+    // xyz, -xy, -yz edges of vertex 27
+    code.clearFlipBits();
+    syndrome.assign(14 * l * l * l, 0);
+    syndrome[501] = 1;
+    syndrome[189] = 1;
+    syndrome[604] = 1;
+    code.setSyndrome(syndrome);
+    sweepEdges = code.findSweepEdges(27, "xz");
+    code.sweepFullVertex(27, sweepEdges, "xz", {"xyz", "-xy", "-yz"});
+    EXPECT_TRUE((flipBits[79] && flipBits[83]) ^
+                (flipBits[79] && flipBits[117]) ^
+                (flipBits[83] && flipBits[117])); 
+    for (int i = 0; i < flipBits.size(); ++i)
+    {
+        if (i == 79 || i == 83 || i == 117)
+        {   
+        }
+        else
+        {
+            EXPECT_EQ(flipBits[i], 0);    
+        }
+    }
+
+    // // 4 sweep edges around vertex
+    // // xz, xyz, -xy, -yz edges of vertex 27
+    code.clearFlipBits();
+    syndrome.assign(14 * l * l * l, 0);
+    syndrome[195] = 1;
+    syndrome[189] = 1;
+    syndrome[501] = 1;
+    syndrome[604] = 1;
+    code.setSyndrome(syndrome);
+    sweepEdges = code.findSweepEdges(27, "xz");
+    code.sweepFullVertex(27, sweepEdges, "xz", {"xyz", "-xy", "-yz"});
+    EXPECT_TRUE(flipBits[79] && flipBits[83] && flipBits[117]); 
+    for (int i = 0; i < flipBits.size(); ++i)
+    {
+        if (i == 79 || i == 83 || i == 117)
+        {   
+        }
+        else
+        {
+            EXPECT_EQ(flipBits[i], 0);    
+        }
+    }
+}
+
+TEST(sweepFullVertex, handlesQubitErrorsMinusXZ)
+{
+    int l = 4;
+    std::string type = "rhombic";
+    double p = 0.1;
+    Code code = Code(l, type, p, p);
+
+    // One error
+    // xy -xz face of vertex 27
+    code.setError({81});
+    code.calculateSyndrome();
+    auto sweepEdges = code.findSweepEdges(27, "-xz");
+    auto &flipBits = code.getFlipBits();
+    code.sweepFullVertex(27, sweepEdges, "-xz", {"-xyz", "xy", "yz"});
+    for (int i = 0; i < flipBits.size(); ++i)
+    {
+        if (i == 81)
+        {
+            EXPECT_EQ(flipBits[i], 1);    
+        }
+        else
+        {
+            EXPECT_EQ(flipBits[i], 0);    
+        }
+    }
+    
+}
+
+TEST(sweepFullVertex, handlesQubitErrorsYZ)
+{
+    int l = 4;
+    std::string type = "rhombic";
+    double p = 0.1;
+    Code code = Code(l, type, p, p);
+
+    // Two errors
+     // xy -xz and xy xyz faces of vertex 27
+    code.setError({80, 81});
+    code.calculateSyndrome();
+    auto sweepEdges = code.findSweepEdges(27, "yz");
+    auto &flipBits = code.getFlipBits();
+    code.sweepFullVertex(27, sweepEdges, "yz", {"xyz", "-xy", "-xz"});
+    for (int i = 0; i < flipBits.size(); ++i)
+    {
+        if (i == 78 || i == 95)
+        {
+            EXPECT_EQ(flipBits[i], 1);    
+        }
+        else
+        {
+            EXPECT_EQ(flipBits[i], 0);    
+        }
+    }
+    
+}
+
+TEST(sweepFullVertex, handlesQubitErrorsMinusYZ)
+{
+    int l = 4;
+    std::string type = "rhombic";
+    double p = 0.1;
+    Code code = Code(l, type, p, p);
+
+    // One error
+    // xy -yz face of vertex 27
+    code.setError({82});
+    code.calculateSyndrome();
+    auto sweepEdges = code.findSweepEdges(27, "-yz");
+    auto &flipBits = code.getFlipBits();
+    code.sweepFullVertex(27, sweepEdges, "-yz", {"-xyz", "xy", "xz"});
+    for (int i = 0; i < flipBits.size(); ++i)
+    {
+        if (i == 82)
+        {
+            EXPECT_EQ(flipBits[i], 1);    
+        }
+        else
+        {
+            EXPECT_EQ(flipBits[i], 0);    
+        }
+    }
+    
+}
+
+TEST(sweepFullVertex, handlesQubitErrorsXYZ)
+{
+    int l = 4;
+    std::string type = "rhombic";
+    double p = 0.1;
+    Code code = Code(l, type, p, p);
+
+    // One Error
+    // xy xyz face of vertex 27
+    code.setError({80});
+    code.calculateSyndrome();
+    auto sweepEdges = code.findSweepEdges(27, "xyz");
+    auto &flipBits = code.getFlipBits();
+    code.sweepFullVertex(27, sweepEdges, "xyz", {"xy", "yz", "xz"});
+    for (int i = 0; i < flipBits.size(); ++i)
+    {
+        if (i == 80)
+        {
+            EXPECT_EQ(flipBits[i], 1);    
+        }
+        else
+        {
+            EXPECT_EQ(flipBits[i], 0);    
+        }
+    }
+    
+}
+
+TEST(sweepFullVertex, handlesQubitErrorsMinusXYZ)
+{
+    int l = 4;
+    std::string type = "rhombic";
+    double p = 0.1;
+    Code code = Code(l, type, p, p);
+
+    // Two Errors
+    // xy -yz and xy -xz faces of vertex 27
+    code.setError({81, 82});
+    code.calculateSyndrome();
+    auto sweepEdges = code.findSweepEdges(27, "-xyz");
+    auto &flipBits = code.getFlipBits();
+    code.sweepFullVertex(27, sweepEdges, "-xyz", {"-xy", "-yz", "-xz"});
+    for (int i = 0; i < flipBits.size(); ++i)
+    {
+        if (i == 18 || i == 31)
+        {
+            EXPECT_EQ(flipBits[i], 1);    
+        }
+        else
+        {
+            EXPECT_EQ(flipBits[i], 0);    
+        }
+    }
+    
+}
+
+TEST(sweepHalfVertex, handlesQubitErrorsMinusXY)
+{
+    int l = 6;
+    std::string type = "rhombic";
+    double p = 0.1;
+    Code code = Code(l, type, p, p);
+
+}
+
+TEST(sweepHalfVertex, handlesQubitErrorsXZ)
+{
+    int l = 6;
+    std::string type = "rhombic";
+    double p = 0.1;
+    Code code = Code(l, type, p, p);
+
+    // One error
+    // xyx -yz face of vertex 283
+    code.setError({204});
+    code.calculateSyndrome();
+    auto sweepEdges = code.findSweepEdges(283, "xz");
+    auto &flipBits = code.getFlipBits();
+    code.sweepHalfVertex(283, sweepEdges, "xz", {"xyz", "-xy", "-yz"});
+    for (int i = 0; i < flipBits.size(); ++i)
+    {
+        if (i == 204)
+        {
+            EXPECT_EQ(flipBits[i], 1);    
+        }
+        else
+        {
+            EXPECT_EQ(flipBits[i], 0);    
+        }
+    }
+
+    // Two errors
+    // xyz -xz, -xz -yz faces of vertex 283
+    code.clearSyndrome();
+    code.clearFlipBits();
+    code.setError({109, 113});
+    code.calculateSyndrome();
+    sweepEdges = code.findSweepEdges(283, "xz");
+    code.sweepHalfVertex(283, sweepEdges, "xz", {"xyz", "-xy", "-yz"});
+    for (int i = 0; i < flipBits.size(); ++i)
+    {
+        if (i == 204)
+        {
+            EXPECT_EQ(flipBits[i], 1);    
+        }
+        else
+        {
+            EXPECT_EQ(flipBits[i], 0);    
+        }
+    }
+    
+}
+
+TEST(sweepHalfVertex, handlesQubitErrorsMinusXZ)
+{
+    int l = 6;
+    std::string type = "rhombic";
+    double p = 0.1;
+    Code code = Code(l, type, p, p);
+    
+}
+
+TEST(sweepHalfVertex, handlesQubitErrorsYZ)
+{
+    int l = 6;
+    std::string type = "rhombic";
+    double p = 0.1;
+    Code code = Code(l, type, p, p);
+
+    // One error
+    // xyx -xz face of vertex 283
+    code.setError({109});
+    code.calculateSyndrome();
+    auto sweepEdges = code.findSweepEdges(283, "yz");
+    auto &flipBits = code.getFlipBits();
     code.sweepHalfVertex(283, sweepEdges, "yz", {"xyz", "-xy", "-xz"});
     for (int i = 0; i < flipBits.size(); ++i)
     {
@@ -987,8 +1314,60 @@ TEST(sweepHalfVertex, handlesMeasurementErrorsXY)
             EXPECT_EQ(flipBits[i], 0);    
         }
     }
-    sweepEdges = code.findSweepEdges(283, "-xyz");
+
+    // Two errors
+    // xyz -yz, -xz -yz faces of vertex 283
+    code.clearSyndrome();
     code.clearFlipBits();
+    code.setError({113, 204});
+    code.calculateSyndrome();
+    sweepEdges = code.findSweepEdges(283, "yz");
+    code.sweepHalfVertex(283, sweepEdges, "yz", {"xyz", "-xy", "-xz"});
+    for (int i = 0; i < flipBits.size(); ++i)
+    {
+        if (i == 109)
+        {
+            EXPECT_EQ(flipBits[i], 1);    
+        }
+        else
+        {
+            EXPECT_EQ(flipBits[i], 0);    
+        }
+    }
+    
+}
+
+TEST(sweepHalfVertex, handlesQubitErrorsMinusYZ)
+{
+    int l = 6;
+    std::string type = "rhombic";
+    double p = 0.1;
+    Code code = Code(l, type, p, p);
+    
+}
+
+TEST(sweepHalfVertex, handlesQubitErrorsXYZ)
+{
+    int l = 6;
+    std::string type = "rhombic";
+    double p = 0.1;
+    Code code = Code(l, type, p, p);
+    
+}
+
+TEST(sweepHalfVertex, handlesQubitErrorsMinusXYZ)
+{
+    int l = 6;
+    std::string type = "rhombic";
+    double p = 0.1;
+    Code code = Code(l, type, p, p);
+
+    // One error
+    // -xz -yz face of vertex 283
+    code.setError({113});
+    code.calculateSyndrome();
+    auto sweepEdges = code.findSweepEdges(283, "-xyz");
+    auto &flipBits = code.getFlipBits();
     code.sweepHalfVertex(283, sweepEdges, "-xyz", {"-xy", "-xz", "-yz"});
     for (int i = 0; i < flipBits.size(); ++i)
     {
@@ -1001,12 +1380,113 @@ TEST(sweepHalfVertex, handlesMeasurementErrorsXY)
             EXPECT_EQ(flipBits[i], 0);    
         }
     }
-    sweepEdges = code.findSweepEdges(283, "xz");   
+
+    // Two errors
+    // xyz -xz, xyz -yz faces of vertex 283
+    code.clearSyndrome();
     code.clearFlipBits();
+    code.setError({109, 204});
+    code.calculateSyndrome();
+    sweepEdges = code.findSweepEdges(283, "-xyz");
+    code.sweepHalfVertex(283, sweepEdges, "-xyz", {"-xy", "-xz", "-yz"});
+    for (int i = 0; i < flipBits.size(); ++i)
+    {
+        if (i == 113)
+        {
+            EXPECT_EQ(flipBits[i], 1);    
+        }
+        else
+        {
+            EXPECT_EQ(flipBits[i], 0);    
+        }
+    }
+    
+}
+
+TEST(sweepHalfVertex, handlesMeasurementErrorsXZ)
+{
+    int l = 6;
+    std::string type = "rhombic";
+    double p = 0.1;
+    Code code = Code(l, type, p, p);
+
+    // Three sweep edges at vertex 283
+    // xyz, -yz and -xz edges
+    vint syndrome;
+    syndrome.assign(14 * l * l * l, 0);
+    syndrome[1981] = 1;
+    syndrome[480] = 1;
+    syndrome[265] = 1;
+    code.setSyndrome(syndrome);
+    auto &flipBits = code.getFlipBits();
+    auto sweepEdges = code.findSweepEdges(283, "xz");   
     code.sweepHalfVertex(283, sweepEdges, "xz", {"xyz", "-xy", "-yz"});
     for (int i = 0; i < flipBits.size(); ++i)
     {
         if (i == 204)
+        {
+            EXPECT_EQ(flipBits[i], 1);    
+        }
+        else
+        {
+            EXPECT_EQ(flipBits[i], 0);    
+        }
+    }
+    
+}
+
+TEST(sweepHalfVertex, handlesMeasurementErrorsYZ)
+{
+    int l = 6;
+    std::string type = "rhombic";
+    double p = 0.1;
+    Code code = Code(l, type, p, p);
+
+    // Three sweep edges at vertex 283
+    // xyz, -yz and -xz edges
+        vint syndrome;
+    syndrome.assign(14 * l * l * l, 0);
+    syndrome[1981] = 1;
+    syndrome[480] = 1;
+    syndrome[265] = 1;
+    code.setSyndrome(syndrome);
+    auto &flipBits = code.getFlipBits();
+    auto sweepEdges = code.findSweepEdges(283, "yz");
+    code.sweepHalfVertex(283, sweepEdges, "yz", {"xyz", "-xy", "-xz"});
+    for (int i = 0; i < flipBits.size(); ++i)
+    {
+        if (i == 109)
+        {
+            EXPECT_EQ(flipBits[i], 1);    
+        }
+        else
+        {
+            EXPECT_EQ(flipBits[i], 0);    
+        }
+    }
+}
+
+TEST(sweepHalfVertex, handlesMeasurementErrorsMinusXYZ)
+{
+    int l = 6;
+    std::string type = "rhombic";
+    double p = 0.1;
+    Code code = Code(l, type, p, p);
+
+    // Three sweep edges at vertex 283
+    // xyz, -yz and -xz edges
+        vint syndrome;
+    syndrome.assign(14 * l * l * l, 0);
+    syndrome[1981] = 1;
+    syndrome[480] = 1;
+    syndrome[265] = 1;
+    code.setSyndrome(syndrome);
+    auto &flipBits = code.getFlipBits();
+    auto sweepEdges = code.findSweepEdges(283, "-xyz");  
+    code.sweepHalfVertex(283, sweepEdges, "-xyz", {"-xy", "-xz", "-yz"});
+    for (int i = 0; i < flipBits.size(); ++i)
+    {
+        if (i == 113)
         {
             EXPECT_EQ(flipBits[i], 1);    
         }

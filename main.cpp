@@ -62,11 +62,16 @@ int main()
     //     code.checkExtremalVertex(v, "-yz");
     // }
 
-    auto start = std::chrono::high_resolution_clock::now();
-    Code code = Code(40, "rhombic", 0.1, 0.1);
-    auto finish = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<double> elapsed = finish - start;
-    std::cout << "Elapsed time: " << elapsed.count() << " s\n";
+    // auto start = std::chrono::high_resolution_clock::now();
+    // Code code = Code(40, "rhombic", 0.1, 0.1);
+    // auto finish = std::chrono::high_resolution_clock::now();
+    // std::chrono::duration<double> elapsed = finish - start;
+    // std::cout << "Elapsed time: " << elapsed.count() << " s\n";
+
+    // std::cout << (1 ^ 1) << std::endl;
+    // std::cout << (1 ^ 0) << std::endl;
+    // std::cout << (1 ^ 0 ^ 1) << std::endl;
+    // std::cout << (1 ^ 0 ^ 0) << std::endl;
 
     return 0;
 }
