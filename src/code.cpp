@@ -4,6 +4,7 @@
 #include "pcg_random.hpp"
 #include <random>
 #include <algorithm>
+#include <set>
 
 // pcg-random
 // Seed with random val, if available
@@ -16,8 +17,8 @@ std::uniform_int_distribution<int> distInt0To2(0, 2);
 std::uniform_int_distribution<int> distInt0To1(0, 1);
 
 // STL random mersenne twister
-std::random_device rd;
-std::mt19937 mt(rd());
+// std::random_device rd;
+// std::mt19937 mt(rd());
 
 Code::Code(const int ll, const std::string &lType, const double dataP, const double measP) : l(ll),
                                                                                              p(dataP),
@@ -40,23 +41,33 @@ Code::Code(const int ll, const std::string &lType, const double dataP, const dou
     lattice.createFaces();
     lattice.createUpEdgesMap();
     lattice.createVertexToEdges();
+    buildLogicals();
 }
 
 void Code::generateDataError()
 {
-    error.clear();
+    // error.clear();
     for (int i = 0; i < 3 * l * l * l; ++i)
     {
-        // if (dist(mt) <= p)
+        // if (distDouble0To1(mt) <= p)
         if (distDouble0To1(pcg) <= p)
         {
-            error.push_back(i);
+            auto it = error.find(i);
+            if (it == error.end())
+            {
+                error.insert(i);
+            }
+            else
+            {
+                error.erase(it);
+            }
         }
     }
 }
 
 void Code::calculateSyndrome()
 {
+    clearSyndrome();
     vvint faceToEdges = lattice.getFaceToEdges();
     for (const int errorIndex : error)
     {
@@ -68,13 +79,12 @@ void Code::calculateSyndrome()
     }
 }
 
-void Code::setError(const vint &err)
+void Code::setError(const std::set<int> &err)
 {
     error.clear();
-    error.reserve(err.size());
     for (const int i : err)
     {
-        error.push_back(i);
+        error.insert(i);
     }
 }
 
@@ -83,7 +93,7 @@ void Code::setSyndrome(vint synd)
     syndrome = synd;
 }
 
-const vint &Code::getSyndrome() const
+vint &Code::getSyndrome()
 {
     return syndrome;
 }
@@ -93,7 +103,7 @@ Lattice &Code::getLattice()
     return lattice;
 }
 
-const vint &Code::getError() const
+std::set<int> &Code::getError()
 {
     return error;
 }
@@ -102,6 +112,7 @@ void Code::generateMeasError()
 {
     for (int i = 0; i < syndrome.size(); ++i)
     {
+        // if (distDouble0To1(mt) <= q)
         if (distDouble0To1(pcg) <= q)
         {
             syndrome[i] = (syndrome[i] + 1) % 2;
@@ -133,55 +144,40 @@ bool Code::checkExtremalVertex(const int vertexIndex, const std::string &directi
 
 void Code::sweep(const std::string &direction, bool greedy)
 {
+    clearFlipBits();
     vstr edgeDirections;
     vvint signsFullVertex, signsHalfVertex;
     if (direction == "xyz")
     {
         edgeDirections = {"xy", "yz", "xz"};
-        // signsFullVertex = {{1, 1, 1}, {1, 1, 1}, {1, 1, 1}};
-        // signsHalfVertex = {{1, 1, 1}, {1, 1, 1}, {1, 1, 1}};
     }
     else if (direction == "xy")
     {
         edgeDirections = {"xyz", "-xz", "-yz"};
-        // signsFullVertex = {{1, 1, 1}, {1, -1, -1}, {1, -1, -1}};
-        // signsHalfVertex = {{1, -1, -1}, {1, -1, 1}, {-1, -1, -1}};
     }
     else if (direction == "xz")
     {
         edgeDirections = {"xyz", "-xy", "-yz"};
-        // signsFullVertex = {{1, 1, 1}, {1, -1, -1}, {1, -1, -1}};
-        // signsHalfVertex = {{1, -1, -1}, {1, -1, -1}, {-1, -1, -1}};
     }
     else if (direction == "yz")
     {
         edgeDirections = {"xyz", "-xy", "-xz"};
-        // signsFullVertex = {{1, 1, 1}, {1, -1, -1}, {1, -1, -1}};
-        // signsHalfVertex = {{1, -1, -1}, {1, -1, -1}, {-1, -1, -1}};
     }
     else if (direction == "-xyz")
     {
         edgeDirections = {"-xy", "-yz", "-xz"};
-        // signsFullVertex = {{-1, -1, -1}, {-1, -1, -1}, {-1, -1, -1}};
-        // signsHalfVertex = {{-1, -1, -1}, {-1, -1, -1}, {-1, -1, -1}};
     }
     else if (direction == "-xy")
     {
         edgeDirections = {"-xyz", "xz", "yz"};
-        // signsFullVertex = {{-1, -1, -1}, {-1, 1, 1}, {-1, 1, 1}};
-        // signsHalfVertex = {{-1, 1, 1}, {-1, 1, 1}, {1, 1, 1}};
     }
     else if (direction == "-xz")
     {
         edgeDirections = {"-xyz", "xy", "yz"};
-        // signsFullVertex = {{-1, -1, -1}, {-1, 1, 1}, {-1, 1, 1}};
-        // signsHalfVertex = {{-1, 1, 1}, {-1, 1, 1}, {1, 1, 1}};
     }
     else if (direction == "-yz")
     {
         edgeDirections = {"-xyz", "xy", "xz"};
-        // signsFullVertex = {{-1, -1, -1}, {-1, 1, 1}, {-1, 1, 1}};
-        // signsHalfVertex = {{-1, 1, 1}, {-1, 1, 1}, {1, 1, 1}};
     }
     else
     {
@@ -222,7 +218,21 @@ void Code::sweep(const std::string &direction, bool greedy)
             sweepHalfVertex(vertexIndex, sweepEdges, direction, edgeDirections);
         }
     }
-    // Update the error here using the flipBits
+    for (int i = 0; i < flipBits.size(); ++i)
+    {
+        if (flipBits[i])
+        {
+            auto it = error.find(i);
+            if (it != error.end())
+            {
+                error.erase(it);
+            }
+            else
+            {
+                error.insert(i);
+            }
+        }
+    }
 }
 
 void Code::localFlip(vint &vertices)
@@ -339,6 +349,7 @@ void Code::sweepFullVertex(const int vertexIndex, vstr &sweepEdges, const std::s
         sweepEdges.erase(sweepEdges.begin() + sweepDirectionIndex);
         if (sweepEdges.size() == 2)
         {
+            // int delIndex = distInt0To1(mt);
             int delIndex = distInt0To1(pcg);
             sweepEdges.erase(sweepEdges.begin() + delIndex);
         }
@@ -366,6 +377,7 @@ void Code::sweepFullVertex(const int vertexIndex, vstr &sweepEdges, const std::s
     {
         if (sweepEdges.size() == 3)
         {
+            // int delIndex = distInt0To2(mt);
             int delIndex = distInt0To2(pcg);
             sweepEdges.erase(sweepEdges.begin() + delIndex);
         }
@@ -407,6 +419,7 @@ void Code::sweepHalfVertex(const int vertexIndex, vstr &sweepEdges, const std::s
     std::string edge2 = upEdgeDirections[2];
     if (sweepEdges.size() == 3)
     {
+        // int delIndex = distInt0To2(mt);
         int delIndex = distInt0To2(pcg);
         sweepEdges.erase(sweepEdges.begin() + delIndex);
     }
@@ -442,4 +455,124 @@ void Code::clearSyndrome()
 void Code::clearFlipBits()
 {
     flipBits.assign(3 * l * l * l, 0);
+}
+
+void Code::buildLogicals()
+{
+    for (int i = 0; i < l; i += 2)
+    {
+        int vertexIndex = lattice.coordinateToIndex({i, 0, 0, 0});
+        int neighbourVertex = lattice.neighbour(vertexIndex, "xz", -1);
+        vint faceVertices = {vertexIndex,
+                             neighbourVertex,
+                             lattice.neighbour(vertexIndex, "xyz", -1),
+                             lattice.neighbour(neighbourVertex, "xyz", -1)};
+        std::sort(faceVertices.begin(), faceVertices.end());
+        logicalZ1.push_back(lattice.findFace(faceVertices));
+        neighbourVertex = lattice.neighbour(vertexIndex, "xy", 1);
+        faceVertices = {vertexIndex,
+                        neighbourVertex,
+                        lattice.neighbour(vertexIndex, "yz", -1),
+                        lattice.neighbour(neighbourVertex, "yz", -1)};
+        std::sort(faceVertices.begin(), faceVertices.end());
+        logicalZ1.push_back(lattice.findFace(faceVertices));
+    }
+    for (int i = 0; i < l; i += 2)
+    {
+        int vertexIndex = lattice.coordinateToIndex({0, i, 0, 0});
+        int neighbourVertex = lattice.neighbour(vertexIndex, "yz", -1);
+        vint faceVertices = {vertexIndex,
+                             neighbourVertex,
+                             lattice.neighbour(vertexIndex, "xyz", -1),
+                             lattice.neighbour(neighbourVertex, "xyz", -1)};
+        std::sort(faceVertices.begin(), faceVertices.end());
+        logicalZ2.push_back(lattice.findFace(faceVertices));
+        neighbourVertex = lattice.neighbour(vertexIndex, "xy", 1);
+        faceVertices = {vertexIndex,
+                        neighbourVertex,
+                        lattice.neighbour(vertexIndex, "xz", -1),
+                        lattice.neighbour(neighbourVertex, "xz", -1)};
+        std::sort(faceVertices.begin(), faceVertices.end());
+        logicalZ2.push_back(lattice.findFace(faceVertices));
+    }
+    for (int i = 0; i < l; i += 2)
+    {
+        int vertexIndex = lattice.coordinateToIndex({0, 0, i, 0});
+        int neighbourVertex = lattice.neighbour(vertexIndex, "xz", -1);
+        vint faceVertices = {vertexIndex,
+                             neighbourVertex,
+                             lattice.neighbour(vertexIndex, "xyz", -1),
+                             lattice.neighbour(neighbourVertex, "xyz", -1)};
+        std::sort(faceVertices.begin(), faceVertices.end());
+        logicalZ3.push_back(lattice.findFace(faceVertices));
+        neighbourVertex = lattice.neighbour(vertexIndex, "yz", 1);
+        faceVertices = {vertexIndex,
+                        neighbourVertex,
+                        lattice.neighbour(vertexIndex, "xy", -1),
+                        lattice.neighbour(neighbourVertex, "xy", -1)};
+        std::sort(faceVertices.begin(), faceVertices.end());
+        logicalZ3.push_back(lattice.findFace(faceVertices));
+    }
+}
+
+vvint Code::getLogicals()
+{
+    vvint logicals;
+    logicals.push_back(logicalZ1);
+    logicals.push_back(logicalZ2);
+    logicals.push_back(logicalZ3);
+    return logicals;
+}
+
+bool Code::checkCorrection()
+{
+    int parityZ1 = 0, parityZ2 = 0, parityZ3 = 0;
+    for (int faceIndex : logicalZ1)
+    {
+        if (error.find(faceIndex) != error.end())
+        {
+            parityZ1 = (parityZ1 + 1) % 2;
+            // std::cout << faceIndex << std::endl;
+        }
+    }
+    if (parityZ1 % 2 == 1)
+    {
+        return false;
+    }
+    for (int faceIndex : logicalZ2)
+    {
+        if (error.find(faceIndex) != error.end())
+        {
+            parityZ2 = (parityZ2 + 1) % 2;
+            // std::cout << faceIndex << std::endl;
+        }
+    }
+    if (parityZ2 % 2 == 1)
+    {
+        return false;
+    }
+    for (int faceIndex : logicalZ3)
+    {
+        if (error.find(faceIndex) != error.end())
+        {
+            parityZ3 = (parityZ3 + 1) % 2;
+            // std::cout << faceIndex << std::endl;
+        }
+    }
+    if (parityZ3 % 2 == 1)
+    {
+        return false;
+    }
+    return true;
+}
+
+void Code::printUnsatisfiedStabilisers()
+{
+    for (int i = 0; i < syndrome.size(); ++i)
+    {
+        if (syndrome[i] == 1)
+        {
+            std::cout << i << std::endl;
+        }
+    }
 }

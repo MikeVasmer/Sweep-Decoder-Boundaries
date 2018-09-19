@@ -1,12 +1,11 @@
 #include <iostream>
 #include "lattice.h"
 #include "code.h"
+#include "decoder.h"
 #include <chrono>
 
 int main()
 {
-    std::cout << "Hello, World!" << std::endl;
-
     // int l = 6;
     // std::string type = "rhombic";
     // Lattice latticeRhombic = Lattice(l, type);
@@ -72,6 +71,73 @@ int main()
     // std::cout << (1 ^ 0) << std::endl;
     // std::cout << (1 ^ 0 ^ 1) << std::endl;
     // std::cout << (1 ^ 0 ^ 0) << std::endl;
+
+    // int l = 6;
+    // std::string type = "rhombic";
+    // double p = 0.1;
+    // Code code = Code(l, type, p, p);
+
+    // code.setError({259, 350, 478});
+    // code.calculateSyndrome();
+    // auto &syndrome = code.getSyndrome();
+    // std::cout << "Syndrome = 1" << std::endl;
+    // for (int i = 0; i < syndrome.size(); ++i)
+    // {
+    //     if (syndrome[i])
+    //     {
+    //         std::cout << i << std::endl;
+    //     }
+    // }
+    // auto &flipBits = code.getFlipBits();
+    // auto &error = code.getError();
+    // for (int i = 0; i < 1; ++i)
+    // {
+    //     code.sweep("yz", true);
+    //     code.calculateSyndrome();
+    // }
+    // std::cout << "Error" << std::endl;
+    // for (auto e : error)
+    // {
+    //     std::cout << e << std::endl;
+    // }
+    // std::cout << "FlipBits = 1" << std::endl;
+    // for (int i = 0; i < flipBits.size(); ++i)
+    // {
+    //     if (flipBits[i])
+    //     {
+    //         std::cout << i << std::endl;
+    //     }
+    // }
+    // std::cout << "Syndrome = 1" << std::endl;
+    // for (int i = 0; i < syndrome.size(); ++i)
+    // {
+    //     if (syndrome[i])
+    //     {
+    //         std::cout << i << std::endl;
+    //     }
+    // }
+    
+    int l = 8;
+    int rounds = 10;
+    double p = 0.05;
+    double q = 0;
+    std::string dir = "xyz";
+    auto start = std::chrono::high_resolution_clock::now();
+    auto succ = runToric(l, rounds, p, q, dir);
+    auto finish = std::chrono::high_resolution_clock::now();
+    std::cout << "Success: " << succ.at(0) << std::endl;
+    std::cout << "Clean syndrome: " << succ.at(1) << std::endl;
+    std::chrono::duration<double> elapsed = finish - start;
+    std::cout << "Elapsed time: " << elapsed.count() << " s\n";
+
+    // double p = 0;
+    // Code code = Code(4, "rhombic", p, p);
+    // code.generateDataError();
+    // code.calculateSyndrome();
+    // auto &syndrome = code.getSyndrome();
+    // code.printUnsatisfiedStabilisers();
+    // auto success = std::all_of(syndrome.begin(), syndrome.end(), [](int i) { return i == 0; });
+    // std::cout << success << std::endl;
 
     return 0;
 }

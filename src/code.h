@@ -3,18 +3,22 @@
 
 #include "lattice.h"
 #include <string>
+#include <set>
 // #include "gtest/gtest_prod.h"
 
 class Code
 {
   private:
     const int l;
-    vint error;
+    std::set<int> error;
     vint syndrome;
     vint flipBits;
     Lattice lattice;
     const double p; // data error probability
     const double q; // measurement error probability
+    vint logicalZ1;
+    vint logicalZ2;
+    vint logicalZ3;
 
   public:
     Code(const int latticeLength, const std::string &latticeType, const double dataErrorProbability, const double measErrorProbability);
@@ -28,15 +32,19 @@ class Code
     void sweep(const std::string &direction, bool greedy);
     vstr findSweepEdges(const int vertexIndex, const std::string &direction);
     vint faceVertices(const int vertexIndex, vstr directions);
-    void setError(const vint &error); // for testing
+    void buildLogicals();
+    bool checkCorrection();
+    void setError(const std::set<int> &error); // for testing
     void clearSyndrome();
     void clearFlipBits();
     void setSyndrome(vint syndrome);
+    void printUnsatisfiedStabilisers();
     // Getter methods
     vint& getFlipBits();
-    const vint& getSyndrome() const;
+    vint& getSyndrome();
     Lattice& getLattice();
-    const vint& getError() const;
+    std::set<int>& getError();
+    vvint getLogicals();
 };
 
 #endif

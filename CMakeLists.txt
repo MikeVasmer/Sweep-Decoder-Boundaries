@@ -14,6 +14,9 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(test ON)
 endif()
 
+# Turn on with 'cmake -Dprofile=ON'
+option(profile "Profile using grpof")
+
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 set(SOURCE_FILES main.cpp)
@@ -26,7 +29,7 @@ include_directories(src)
 include_directories(include/pcg-cpp-0.98/include)
 
 # Link to my library
-set(LIB_FILES src/lattice.h src/lattice.cpp src/code.h src/code.cpp)
+set(LIB_FILES src/lattice.h src/lattice.cpp src/code.h src/code.cpp src/decoder.h)
 add_library(SweepLib ${LIB_FILES})
 target_link_libraries(RhombicSweep SweepLib)
 
@@ -51,6 +54,11 @@ if (test)
     # Enable running tests with 'make test'
     add_test(NAME testLattice COMMAND testLattice)
     add_test(NAME testCode COMMAND testCode)
+endif()
+
+if (profile)
+    SET(GCC_PROFILE_COMPILE_FLAGS "-pg")
+    SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${GCC_PROFILE_COMPILE_FLAGS}")
 endif()
 
 # Check compiler flags
