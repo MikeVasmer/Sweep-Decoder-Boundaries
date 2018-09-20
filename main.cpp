@@ -116,9 +116,18 @@ int main()
     //         std::cout << i << std::endl;
     //     }
     // }
+
+    // double p = 0;
+    // Code code = Code(4, "rhombic", p, p);
+    // code.generateDataError();
+    // code.calculateSyndrome();
+    // auto &syndrome = code.getSyndrome();
+    // code.printUnsatisfiedStabilisers();
+    // auto success = std::all_of(syndrome.begin(), syndrome.end(), [](int i) { return i == 0; });
+    // std::cout << success << std::endl;
     
     int l = 8;
-    int rounds = 10;
+    int rounds = 16;
     double p = 0.05;
     double q = 0;
     std::string dir = "xyz";
@@ -130,14 +139,60 @@ int main()
     std::chrono::duration<double> elapsed = finish - start;
     std::cout << "Elapsed time: " << elapsed.count() << " s\n";
 
-    // double p = 0;
-    // Code code = Code(4, "rhombic", p, p);
+    // // Profiling
+    // double p = 0.05;
+    // double q = 0.05;
+    // int l = 8;
+
+    // // Build Code
+    // auto start = std::chrono::high_resolution_clock::now();
+    // Code code = Code(l, "rhombic", p, p);
+    // auto finish = std::chrono::high_resolution_clock::now();
+    // std::chrono::duration<double> elapsed = finish - start;
+    // std::cout << "Code constructor elapsed time: " << elapsed.count() << " s\n";
+
+    // // Generate data error
+    // start = std::chrono::high_resolution_clock::now();
     // code.generateDataError();
+    // finish = std::chrono::high_resolution_clock::now();
+    // elapsed = finish - start;
+    // std::cout << "Generate data error elapsed time: " << elapsed.count() << " s\n";
+
+    // // Calculate syndrome
+    // start = std::chrono::high_resolution_clock::now();
     // code.calculateSyndrome();
+    // finish = std::chrono::high_resolution_clock::now();
+    // elapsed = finish - start;
+    // std::cout << "Calculate syndrome elapsed time: " << elapsed.count() << " s\n";
+
+    // // Generate measurement error
+    // start = std::chrono::high_resolution_clock::now();
+    // code.generateMeasError();
+    // finish = std::chrono::high_resolution_clock::now();
+    // elapsed = finish - start;
+    // std::cout << "Generate measurement error elapsed time: " << elapsed.count() << " s\n";
+
+    // // Sweep
+    // start = std::chrono::high_resolution_clock::now();
+    // code.sweep("xyz", true);
+    // finish = std::chrono::high_resolution_clock::now();
+    // elapsed = finish - start;
+    // std::cout << "Sweep elapsed time: " << elapsed.count() << " s\n";
+
+    // // Check syndrome zero
     // auto &syndrome = code.getSyndrome();
-    // code.printUnsatisfiedStabilisers();
-    // auto success = std::all_of(syndrome.begin(), syndrome.end(), [](int i) { return i == 0; });
-    // std::cout << success << std::endl;
+    // start = std::chrono::high_resolution_clock::now();
+    // bool zeros = std::all_of(syndrome.begin(), syndrome.end(), [](int i) { return i == 0; });
+    // finish = std::chrono::high_resolution_clock::now();
+    // elapsed = finish - start;
+    // std::cout << "Check syndrome zero elapsed time: " << elapsed.count() << " s\n";
+
+    // // Check correction
+    // start = std::chrono::high_resolution_clock::now();
+    // bool success = code.checkCorrection();
+    // finish = std::chrono::high_resolution_clock::now();
+    // elapsed = finish - start;
+    // std::cout << "Check correction elapsed time: " << elapsed.count() << " s\n";
 
     return 0;
 }

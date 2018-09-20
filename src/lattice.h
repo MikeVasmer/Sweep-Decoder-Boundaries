@@ -60,7 +60,7 @@ class Lattice {
         // contains a vertex (index) 
         int edgeIndex(const int vertexIndex, const std::string &direction, const int sign);
         // Getter methods
-        std::map<std::string, vvint> getUpEdgesMap();
+        std::map<std::string, vvint>& getUpEdgesMap();
         const vvint& getFaceToVertices() const;
         const vvint& getFaceToEdges() const;
         const std::vector<std::vector<faceS>>& getVertexToFaces() const;

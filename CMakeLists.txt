@@ -58,7 +58,7 @@ endif()
 
 if (profile)
     SET(GCC_PROFILE_COMPILE_FLAGS "-pg")
-    SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${GCC_PROFILE_COMPILE_FLAGS}")
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_PROFILE_COMPILE_FLAGS}")
 endif()
 
 # Check compiler flags

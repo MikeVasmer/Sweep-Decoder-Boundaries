@@ -19,6 +19,7 @@ class Code
     vint logicalZ1;
     vint logicalZ2;
     vint logicalZ3;
+    std::map<std::string, vvint> upEdgesMap;
 
   public:
     Code(const int latticeLength, const std::string &latticeType, const double dataErrorProbability, const double measErrorProbability);

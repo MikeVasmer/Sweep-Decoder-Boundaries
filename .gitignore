@@ -59,3 +59,9 @@ SweepRule.cpp
 
 # VS Code files
 .vscode
+
+# Callgrind output
+callgrind.*
+
+# SweepRule program
+SweepRule

@@ -25,7 +25,8 @@ std::vector<bool> runToric(const int l, const int rounds,
     }
     code.calculateSyndrome();
     // code.printUnsatisfiedStabilisers();
-    for (int r = 0; r < l * l * l; ++r)
+    // for (int r = 0; r < l * l * l; ++r)
+    for (int r = 0; r < 12 * l; ++r)
     {
         code.sweep(sweepDirection, true);
         code.calculateSyndrome();

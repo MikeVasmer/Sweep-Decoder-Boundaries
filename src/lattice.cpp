@@ -487,7 +487,7 @@ void Lattice::createUpEdgesMap()
     }
 }
 
-std::map<std::string, vvint> Lattice::getUpEdgesMap()
+std::map<std::string, vvint>& Lattice::getUpEdgesMap()
 {
     return upEdgesMap;
 }
