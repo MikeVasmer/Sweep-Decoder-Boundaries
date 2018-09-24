@@ -8,9 +8,9 @@
 
 // pcg-random
 // Seed with random val, if available
-// pcg_extras::seed_seq_from<std::random_device> seedSource;
+pcg_extras::seed_seq_from<std::random_device> seedSource;
 // Make a random number engine
-// pcg32 pcg(seedSource);
+pcg32 pcg(seedSource);
 // Create distribution
 std::uniform_real_distribution<double> distDouble0To1(0, nextafter(1, 2));
 std::uniform_int_distribution<int> distInt0To2(0, 2);
@@ -19,7 +19,7 @@ std::uniform_int_distribution<int> distInt0To1(0, 1);
 // STL random mersenne twister
 // std::random_device rd;
 // std::mt19937 mt(rd());
-std::mt19937 mt;
+// std::mt19937 mt;
 
 Code::Code(const int ll, const std::string &lType, const double dataP, const double measP) : l(ll),
                                                                                              p(dataP),
@@ -51,8 +51,8 @@ void Code::generateDataError()
     // error.clear();
     for (int i = 0; i < 3 * l * l * l; ++i)
     {
-        if (distDouble0To1(mt) <= p)
-        // if (distDouble0To1(pcg) <= p)
+        // if (distDouble0To1(mt) <= p)
+        if (distDouble0To1(pcg) <= p)
         {
             auto it = error.find(i);
             if (it == error.end())
@@ -114,8 +114,8 @@ void Code::generateMeasError()
 {
     for (int i = 0; i < syndrome.size(); ++i)
     {
-        if (distDouble0To1(mt) <= q)
-        // if (distDouble0To1(pcg) <= q)
+        // if (distDouble0To1(mt) <= q)
+        if (distDouble0To1(pcg) <= q)
         {
             syndrome[i] = (syndrome[i] + 1) % 2;
         }
@@ -350,8 +350,8 @@ void Code::sweepFullVertex(const int vertexIndex, vstr &sweepEdges, const std::s
         sweepEdges.erase(sweepEdges.begin() + sweepDirectionIndex);
         if (sweepEdges.size() == 2)
         {
-            int delIndex = distInt0To1(mt);
-            // int delIndex = distInt0To1(pcg);
+            // int delIndex = distInt0To1(mt);
+            int delIndex = distInt0To1(pcg);
             sweepEdges.erase(sweepEdges.begin() + delIndex);
         }
         if (sweepEdges[0] == edge0)
@@ -378,8 +378,8 @@ void Code::sweepFullVertex(const int vertexIndex, vstr &sweepEdges, const std::s
     {
         if (sweepEdges.size() == 3)
         {
-            int delIndex = distInt0To2(mt);
-            // int delIndex = distInt0To2(pcg);
+            // int delIndex = distInt0To2(mt);
+            int delIndex = distInt0To2(pcg);
             sweepEdges.erase(sweepEdges.begin() + delIndex);
         }
         if ((sweepEdges[0] == edge0 && sweepEdges[1] == edge2) ||
@@ -420,8 +420,8 @@ void Code::sweepHalfVertex(const int vertexIndex, vstr &sweepEdges, const std::s
     std::string edge2 = upEdgeDirections[2];
     if (sweepEdges.size() == 3)
     {
-        int delIndex = distInt0To2(mt);
-        // int delIndex = distInt0To2(pcg);
+        // int delIndex = distInt0To2(mt);
+        int delIndex = distInt0To2(pcg);
         sweepEdges.erase(sweepEdges.begin() + delIndex);
     }
     if ((sweepEdges[0] == edge0 && sweepEdges[1] == edge2) ||

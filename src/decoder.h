@@ -23,10 +23,12 @@ std::vector<bool> runToric(const int l, const int rounds,
         }
         code.sweep(sweepDirection, true);
     }
+    code.generateDataError(); // Data errors = measurement errors at readout
     code.calculateSyndrome();
     // code.printUnsatisfiedStabilisers();
-    // for (int r = 0; r < l * l * l; ++r)
-    for (int r = 0; r < 12 * l; ++r)
+    for (int r = 0; r < l * l * l; ++r)
+    // for (int r = 0; r < l * l; ++r)
+    // for (int r = 0; r < 12 * l; ++r)
     {
         code.sweep(sweepDirection, true);
         code.calculateSyndrome();

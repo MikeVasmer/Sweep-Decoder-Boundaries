@@ -63,5 +63,14 @@ SweepRule.cpp
 # Callgrind output
 callgrind.*
 
-# SweepRule program
+# Binaries
 SweepRule
+RhombicSweep
+
+# data
+data/
+
+# pycache
+__pycache__/
+
+
