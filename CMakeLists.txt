@@ -29,7 +29,7 @@ include_directories(src)
 include_directories(include/pcg-cpp-0.98/include)
 
 # Link to my library
-set(LIB_FILES src/lattice.h src/lattice.cpp src/code.h src/code.cpp src/decoder.h)
+set(LIB_FILES src/lattice.h src/lattice.cpp src/code.h src/code.cpp src/decoder.h src/baseLattice.h src/baseLattice.cpp)
 add_library(SweepLib ${LIB_FILES})
 target_link_libraries(RhombicSweep SweepLib)
 

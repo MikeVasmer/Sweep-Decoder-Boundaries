@@ -3,6 +3,7 @@ import subprocess
 import os
 import ast
 import json
+import time
 
 def generate_data(l, p, q, sweep_direction, rounds, trials, job_number):
     cwd = os.getcwd()
@@ -11,6 +12,7 @@ def generate_data(l, p, q, sweep_direction, rounds, trials, job_number):
     data = {}
     results = []
 
+    start_time = time.time()
     for _ in range(trials):
         result = subprocess.run(
             ['./RhombicSweep', str(l), str(p), str(q), sweep_direction, str(rounds)], stdout=subprocess.PIPE, check=True, cwd=build_directory)
@@ -19,6 +21,7 @@ def generate_data(l, p, q, sweep_direction, rounds, trials, job_number):
         # print(result_list)
         results.append(
             {'Success': result_list[0], 'Clear syndrome': result_list[1], 'Time (s)': result_list[2]})
+    elapsed_time = round(time.time() - start_time, 2)
 
     data['Results'] = results
     data['L'] = l
@@ -27,6 +30,7 @@ def generate_data(l, p, q, sweep_direction, rounds, trials, job_number):
     data['Rounds'] = rounds
     data['Trials'] = trials
     data['Sweep direction'] = sweep_direction
+    data['Job RunTime'] = elapsed_time
     json_file = "L={}_rounds={}_p={:0.4f}_q={:0.4f}_trials={}_sweepDir={}_job={}.json".format(
         l, rounds, p, q, trials, sweep_direction, job_number)
 

@@ -136,7 +136,7 @@ bool Code::checkExtremalVertex(const int vertexIndex, const std::string &directi
             edgeInSyndrome = true;
             if (std::find(upEdges.begin(), upEdges.end(), edgeIndex) == upEdges.end())
             {
-                // Edge in syndrome is not an up-edge => vertex is extremal
+                // Edge in syndrome is not an up-edge => vertex is not extremal
                 return false;
             }
         }

@@ -1,5 +1,3 @@
-import numpy as np
-
 if __name__ == "__main__":
     with open("params.txt", "w") as param_file:
         N_list = [0]

@@ -3,7 +3,7 @@ import time
 
 l_list = [16, 20, 24, 28]
 rounds_list = [0]
-p_list_q0 = [0.21]
+p_list_q0 = [0.05]
 p_list_q16 = [0.032]
 p_list_q = [0.017]
 trials = 10
