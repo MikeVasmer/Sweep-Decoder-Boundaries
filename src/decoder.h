@@ -2,7 +2,7 @@
 #define DECODER_H
 
 #include <string>
-#include "lattice.h"
+#include "rhombicToricLattice.h"
 #include "code.h"
 #include <algorithm>
 

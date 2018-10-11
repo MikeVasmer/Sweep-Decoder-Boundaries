@@ -29,7 +29,11 @@ include_directories(src)
 include_directories(include/pcg-cpp-0.98/include)
 
 # Link to my library
-set(LIB_FILES src/lattice.h src/lattice.cpp src/code.h src/code.cpp src/decoder.h src/baseLattice.h src/baseLattice.cpp)
+set(LIB_FILES src/lattice.h src/lattice.cpp)
+set(LIB_FILES ${LIB_FILES} src/rhombicToricLattice.h src/rhombicToricLattice.cpp)
+set(LIB_FILES ${LIB_FILES} src/rhombicLattice.h src/rhombicLattice.cpp)
+set(LIB_FILES ${LIB_FILES} src/code.h src/code.cpp)
+set(LIB_FILES ${LIB_FILES} src/decoder.h)
 add_library(SweepLib ${LIB_FILES})
 target_link_libraries(RhombicSweep SweepLib)
 
@@ -44,15 +48,23 @@ if (test)
     include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR} src)
     # Add test executables
     add_executable(testLattice tests/test_lattice.cpp)
+    add_executable(testRhombicToricLattice tests/test_rhombicToricLattice.cpp)
+    add_executable(testRhombicLattice tests/test_rhombicLattice.cpp)
     add_executable(testCode tests/test_code.cpp)
     # Standard googletest linking
     target_link_libraries(testLattice gtest gtest_main)
+    target_link_libraries(testRhombicToricLattice gtest gtest_main)
+    target_link_libraries(testRhombicLattice gtest gtest_main)
     target_link_libraries(testCode gtest gtest_main)
     # Link to my library
     target_link_libraries(testLattice SweepLib)
+    target_link_libraries(testRhombicToricLattice SweepLib)
+    target_link_libraries(testRhombicLattice SweepLib)
     target_link_libraries(testCode SweepLib)
     # Enable running tests with 'make test'
     add_test(NAME testLattice COMMAND testLattice)
+    add_test(NAME testRhombicToricLattice COMMAND testRhombicToricLattice)
+    add_test(NAME testRhombicLattice COMMAND testRhombicLattice)
     add_test(NAME testCode COMMAND testCode)
 endif()
 

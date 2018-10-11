@@ -1,86 +1,226 @@
-#include "baseLattice.h"
+#include "rhombicToricLattice.h"
+#include "lattice.h"
 #include <string>
 #include <iostream>
 #include <cmath>
 #include <algorithm>
 #include <map>
 
-int sgn(int x) { return (x > 0) - (x < 0); }
-
-BaseLattice::BaseLattice(const int length, const std::string &latticeType) : l(length), type(latticeType)
+RhombicToricLattice::RhombicToricLattice(const int length) : Lattice(length)
 {
-    if (length < 3)
+    if (length % 2 != 0)
     {
-        throw std::invalid_argument("Lattice dimension l must be a positive integer greater than two.");
+        throw std::invalid_argument("Rhombic toric lattices can only have even L.");
     }
-    if (!(latticeType == "cubic" || latticeType == "rhombic" || latticeType == "bcc"))
-    {
-        throw std::invalid_argument("Lattice type must be either 'cubic', 'bcc' or 'rhombic'.");
-    }
-    if (latticeType == "rhombic" && length % 2 != 0)
-    {
-        throw std::invalid_argument("For lattice type = 'rhombic', only even lattice dimensions are allowed.");
-    }
-    if (latticeType == "bcc")
-    {
-        faceToVertices.reserve(24 * l * l * l);
-        faceToEdges.reserve(24 * l * l * l);
-        vertexToFaces.assign(2 * l * l * l, {});
-    }
-    else if (latticeType == "rhombic")
-    {
-        faceToVertices.reserve(3 * l * l * l);
-        faceToEdges.reserve(3 * l * l * l);
-        // Not all vertices present in this lattice, but all w=1 faces
-        // are present, so the possible vertex indices go from
-        // 0 to l^3 -1
-        vertexToFaces.assign(2 * l * l * l, {});
-        vertexToEdges.assign(2 * l * l * l, {});
-    }
+    faceToVertices.reserve(3 * l * l * l);
+    faceToEdges.reserve(3 * l * l * l);
+    // Not all vertices present in this lattice, but all w=1 faces
+    // are present, so the possible vertex indices go from
+    // 0 to l^3 -1
+    vertexToFaces.assign(2 * l * l * l, {});
+    vertexToEdges.assign(2 * l * l * l, {});
 }
 
-const std::string& BaseLattice::getType() const { return type; }
-
-cartesian4 BaseLattice::indexToCoordinate(const int vertexIndex)
+int RhombicToricLattice::neighbour(const int vertexIndex, const std::string &direction, const int sign)
 {
-    if (vertexIndex < 0)
+    if (!(sign == 1 || sign == -1))
     {
-        throw std::invalid_argument("Index must not be negative.");
+        throw std::invalid_argument("Sign must be either 1 or -1.");
+    }
+    if (!(direction == "xy" || direction == "xz" || direction == "yz" ||
+          direction == "xyz"))
+    {
+        throw std::invalid_argument("Direction must be one of 'xy', 'xz', 'yz' or 'xyz'.");
     }
     cartesian4 coordinate;
-    coordinate.x = vertexIndex % l;
-    coordinate.y = int(floor(vertexIndex / l)) % l;
-    coordinate.z = int(floor(vertexIndex / (l * l))) % l;
-    // w is either 0 or 1 and fixes the sub-lattice
-    coordinate.w = int(floor(vertexIndex / (l * l * l)));
-    return coordinate;
-}
-
-int BaseLattice::coordinateToIndex(const cartesian4 &coordinate)
-{
-    if (coordinate.x < 0 || coordinate.y < 0 || coordinate.z < 0 || coordinate.w < 0 || coordinate.w > 1)
+    coordinate = indexToCoordinate(vertexIndex);
+    // if (direction == "x")
+    //     coordinate.x = (coordinate.x + sign + l) % l;
+    // if (direction == "y")
+    //     coordinate.y = (coordinate.y + sign + l) % l;
+    // if (direction == "z")
+    //     coordinate.z = (coordinate.z + sign + l) % l;
+    if (coordinate.w == 1)
     {
-        throw std::invalid_argument("Lattice coordinates must be positive and w coordinate must be either zero or one.");
+        if (direction == "xy")
+        {
+            coordinate.x = (coordinate.x + (sign > 0)) % l;
+            coordinate.y = (coordinate.y + (sign > 0)) % l;
+            coordinate.z = (coordinate.z + (sign < 0)) % l;
+            coordinate.w = 0;
+        }
+        if (direction == "xz")
+        {
+            coordinate.x = (coordinate.x + (sign > 0)) % l;
+            coordinate.z = (coordinate.z + (sign > 0)) % l;
+            coordinate.y = (coordinate.y + (sign < 0)) % l;
+            coordinate.w = 0;
+        }
+        if (direction == "yz")
+        {
+            coordinate.y = (coordinate.y + (sign > 0)) % l;
+            coordinate.z = (coordinate.z + (sign > 0)) % l;
+            coordinate.x = (coordinate.x + (sign < 0)) % l;
+            coordinate.w = 0;
+        }
+        if (direction == "xyz")
+        {
+            coordinate.x = (coordinate.x + (sign > 0)) % l;
+            coordinate.y = (coordinate.y + (sign > 0)) % l;
+            coordinate.z = (coordinate.z + (sign > 0)) % l;
+            coordinate.w = 0;
+        }
     }
-    return coordinate.w * l * l * l + coordinate.z * l * l + coordinate.y * l + coordinate.x;
+    else
+    {
+        if (direction == "xy")
+        {
+            coordinate.x = (coordinate.x - (sign < 0) + l) % l;
+            coordinate.y = (coordinate.y - (sign < 0) + l) % l;
+            coordinate.z = (coordinate.z - (sign > 0) + l) % l;
+            coordinate.w = 1;
+        }
+        if (direction == "xz")
+        {
+            coordinate.x = (coordinate.x - (sign < 0) + l) % l;
+            coordinate.z = (coordinate.z - (sign < 0) + l) % l;
+            coordinate.y = (coordinate.y - (sign > 0) + l) % l;
+            coordinate.w = 1;
+        }
+        if (direction == "yz")
+        {
+            coordinate.y = (coordinate.y - (sign < 0) + l) % l;
+            coordinate.z = (coordinate.z - (sign < 0) + l) % l;
+            coordinate.x = (coordinate.x - (sign > 0) + l) % l;
+            coordinate.w = 1;
+        }
+        if (direction == "xyz")
+        {
+            coordinate.x = (coordinate.x - (sign < 0) + l) % l;
+            coordinate.y = (coordinate.y - (sign < 0) + l) % l;
+            coordinate.z = (coordinate.z - (sign < 0) + l) % l;
+            coordinate.w = 1;
+        }
+    }
+    return coordinateToIndex(coordinate);
 }
 
-const vvint& BaseLattice::getFaceToVertices() const
+int RhombicToricLattice::edgeIndex(const int vertexIndex, const std::string &direction, const int sign)
 {
-    return faceToVertices;
+    if (!(sign == 1 || sign == -1))
+    {
+        throw std::invalid_argument("Sign must be either 1 or -1.");
+    }
+    if (!(direction == "xy" || direction == "xz" || direction == "yz" ||
+          direction == "xyz"))
+    {
+        throw std::invalid_argument("Direction must be one of 'xy', 'xz', 'yz' or 'xyz'.");
+    }
+
+    int edgeIndex;
+    if (sign < 0)
+    {
+        edgeIndex = neighbour(vertexIndex, direction, sign);
+    }
+    else
+    {
+        edgeIndex = vertexIndex;
+    }
+    // Numbering is an arbitrary convention
+    if (direction == "xyz")
+        edgeIndex = 7 * edgeIndex;
+    // else if (direction == "x")
+    //     edgeIndex = 7 * edgeIndex + 1;
+    else if (direction == "xy")
+        edgeIndex = 7 * edgeIndex + 2;
+    // else if (direction == "y")
+    //     edgeIndex = 7 * edgeIndex + 3;
+    else if (direction == "yz")
+        edgeIndex = 7 * edgeIndex + 4;
+    // else if (direction == "z")
+    //     edgeIndex = 7 * edgeIndex + 5;
+    else if (direction == "xz")
+        edgeIndex = 7 * edgeIndex + 6;
+    return edgeIndex;
 }
 
-const vvint& BaseLattice::getFaceToEdges() const
+void RhombicToricLattice::addFace(const int vertexIndex, const int faceIndex, const vstr &directions, const vint &signs)
 {
-    return faceToEdges;
+    vint vertices;
+    vint edges;
+    int neighbourVertex = neighbour(vertexIndex, directions[0], signs[0]);
+    vertices = {vertexIndex, neighbourVertex,
+                neighbour(vertexIndex, directions[1], signs[1]),
+                neighbour(neighbourVertex, directions[2], signs[2])};
+    edges = {edgeIndex(vertexIndex, directions[0], signs[0]),
+                edgeIndex(vertexIndex, directions[1], signs[1]),
+                edgeIndex(neighbourVertex, directions[2], signs[2]),
+                edgeIndex(vertices[2], directions[3], signs[3])};    
+    faceS face;
+    std::sort(vertices.begin(), vertices.end());
+    std::sort(edges.begin(), edges.end());
+    face.vertices = vertices;
+    face.faceIndex = faceIndex;
+
+    faceToVertices.push_back(vertices);
+    faceToEdges.push_back(edges);
+    for (const auto &vertex : vertices)
+    {
+        vertexToFaces[vertex].push_back(face);
+    }
 }
 
-const std::vector<std::vector<faceS>>& BaseLattice::getVertexToFaces() const
+void RhombicToricLattice::createFaces()
 {
-    return vertexToFaces;
+    int faceIndex = 0;
+    for (int vertexIndex = 0; vertexIndex < l * l * l; ++vertexIndex)
+    {
+        cartesian4 coordinate = indexToCoordinate(vertexIndex);
+        if ((coordinate.x + coordinate.y + coordinate.z) % 2 == 0)
+        {
+            vint signs = {1, 1, 1, 1};
+            addFace(vertexIndex, faceIndex, {"xyz", "yz", "yz", "xyz"},
+                    signs);
+            faceIndex++;
+            addFace(vertexIndex, faceIndex, {"xyz", "xz", "xz", "xyz"},
+                    signs);
+            faceIndex++;
+            addFace(vertexIndex, faceIndex, {"xyz", "xy", "xy", "xyz"},
+                    signs);
+            faceIndex++;
+            signs = {1, -1, -1, 1};
+            addFace(vertexIndex, faceIndex, {"xy", "xz", "xz", "xy"},
+                    signs);
+            faceIndex++;
+            addFace(vertexIndex, faceIndex, {"xy", "yz", "yz", "xy"},
+                    signs);
+            faceIndex++;
+            addFace(vertexIndex, faceIndex, {"xz", "yz", "yz", "xz"},
+                    signs);
+            faceIndex++;
+        }
+    }
 }
 
-void BaseLattice::createUpEdgesMap()
+int RhombicToricLattice::findFace(vint &vertices)
+{
+    if (vertices.size() != 4)
+    {
+        throw std::invalid_argument("Vertex list must contain exactly four vertices.");
+    }
+    std::sort(vertices.begin(), vertices.end());
+    auto v0Faces = vertexToFaces[vertices[0]];
+    for (const auto &face : v0Faces)
+    {
+        if (face.vertices == vertices)
+        {
+            return face.faceIndex;
+        }
+    }
+    throw std::invalid_argument("Input vertices do not correspond to a face.");
+}
+
+void RhombicToricLattice::createUpEdgesMap()
 {
     std::vector<std::string> directionList = {"xyz", "xy", "xz", "yz",
                                               "-xyz", "-xy", "-xz", "-yz"};
@@ -230,12 +370,7 @@ void BaseLattice::createUpEdgesMap()
     }
 }
 
-std::map<std::string, vvint>& BaseLattice::getUpEdgesMap()
-{
-    return upEdgesMap;
-}
-
-void BaseLattice::createVertexToEdges()
+void RhombicToricLattice::createVertexToEdges()
 {
     for (int vertexIndex = 0; vertexIndex < 2 * l * l * l; ++vertexIndex)
     {
@@ -278,9 +413,4 @@ void BaseLattice::createVertexToEdges()
             }
         }
     }
-}
-
-const vvint& BaseLattice::getVertexToEdges() const
-{
-    return vertexToEdges;
 }

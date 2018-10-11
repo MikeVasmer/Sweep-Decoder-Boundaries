@@ -1,5 +1,5 @@
 #include <iostream>
-#include "lattice.h"
+#include "rhombicToricLattice.h"
 #include "code.h"
 #include "decoder.h"
 #include <chrono>

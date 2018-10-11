@@ -1,5 +1,5 @@
 #include "code.h"
-#include "lattice.h"
+#include "rhombicToricLattice.h"
 #include <string>
 #include "pcg_random.hpp"
 #include <random>
@@ -24,7 +24,7 @@ std::uniform_int_distribution<int> distInt0To1(0, 1);
 Code::Code(const int ll, const std::string &lType, const double dataP, const double measP) : l(ll),
                                                                                              p(dataP),
                                                                                              q(measP),
-                                                                                             lattice(ll, lType)
+                                                                                             lattice(ll)
 {
     if (dataP < 0 || dataP > 1)
     {
@@ -100,7 +100,7 @@ vint &Code::getSyndrome()
     return syndrome;
 }
 
-Lattice &Code::getLattice()
+RhombicToricLattice &Code::getLattice()
 {
     return lattice;
 }

@@ -1,7 +1,7 @@
 #ifndef CODE_H
 #define CODE_H
 
-#include "lattice.h"
+#include "rhombicToricLattice.h"
 #include <string>
 #include <set>
 // #include "gtest/gtest_prod.h"
@@ -13,7 +13,7 @@ class Code
     std::set<int> error;
     vint syndrome;
     vint flipBits;
-    Lattice lattice;
+    RhombicToricLattice lattice;
     const double p; // data error probability
     const double q; // measurement error probability
     vint logicalZ1;
@@ -43,7 +43,7 @@ class Code
     // Getter methods
     vint& getFlipBits();
     vint& getSyndrome();
-    Lattice& getLattice();
+    RhombicToricLattice& getLattice();
     std::set<int>& getError();
     vvint getLogicals();
 };
