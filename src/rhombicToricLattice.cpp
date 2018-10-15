@@ -181,23 +181,23 @@ void RhombicToricLattice::createFaces()
             vint signs = {1, 1, 1, 1};
             addFace(vertexIndex, faceIndex, {"xyz", "yz", "yz", "xyz"},
                     signs);
-            faceIndex++;
+            ++faceIndex;
             addFace(vertexIndex, faceIndex, {"xyz", "xz", "xz", "xyz"},
                     signs);
-            faceIndex++;
+            ++faceIndex;
             addFace(vertexIndex, faceIndex, {"xyz", "xy", "xy", "xyz"},
                     signs);
-            faceIndex++;
+            ++faceIndex;
             signs = {1, -1, -1, 1};
             addFace(vertexIndex, faceIndex, {"xy", "xz", "xz", "xy"},
                     signs);
-            faceIndex++;
+            ++faceIndex;
             addFace(vertexIndex, faceIndex, {"xy", "yz", "yz", "xy"},
                     signs);
-            faceIndex++;
+            ++faceIndex;
             addFace(vertexIndex, faceIndex, {"xz", "yz", "yz", "xz"},
                     signs);
-            faceIndex++;
+            ++faceIndex;
         }
     }
 }
