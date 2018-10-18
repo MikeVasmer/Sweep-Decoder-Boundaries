@@ -37,7 +37,7 @@ inline bool operator==(const cartesian4 &lhs, const cartesian4 &rhs)
 
 inline std::ostream &operator<<(std::ostream &o, const cartesian4 &c)
 {
-  o << "(" << c.x << ", " << c.y << ", " << c.z << ", " << c.w << ")" << std::endl;
+  o << "(" << c.x << ", " << c.y << ", " << c.z << ", " << c.w << ")";
   return o;
 }
 
@@ -46,9 +46,6 @@ int sgn(int x);
 
 class Lattice
 {
-private:
-  virtual void addFace(const int vertexIndex, const int faceIndex, const vstr &directions, const vint &signs) = 0;
-
 protected:
   const int l;
   vvint faceToVertices;
@@ -56,23 +53,24 @@ protected:
   std::vector<std::vector<faceS>> vertexToFaces;
   std::map<std::string, vvint> upEdgesMap;
   vvint vertexToEdges;
+  Lattice(const int l);
+  void addFace(const int vertexIndex, const int faceIndex, const vstr &directions, const vint &signs);
 
 public:
-  Lattice(const int l);
   cartesian4 indexToCoordinate(const int vertexIndex);
   int coordinateToIndex(const cartesian4 &coordinate);
-
+  int findFace(vint &vertices);
+  // Find the edge pointing in the sign direction which
+  // contains a vertex (index)
+  virtual int edgeIndex(const int vertexIndex, const std::string &direction, const int sign);
+  
   // Pure virtual methods
   // Find neighbour of a vertex (index) in the sign direction
   virtual int neighbour(const int vertexIndex, const std::string &direction, const int sign) = 0;
   virtual void createFaces() = 0;
-  virtual int findFace(vint &vertices) = 0;
-  // Find the edge pointing in the sign direction which
-  // contains a vertex (index)
-  virtual int edgeIndex(const int vertexIndex, const std::string &direction, const int sign) = 0;
-  virtual void createUpEdgesMap() = 0;
   virtual void createVertexToEdges() = 0;
-
+  virtual void createUpEdgesMap() = 0;
+  
   // Getter methods
   std::map<std::string, vvint> &getUpEdgesMap();
   const vvint &getFaceToVertices() const;

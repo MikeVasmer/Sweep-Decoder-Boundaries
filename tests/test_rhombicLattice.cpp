@@ -145,25 +145,25 @@ TEST(createFaces, correctNumberOfFacesCreated)
         lattice.createFaces();
         auto &faceToEdges = lattice.getFaceToEdges();
         auto &faceToVertices = lattice.getFaceToVertices();
-        // if (l == 4)
-        // {
-        //     int i = 0;
-        //     for (auto vs : faceToVertices)
-        //     {
-        //         // if (!(vs[0] == 63 || vs[1] == 63))
-        //         // {
-        //         //     continue;
-        //         // }
-        //         std::cout << "Face Index = " << i << std::endl;
-        //         std::cout << "Vertex Indices = " << vs[0] << ", " << vs[1] << ", "
-        //                   << vs[2] << ", " << vs[3] << std::endl;
-        //         std::cout << "Vertices = " << lattice.indexToCoordinate(vs[0]) << " "
-        //                   << lattice.indexToCoordinate(vs[1]) << " "
-        //                   << lattice.indexToCoordinate(vs[2]) << " "
-        //                   << lattice.indexToCoordinate(vs[3]) << std::endl;
-        //         ++i;
-        //     }
-        // }
+        if (l == 4)
+        {
+            int i = 0;
+            for (auto vs : faceToVertices)
+            {
+                // if (!(vs[0] == 63 || vs[1] == 63))
+                // {
+                //     continue;
+                // }
+                std::cout << "Face Index = " << i << std::endl;
+                std::cout << "Vertex Indices = " << vs[0] << ", " << vs[1] << ", "
+                          << vs[2] << ", " << vs[3] << std::endl;
+                std::cout << "Vertices = " << lattice.indexToCoordinate(vs[0]) << " "
+                          << lattice.indexToCoordinate(vs[1]) << " "
+                          << lattice.indexToCoordinate(vs[2]) << " "
+                          << lattice.indexToCoordinate(vs[3]) << std::endl;
+                ++i;
+            }
+        }
         int numberOfFaces = 3 * pow(l - 1, 3) - 4 * pow(l - 1, 2) + 2 * (l - 1);
         EXPECT_EQ(faceToEdges.size(), numberOfFaces);
         EXPECT_EQ(faceToVertices.size(), numberOfFaces);
@@ -183,14 +183,14 @@ TEST(createFaces, correctFacesL4)
     {
         EXPECT_EQ(faceToVertices[i], expectedVertices[i]);
     }
-    vvint expectedEdges = {{112, 114, 448, 562}, {126, 128, 462, 576}, {147, 153, 567, 601}, {151, 254, 562, 564}, {130, 153, 459, 461}};
+    vvint expectedEdges = {{112, 114, 448, 562}, {126, 128, 462, 576}, {147, 153, 567, 601}, {151, 254, 562, 564}, {130, 153, 459, 461}, {151, 174, 480, 482}, {165, 188, 494, 496}, {165, 268, 576, 578}, {168, 170, 504, 618}, {168, 174, 588, 622}, {182, 188, 602, 636}}; // Next faceIndex = 11
     for (int i = 0; i < expectedEdges.size(); ++i)
     {
         EXPECT_EQ(faceToEdges[i], expectedEdges[i]);
     }
 }
 
-TEST(createFaces, correctNumberOfFacesInVertexToFaces)
+TEST(createFaces, correctNumberOfFacesInVertexToFacesL4)
 {
     int l = 4;
     RhombicLattice lattice = RhombicLattice(l);
@@ -204,5 +204,51 @@ TEST(createFaces, correctNumberOfFacesInVertexToFaces)
     for (int i = 0; i < vertexList.size(); ++i)
     {
         EXPECT_EQ(vertexToFaces[vertexList[i]].size(), faceNumberList[i]);
+    }
+}
+
+TEST(findFace, handlesValidInput)
+{
+    int l = 4;
+    RhombicLattice lattice = RhombicLattice(l);
+    lattice.createFaces();
+
+    vvint testVertices = {{41, 56, 100, 104}, {50, 55, 98, 114}, {46, 58, 105, 106}, {29, 41, 88, 89}, {26, 29, 73, 89}, {21, 36, 80, 84}};
+    vint expectedFaceIndices = {45, 37, 34, 26, 14, 3};
+    for (int i = 0; i < expectedFaceIndices.size(); ++i)
+    {
+        EXPECT_EQ(lattice.findFace(testVertices[i]), expectedFaceIndices[i]);
+    }
+}
+
+TEST(createUpEdgesMap, correctNumberOfUpEdgesAllVertexTypes)
+{
+    int l = 4;
+    RhombicLattice lattice = RhombicLattice(l);
+    lattice.createUpEdgesMap();
+    auto upEdgesMap = lattice.getUpEdgesMap();
+    std::vector<std::string> directionList = {"xyz", "yz", "xz", "xy", "-xyz", "-yz", "-xz", "-xy"};
+    vint testVertices = {16, 24, 18, 26, 90, 42, 127, 91, 87, 110, 109, 117, 118};
+    vvint expectedUpEdgeNumbers = {{2, 1, 1, 2, 0, 1, 1, 0}, {3, 1, 3, 3, 1, 3, 1, 1}, {3, 3, 1, 3, 1, 1, 3, 1}, {4, 4, 4, 4, 4, 4, 4, 4}, {3, 0, 0, 0, 0, 3, 3, 3}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 1, 1, 1}, {0, 2, 1, 1, 2, 0, 0, 0}, {1, 0, 0, 0, 0, 1, 2, 2}, {1, 0, 0, 0, 0, 2, 1, 2}, {0, 1, 2, 1, 2, 0, 0, 0}, {1, 0, 0, 0, 0, 2, 2, 1}, {0, 1, 1, 2, 2, 0, 0, 0}};
+    int j = 0;
+    for (const auto &direction : directionList)
+    {
+        vvint vertexToUpEdges = upEdgesMap[direction];
+        
+        // cartesian4 coordinate = {2, 1, 3, 1};
+        // int index = lattice.coordinateToIndex(coordinate);
+        // std::cout << index << std::endl;
+        // std::cout << coordinate << std::endl;
+        // for (const auto edge : vertexToUpEdges[index])
+        // {
+        //     std::cout << edge << ", "; 
+        // }
+        // std::cout << std::endl;
+
+        for (int i = 0; i < testVertices.size(); ++i)
+        {
+            EXPECT_EQ(vertexToUpEdges[testVertices[i]].size(), expectedUpEdgeNumbers[i][j]);
+        }
+        ++j;
     }
 }
