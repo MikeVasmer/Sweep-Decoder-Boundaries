@@ -763,4 +763,141 @@ void RhombicLattice::createUpEdgesMap()
 
 void RhombicLattice::createVertexToEdges()
 {
+    for (int vertexIndex = 0; vertexIndex < 2 * l * l * l; ++vertexIndex)
+    {
+        cartesian4 coordinate = indexToCoordinate(vertexIndex);
+        if (coordinate.w == 0)
+        {
+            if ((coordinate.x + coordinate.y + coordinate.z) % 2 == 1)
+            {
+                int sign = 1;
+                try
+                {
+                    vertexToEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "xyz", sign));
+                }
+                catch (std::invalid_argument &e)
+                {
+                }
+                try
+                {
+                    vertexToEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "xy", sign));
+                }
+                catch (std::invalid_argument &e)
+                {
+                }
+                try
+                {
+                    vertexToEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "xz", sign));
+                }
+                catch (std::invalid_argument &e)
+                {
+                }
+                try
+                {
+                    vertexToEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "yz", sign));
+                }
+                catch (std::invalid_argument &e)
+                {
+                }
+                sign = -1;
+                try
+                {
+                    vertexToEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "xyz", sign));
+                }
+                catch (std::invalid_argument &e)
+                {
+                }
+                try
+                {
+                    vertexToEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "xy", sign));
+                }
+                catch (std::invalid_argument &e)
+                {
+                }
+                try
+                {
+                    vertexToEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "xz", sign));
+                }
+                catch (std::invalid_argument &e)
+                {
+                }
+                try
+                {
+                    vertexToEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "yz", sign));
+                }
+                catch (std::invalid_argument &e)
+                {
+                }
+            }
+        }
+        else
+        {
+            if ((coordinate.x + coordinate.y + coordinate.z) % 2 == 1)
+            {
+                int sign = 1;
+                try
+                {
+                    vertexToEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "xy", sign));
+                }
+                catch (std::invalid_argument &e)
+                {
+                }
+                try
+                {
+                    vertexToEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "xz", sign));
+                }
+                catch (std::invalid_argument &e)
+                {
+                }
+                try
+                {
+                    vertexToEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "yz", sign));
+                }
+                catch (std::invalid_argument &e)
+                {
+                }
+                sign = -1;
+                try
+                {
+                    vertexToEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "xyz", sign));
+                }
+                catch (std::invalid_argument &e)
+                {
+                }
+            }
+            else
+            {
+                int sign = -1;
+                try
+                {
+                    vertexToEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "xy", sign));
+                }
+                catch (std::invalid_argument &e)
+                {
+                }
+                try
+                {
+                    vertexToEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "xz", sign));
+                }
+                catch (std::invalid_argument &e)
+                {
+                }
+                try
+                {
+                    vertexToEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "yz", sign));
+                }
+                catch (std::invalid_argument &e)
+                {
+                }
+                sign = 1;
+                try
+                {
+                    vertexToEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "xyz", sign));
+                }
+                catch (std::invalid_argument &e)
+                {
+                }
+            }
+        }
+    }
 }

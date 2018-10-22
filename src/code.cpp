@@ -24,6 +24,7 @@ std::uniform_int_distribution<int> distInt0To1(0, 1);
 Code::Code(const int ll, const std::string &lType, const double dataP, const double measP) : l(ll),
                                                                                              p(dataP),
                                                                                              q(measP),
+                                                                                             latticeType(lType),
                                                                                              lattice(ll)
 {
     if (dataP < 0 || dataP > 1)
@@ -34,11 +35,20 @@ Code::Code(const int ll, const std::string &lType, const double dataP, const dou
     {
         throw std::invalid_argument("Measurement error probability must be between zero and one (inclusive).");
     }
-    if (lType == "rhombic")
+    if (lType == "rhombic toric")
     {
-        syndrome.assign(2 * 7 * l * l * l, 0);
-        flipBits.assign(3 * l * l * l, 0);
+        numberOfFaces = (3 * l * l * l);
+        latticeParity = 0;
     }
+    else if (lType == "rhombic boundaries")
+    {
+        numberOfFaces = 3 * pow(l - 1, 3) - 4 * pow(l - 1, 2) + 2 * (l - 1);
+        latticeParity = 1;
+        buildSyndrome();
+    }
+    numberOfEdges = 2 * 7 * l * l * l;
+    syndrome.assign(numberOfEdges, 0);
+    flipBits.assign(numberOfFaces, 0);
     lattice.createFaces();
     lattice.createUpEdgesMap();
     lattice.createVertexToEdges();
@@ -49,7 +59,7 @@ Code::Code(const int ll, const std::string &lType, const double dataP, const dou
 void Code::generateDataError()
 {
     // error.clear();
-    for (int i = 0; i < 3 * l * l * l; ++i)
+    for (int i = 0; i < numberOfFaces; ++i)
     {
         // if (distDouble0To1(mt) <= p)
         if (distDouble0To1(pcg) <= p)
@@ -76,7 +86,77 @@ void Code::calculateSyndrome()
         vint edges = faceToEdges[errorIndex];
         for (const int edgeIndex : edges)
         {
+            if (latticeType == "rhombic boundaries")
+            {
+                auto it = syndromeIndices.find(edgeIndex);
+                if (it == syndromeIndices.end())
+                {
+                    continue;
+                }
+            }
             syndrome[edgeIndex] = (syndrome[edgeIndex] + 1) % 2;
+        }
+    }
+}
+
+void Code::buildSyndrome()
+{
+    for (int i = 0; i < l * l * l; ++i)
+    {
+        const cartesian4 coordinate = lattice.indexToCoordinate(i);
+        if (coordinate.z == 0 || coordinate.y == 0 || coordinate.y == l - 1)
+        {
+            continue;
+        }
+        else
+        {
+            if ((coordinate.x + coordinate.y + coordinate.z) % 2 == latticeParity)
+            {
+                if (coordinate.z == 1)
+                {
+                    if (coordinate.x != 0)
+                    {
+                        syndromeIndices.insert(lattice.edgeIndex(i, "yz", 1));
+                        syndromeIndices.insert(lattice.edgeIndex(i, "xy", -1));   
+                    }
+                    if (coordinate.x != l - 1)
+                    {
+                        syndromeIndices.insert(lattice.edgeIndex(i, "xyz", 1));
+                        syndromeIndices.insert(lattice.edgeIndex(i, "xz", 1));
+                    }
+                }
+                else if (coordinate.z == l - 1)
+                {
+                    if (coordinate.x != 0)
+                    {
+                        syndromeIndices.insert(lattice.edgeIndex(i, "xyz", -1));
+                        syndromeIndices.insert(lattice.edgeIndex(i, "xz", -1));   
+                    }
+                    if (coordinate.x != l - 1)
+                    {
+                        syndromeIndices.insert(lattice.edgeIndex(i, "yz", -1));
+                        syndromeIndices.insert(lattice.edgeIndex(i, "xy", 1));   
+                    }
+                }
+                else
+                {
+                    if (coordinate.x != 0)
+                    {
+                        syndromeIndices.insert(lattice.edgeIndex(i, "xyz", -1));
+                        syndromeIndices.insert(lattice.edgeIndex(i, "xy", -1));
+                        syndromeIndices.insert(lattice.edgeIndex(i, "xz", -1));
+                        syndromeIndices.insert(lattice.edgeIndex(i, "yz", 1));
+                    }
+                    if (coordinate.x != l - 1)
+                    {
+                        syndromeIndices.insert(lattice.edgeIndex(i, "xyz", 1));
+                        syndromeIndices.insert(lattice.edgeIndex(i, "xy", 1));
+                        syndromeIndices.insert(lattice.edgeIndex(i, "xz", 1));
+                        syndromeIndices.insert(lattice.edgeIndex(i, "yz", -1));
+                        
+                    }
+                }
+            }
         }
     }
 }
@@ -114,6 +194,14 @@ void Code::generateMeasError()
 {
     for (int i = 0; i < syndrome.size(); ++i)
     {
+        if (latticeType == "rhombic boundaries")
+            {
+                auto it = syndromeIndices.find(i);
+                if (it == syndromeIndices.end())
+                {
+                    continue;
+                }
+            }
         // if (distDouble0To1(mt) <= q)
         if (distDouble0To1(pcg) <= q)
         {
@@ -206,7 +294,7 @@ void Code::sweep(const std::string &direction, bool greedy)
         cartesian4 coordinate = lattice.indexToCoordinate(vertexIndex);
         if (coordinate.w == 0)
         {
-            if ((coordinate.x + coordinate.y + coordinate.z) % 2 == 0)
+            if ((coordinate.x + coordinate.y + coordinate.z) % 2 == latticeParity)
             {
                 sweepFullVertex(vertexIndex, sweepEdges, direction, edgeDirections);
             }
@@ -576,4 +664,9 @@ void Code::printUnsatisfiedStabilisers()
             std::cout << i << std::endl;
         }
     }
+}
+
+std::set<int>& Code::getSyndromeIndices()
+{
+    return syndromeIndices;
 }

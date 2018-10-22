@@ -1,4 +1,5 @@
 #include "code.h"
+#include "rhombicLattice.h"
 #include "gtest/gtest.h"
 #include <string>
 #include <iostream>
@@ -6,7 +7,7 @@
 TEST(Code, ExceptsInvalidProbabilities)
 {
     int latticeLength = 4;
-    std::string latticeType = "rhombic";
+    std::string latticeType = "rhombic toric";
     std::vector<std::pair<double, double>> errorProbabilities = {{2, 0.1}, {-2, 0.2}, {0.5, 3}, {0.8, -1}};
     for (const auto &errorPair : errorProbabilities)
     {
@@ -17,7 +18,7 @@ TEST(Code, ExceptsInvalidProbabilities)
 TEST(Code, SyndromeCorrectSize)
 {
     std::vector<int> latticeLengths = {4, 6, 8, 10};
-    std::string latticeType = "rhombic";
+    std::string latticeType = "rhombic toric";
     for (const int l : latticeLengths)
     {
         Code code(l, latticeType, 0.1, 0.1);
@@ -29,7 +30,7 @@ TEST(Code, SyndromeCorrectSize)
 TEST(calculateSyndrome, correctlyCalculatesError)
 {
     int latticeLength = 6;
-    std::string latticeType = "rhombic";
+    std::string latticeType = "rhombic toric";
     double p = 0.1;
     double q = p;
     Code code = Code(latticeLength, latticeType, p, q);
@@ -54,7 +55,7 @@ TEST(calculateSyndrome, correctlyCalculatesError)
 TEST(calculateSyndrome, correctlyCalculatesStabiliserError)
 {
     int latticeLength = 4;
-    std::string latticeType = "rhombic";
+    std::string latticeType = "rhombic toric";
     double p = 0.1;
     double q = p;
     Code code = Code(latticeLength, latticeType, p, q);
@@ -70,7 +71,7 @@ TEST(calculateSyndrome, correctlyCalculatesStabiliserError)
 TEST(generateDataError, handlesOneErrorProbability)
 {
     int l = 4;
-    std::string latticeType = "rhombic";
+    std::string latticeType = "rhombic toric";
     double p = 1;
     Code code = Code(l, latticeType, p, p);
     code.generateDataError();
@@ -80,7 +81,7 @@ TEST(generateDataError, handlesOneErrorProbability)
 TEST(generateDataError, handlesZeroErrorProbability)
 {
     int l = 6;
-    std::string latticeType = "rhombic";
+    std::string latticeType = "rhombic toric";
     double p = 0;
     Code code = Code(l, latticeType, p, p);
     code.generateDataError();
@@ -90,7 +91,7 @@ TEST(generateDataError, handlesZeroErrorProbability)
 TEST(generateMeasError, handlesOneErrorProbability)
 {
     int l = 6;
-    std::string latticeType = "rhombic";
+    std::string latticeType = "rhombic toric";
     double p = 1;
     Code code = Code(l, latticeType, p, p);
     code.generateMeasError();
@@ -104,7 +105,7 @@ TEST(generateMeasError, handlesOneErrorProbability)
 TEST(generateMeasError, handlesZeroErrorProbability)
 {
     int l = 4;
-    std::string latticeType = "rhombic";
+    std::string latticeType = "rhombic toric";
     double p = 0;
     Code code = Code(l, latticeType, p, p);
     code.generateMeasError();
@@ -118,7 +119,7 @@ TEST(generateMeasError, handlesZeroErrorProbability)
 TEST(checkExtremalVertex, correctVerticesExtremalOneError)
 {
     int l = 4;
-    std::string latticeType = "rhombic";
+    std::string latticeType = "rhombic toric";
     double p = 0.1;
     Code code = Code(l, latticeType, p, p);
     code.setError({0});
@@ -175,7 +176,7 @@ TEST(checkExtremalVertex, correctVerticesExtremalOneError)
 TEST(checkExtremalVertex, correctVerticesExtremalTwoErrors)
 {
     int l = 6;
-    std::string latticeType = "rhombic";
+    std::string latticeType = "rhombic toric";
     double p = 0.1;
     Code code = Code(l, latticeType, p, p);
     code.setError({0, 1});
@@ -248,7 +249,7 @@ TEST(checkExtremalVertex, correctVerticesExtremalTwoErrors)
 TEST(localFlip, flipFaceOnceTwice)
 {
     int l = 8;
-    std::string latticeType = "rhombic";
+    std::string latticeType = "rhombic toric";
     double p = 0.1;
     Code code = Code(l, latticeType, p, p);
     vint vs = {0, 72, 512, 519};
@@ -265,7 +266,7 @@ TEST(localFlip, flipFaceOnceTwice)
 TEST(findSweepEdges, correctEdgesOneError)
 {
     int l = 4;
-    std::string type = "rhombic";
+    std::string type = "rhombic toric";
     double p = 0.1;
     Code code = Code(l, type, p, p);
     code.setError({120});
@@ -370,7 +371,7 @@ TEST(findSweepEdges, correctEdgesOneError)
 TEST(faceVertices, handlesReasonableInput)
 {
     int l = 6;
-    std::string type = "rhombic";
+    std::string type = "rhombic toric";
     double p = 0.1;
     Code code = Code(l, type, p, p);
 
@@ -398,7 +399,7 @@ TEST(faceVertices, handlesReasonableInput)
 TEST(faceVertices, exceptsTooManyDirections)
 {
     int l = 6;
-    std::string type = "rhombic";
+    std::string type = "rhombic toric";
     double p = 0.1;
     Code code = Code(l, type, p, p);
     EXPECT_THROW(code.faceVertices(0, {"xyz", "-xy", "xy", "xz"}), std::invalid_argument);
@@ -407,7 +408,7 @@ TEST(faceVertices, exceptsTooManyDirections)
 TEST(faceVertices, exceptsInvalidSigns)
 {
     int l = 6;
-    std::string type = "rhombic";
+    std::string type = "rhombic toric";
     double p = 0.1;
     Code code = Code(l, type, p, p);
     EXPECT_THROW(code.faceVertices(0, {"xyz", "-xy", "xy"}), std::invalid_argument);
@@ -417,7 +418,7 @@ TEST(faceVertices, exceptsInvalidSigns)
 TEST(faceVertices, exceptsInvalidDirections)
 {
     int l = 6;
-    std::string type = "rhombic";
+    std::string type = "rhombic toric";
     double p = 0.1;
     Code code = Code(l, type, p, p);
     EXPECT_THROW(code.faceVertices(0, {"xyz", "xy", "xz"}), std::invalid_argument);
@@ -427,7 +428,7 @@ TEST(faceVertices, exceptsInvalidDirections)
 TEST(sweepFullVertex, handlesQubitErrorsXY)
 {
     int l = 4;
-    std::string type = "rhombic";
+    std::string type = "rhombic toric";
     double p = 0.1;
     Code code = Code(l, type, p, p);
 
@@ -566,7 +567,7 @@ TEST(sweepFullVertex, handlesQubitErrorsXY)
 TEST(sweepFullVertex, handlesMeasurementErrorsXY)
 {
     int l = 4;
-    std::string type = "rhombic";
+    std::string type = "rhombic toric";
     double p = 0.1;
     Code code = Code(l, type, p, p);
 
@@ -666,7 +667,7 @@ TEST(sweepFullVertex, handlesMeasurementErrorsXY)
 TEST(sweepHalfVertex, handlesQubitErrorsXY)
 {
     int l = 6;
-    std::string type = "rhombic";
+    std::string type = "rhombic toric";
     double p = 0.1;
     Code code = Code(l, type, p, p);
 
@@ -785,7 +786,7 @@ TEST(sweepHalfVertex, handlesQubitErrorsXY)
 TEST(sweepHalfVertex, handlesMeasurementErrorsXY)
 {
     int l = 6;
-    std::string type = "rhombic";
+    std::string type = "rhombic toric";
     double p = 0.1;
     Code code = Code(l, type, p, p);
 
@@ -818,7 +819,7 @@ TEST(sweepHalfVertex, handlesMeasurementErrorsXY)
 TEST(sweepFullVertex, handlesQubitErrorsMinusXY)
 {
     int l = 4;
-    std::string type = "rhombic";
+    std::string type = "rhombic toric";
     double p = 0.1;
     Code code = Code(l, type, p, p);
 
@@ -957,7 +958,7 @@ TEST(sweepFullVertex, handlesQubitErrorsMinusXY)
 TEST(sweepFullVertex, handlesMeasurementErrorsMinusXY)
 {
     int l = 4;
-    std::string type = "rhombic";
+    std::string type = "rhombic toric";
     double p = 0.1;
     Code code = Code(l, type, p, p);
 
@@ -1050,7 +1051,7 @@ TEST(sweepFullVertex, handlesMeasurementErrorsMinusXY)
 TEST(sweepFullVertex, handlesQubitErrorsXZ)
 {
     int l = 4;
-    std::string type = "rhombic";
+    std::string type = "rhombic toric";
     double p = 0.1;
     Code code = Code(l, type, p, p);
 
@@ -1189,7 +1190,7 @@ TEST(sweepFullVertex, handlesQubitErrorsXZ)
 TEST(sweepFullVertex, handlesMeasurementErrorsXZ)
 {
     int l = 4;
-    std::string type = "rhombic";
+    std::string type = "rhombic toric";
     double p = 0.1;
     Code code = Code(l, type, p, p);
 
@@ -1282,7 +1283,7 @@ TEST(sweepFullVertex, handlesMeasurementErrorsXZ)
 TEST(sweepFullVertex, handlesQubitErrorsMinusXZ)
 {
     int l = 4;
-    std::string type = "rhombic";
+    std::string type = "rhombic toric";
     double p = 0.1;
     Code code = Code(l, type, p, p);
 
@@ -1421,7 +1422,7 @@ TEST(sweepFullVertex, handlesQubitErrorsMinusXZ)
 TEST(sweepFullVertex, handlesMeasurementErrorsMinusXZ)
 {
     int l = 4;
-    std::string type = "rhombic";
+    std::string type = "rhombic toric";
     double p = 0.1;
     Code code = Code(l, type, p, p);
 
@@ -1514,7 +1515,7 @@ TEST(sweepFullVertex, handlesMeasurementErrorsMinusXZ)
 TEST(sweepFullVertex, handlesQubitErrorsYZ)
 {
     int l = 4;
-    std::string type = "rhombic";
+    std::string type = "rhombic toric";
     double p = 0.1;
     Code code = Code(l, type, p, p);
 
@@ -1653,7 +1654,7 @@ TEST(sweepFullVertex, handlesQubitErrorsYZ)
 TEST(sweepFullVertex, handlesMeasurementErrorsYZ)
 {
     int l = 4;
-    std::string type = "rhombic";
+    std::string type = "rhombic toric";
     double p = 0.1;
     Code code = Code(l, type, p, p);
 
@@ -1746,7 +1747,7 @@ TEST(sweepFullVertex, handlesMeasurementErrorsYZ)
 TEST(sweepFullVertex, handlesQubitErrorsMinusYZ)
 {
     int l = 4;
-    std::string type = "rhombic";
+    std::string type = "rhombic toric";
     double p = 0.1;
     Code code = Code(l, type, p, p);
 
@@ -1885,7 +1886,7 @@ TEST(sweepFullVertex, handlesQubitErrorsMinusYZ)
 TEST(sweepFullVertex, handlesMeasurementErrorsMinusYZ)
 {
     int l = 4;
-    std::string type = "rhombic";
+    std::string type = "rhombic toric";
     double p = 0.1;
     Code code = Code(l, type, p, p);
 
@@ -1978,7 +1979,7 @@ TEST(sweepFullVertex, handlesMeasurementErrorsMinusYZ)
 TEST(sweepFullVertex, handlesQubitErrorsXYZ)
 {
     int l = 4;
-    std::string type = "rhombic";
+    std::string type = "rhombic toric";
     double p = 0.1;
     Code code = Code(l, type, p, p);
 
@@ -2116,7 +2117,7 @@ TEST(sweepFullVertex, handlesQubitErrorsXYZ)
 TEST(sweepFullVertex, handlesMeasurementErrorsYXZ)
 {
     int l = 4;
-    std::string type = "rhombic";
+    std::string type = "rhombic toric";
     double p = 0.1;
     Code code = Code(l, type, p, p);
 
@@ -2209,7 +2210,7 @@ TEST(sweepFullVertex, handlesMeasurementErrorsYXZ)
 TEST(sweepFullVertex, handlesQubitErrorsMinusXYZ)
 {
     int l = 4;
-    std::string type = "rhombic";
+    std::string type = "rhombic toric";
     double p = 0.1;
     Code code = Code(l, type, p, p);
 
@@ -2349,7 +2350,7 @@ TEST(sweepFullVertex, handlesQubitErrorsMinusXYZ)
 TEST(sweepFullVertex, handlesMeasurementErrorsMinusYXZ)
 {
     int l = 4;
-    std::string type = "rhombic";
+    std::string type = "rhombic toric";
     double p = 0.1;
     Code code = Code(l, type, p, p);
 
@@ -2442,7 +2443,7 @@ TEST(sweepFullVertex, handlesMeasurementErrorsMinusYXZ)
 TEST(sweepHalfVertex, handlesQubitErrorsMinusXY)
 {
     int l = 6;
-    std::string type = "rhombic";
+    std::string type = "rhombic toric";
     double p = 0.1;
     Code code = Code(l, type, p, p);
 
@@ -2561,7 +2562,7 @@ TEST(sweepHalfVertex, handlesQubitErrorsMinusXY)
 TEST(sweepHalfVertex, handlesQubitErrorsXZ)
 {
     int l = 6;
-    std::string type = "rhombic";
+    std::string type = "rhombic toric";
     double p = 0.1;
     Code code = Code(l, type, p, p);
 
@@ -2680,7 +2681,7 @@ TEST(sweepHalfVertex, handlesQubitErrorsXZ)
 TEST(sweepHalfVertex, handlesQubitErrorsMinusXZ)
 {
     int l = 6;
-    std::string type = "rhombic";
+    std::string type = "rhombic toric";
     double p = 0.1;
     Code code = Code(l, type, p, p);
 
@@ -2799,7 +2800,7 @@ TEST(sweepHalfVertex, handlesQubitErrorsMinusXZ)
 TEST(sweepHalfVertex, handlesQubitErrorsYZ)
 {
     int l = 6;
-    std::string type = "rhombic";
+    std::string type = "rhombic toric";
     double p = 0.1;
     Code code = Code(l, type, p, p);
 
@@ -2918,7 +2919,7 @@ TEST(sweepHalfVertex, handlesQubitErrorsYZ)
 TEST(sweepHalfVertex, handlesQubitErrorsMinusYZ)
 {
     int l = 6;
-    std::string type = "rhombic";
+    std::string type = "rhombic toric";
     double p = 0.1;
     Code code = Code(l, type, p, p);
 
@@ -3037,7 +3038,7 @@ TEST(sweepHalfVertex, handlesQubitErrorsMinusYZ)
 TEST(sweepHalfVertex, handlesQubitErrorsXYZ)
 {
     int l = 6;
-    std::string type = "rhombic";
+    std::string type = "rhombic toric";
     double p = 0.1;
     Code code = Code(l, type, p, p);
 
@@ -3156,7 +3157,7 @@ TEST(sweepHalfVertex, handlesQubitErrorsXYZ)
 TEST(sweepHalfVertex, handlesQubitErrorsMinusXYZ)
 {
     int l = 6;
-    std::string type = "rhombic";
+    std::string type = "rhombic toric";
     double p = 0.1;
     Code code = Code(l, type, p, p);
 
@@ -3275,7 +3276,7 @@ TEST(sweepHalfVertex, handlesQubitErrorsMinusXYZ)
 TEST(sweepHalfVertex, handlesMeasurementErrorsXZ)
 {
     int l = 6;
-    std::string type = "rhombic";
+    std::string type = "rhombic toric";
     double p = 0.1;
     Code code = Code(l, type, p, p);
 
@@ -3306,7 +3307,7 @@ TEST(sweepHalfVertex, handlesMeasurementErrorsXZ)
 TEST(sweepHalfVertex, handlesMeasurementErrorsYZ)
 {
     int l = 6;
-    std::string type = "rhombic";
+    std::string type = "rhombic toric";
     double p = 0.1;
     Code code = Code(l, type, p, p);
 
@@ -3337,7 +3338,7 @@ TEST(sweepHalfVertex, handlesMeasurementErrorsYZ)
 TEST(sweepHalfVertex, handlesMeasurementErrorsMinusXYZ)
 {
     int l = 6;
-    std::string type = "rhombic";
+    std::string type = "rhombic toric";
     double p = 0.1;
     Code code = Code(l, type, p, p);
 
@@ -3368,7 +3369,7 @@ TEST(sweepHalfVertex, handlesMeasurementErrorsMinusXYZ)
 TEST(sweepHalfVertex, handlesMeasurementErrorsMinusXY)
 {
     int l = 6;
-    std::string type = "rhombic";
+    std::string type = "rhombic toric";
     double p = 0.1;
     Code code = Code(l, type, p, p);
 
@@ -3399,7 +3400,7 @@ TEST(sweepHalfVertex, handlesMeasurementErrorsMinusXY)
 TEST(sweepHalfVertex, handlesMeasurementErrorsMinusXZ)
 {
     int l = 6;
-    std::string type = "rhombic";
+    std::string type = "rhombic toric";
     double p = 0.1;
     Code code = Code(l, type, p, p);
 
@@ -3430,7 +3431,7 @@ TEST(sweepHalfVertex, handlesMeasurementErrorsMinusXZ)
 TEST(sweepHalfVertex, handlesMeasurementErrorsMinusYZ)
 {
     int l = 6;
-    std::string type = "rhombic";
+    std::string type = "rhombic toric";
     double p = 0.1;
     Code code = Code(l, type, p, p);
 
@@ -3461,7 +3462,7 @@ TEST(sweepHalfVertex, handlesMeasurementErrorsMinusYZ)
 TEST(sweepHalfVertex, handlesMeasurementErrorsXYZ)
 {
     int l = 6;
-    std::string type = "rhombic";
+    std::string type = "rhombic toric";
     double p = 0.1;
     Code code = Code(l, type, p, p);
 
@@ -3492,7 +3493,7 @@ TEST(sweepHalfVertex, handlesMeasurementErrorsXYZ)
 TEST(sweep, handlesQubitErrorsXYZ)
 {
     int l = 4;
-    std::string type = "rhombic";
+    std::string type = "rhombic toric";
     double p = 0.1;
     Code code = Code(l, type, p, p);
 
@@ -3552,7 +3553,7 @@ TEST(sweep, handlesQubitErrorsXYZ)
 TEST(sweep, handlesQubitErrorsMinusXYZ)
 {
     int l = 4;
-    std::string type = "rhombic";
+    std::string type = "rhombic toric";
     double p = 0.1;
     Code code = Code(l, type, p, p);
 
@@ -3611,7 +3612,7 @@ TEST(sweep, handlesQubitErrorsMinusXYZ)
 TEST(sweep, handlesQubitErrorsXY)
 {
     int l = 4;
-    std::string type = "rhombic";
+    std::string type = "rhombic toric";
     double p = 0.1;
     Code code = Code(l, type, p, p);
 
@@ -3670,7 +3671,7 @@ TEST(sweep, handlesQubitErrorsXY)
 TEST(sweep, handlesQubitErrorsMinusXY)
 {
     int l = 4;
-    std::string type = "rhombic";
+    std::string type = "rhombic toric";
     double p = 0.1;
     Code code = Code(l, type, p, p);
 
@@ -3730,7 +3731,7 @@ TEST(sweep, handlesQubitErrorsMinusXY)
 TEST(sweep, handlesQubitErrorsXZ)
 {
     int l = 6;
-    std::string type = "rhombic";
+    std::string type = "rhombic toric";
     double p = 0.1;
     Code code = Code(l, type, p, p);
 
@@ -3789,7 +3790,7 @@ TEST(sweep, handlesQubitErrorsXZ)
 TEST(sweep, handlesQubitErrorsMinusXZ)
 {
     int l = 6;
-    std::string type = "rhombic";
+    std::string type = "rhombic toric";
     double p = 0.1;
     Code code = Code(l, type, p, p);
 
@@ -3843,7 +3844,7 @@ TEST(sweep, handlesQubitErrorsMinusXZ)
 TEST(sweep, handlesQubitErrorsYZ)
 {
     int l = 6;
-    std::string type = "rhombic";
+    std::string type = "rhombic toric";
     double p = 0.1;
     Code code = Code(l, type, p, p);
 
@@ -3899,7 +3900,7 @@ TEST(sweep, handlesQubitErrorsMinusYZ)
 {
     // Same as XZ test by symmetry
     int l = 6;
-    std::string type = "rhombic";
+    std::string type = "rhombic toric";
     double p = 0.1;
     Code code = Code(l, type, p, p);
 
@@ -3958,7 +3959,7 @@ TEST(sweep, handlesQubitErrorsMinusYZ)
 TEST(buildLogical, correctFunctionl4)
 {
     int l = 4;
-    std::string type = "rhombic";
+    std::string type = "rhombic toric";
     double p = 0.1;
     Code code = Code(l, type, p, p);
     auto logicals = code.getLogicals();
@@ -3973,7 +3974,7 @@ TEST(buildLogical, correctFunctionl4)
 TEST(checkCorrection, handlesStabilisers)
 {
     int l = 4;
-    std::string type = "rhombic";
+    std::string type = "rhombic toric";
     double p = 0.1;
     Code code = Code(l, type, p, p);
 
@@ -3987,7 +3988,7 @@ TEST(checkCorrection, handlesStabilisers)
 TEST(checkCorrection, handlesLogicalXOps)
 {
     int l = 4;
-    std::string type = "rhombic";
+    std::string type = "rhombic toric";
     double p = 0.1;
     Code code = Code(l, type, p, p);
 
@@ -4022,4 +4023,42 @@ TEST(checkCorrection, handlesLogicalXOps)
     code.setError(logicalX1);
     EXPECT_FALSE(code.checkCorrection());
     
+}
+
+TEST(buildSyndrome, syndromeCorrectSize)
+{
+    std::vector<int> lList = {4, 6, 8, 10};
+    double p = 0.1;
+    for (int l : lList)
+    {
+        Code code = Code(l, "rhombic boundaries", p, p);
+        auto syndromeIndices = code.getSyndromeIndices();
+        int expectedNumberOfEdges = 4 * (l - 2) * (l - 2) * (l - 1);
+        EXPECT_EQ(syndromeIndices.size(), expectedNumberOfEdges);
+    }
+}
+
+TEST(buildSyndrome, syndromeCorrectEdges)
+{
+    std::vector<int> lList = {4, 6, 8, 10};
+    double p = 0.1;
+    for (int l : lList)
+    {
+        Code code = Code(l, "rhombic boundaries", p, p);
+        auto &syndromeIndices = code.getSyndromeIndices();
+        std::vector<cartesian4> coordinateList = {{0, 2, 1, 0}, {1, 1, 1, 0}, {l - 1, 1, 1, 0}, {0, 1, l - 2, 0}, {2, 1, l - 2, 0}, {l - 1, 2, l - 2, 0}, {0, 2, l - 1}, {2, 2, l - 1}, {l - 1, 1, l - 1}};
+        std::vector<vstr> expectedEdgeDirections = {{"xyz", "xz"}, {"xyz", "xz", "yz", "xy"}, {"xy", "yz"}, {"xyz", "xz", "xy", "yz"}, {"xyz", "xz", "xy", "yz", "xyz", "xz", "xy", "yz"}, {"xyz", "xz", "xy", "yz"}, {"xy", "yz"}, {"xyz", "xz", "xy", "yz"}, {"xyz", "xz"}};
+        std::vector<vint> expectedEdgeSigns = {{1, 1}, {1, 1, 1, -1}, {-1, 1}, {1, 1, 1, -1}, {1, 1, 1, 1, -1, -1, -1, -1}, {-1, -1, -1, 1}, {1, -1}, {-1, -1, 1, -1}, {-1, -1}};
+        auto &lattice = code.getLattice();
+        for (int i = 0; i < coordinateList.size(); ++i)
+        {
+            // std::cout << coordinateList[i] << std::endl;
+            int vertexIndex = lattice.coordinateToIndex(coordinateList[i]); 
+            for (int j = 0; j < expectedEdgeDirections[i].size(); ++j)
+            {
+                auto it = syndromeIndices.find(lattice.edgeIndex(vertexIndex, expectedEdgeDirections[i][j], expectedEdgeSigns[i][j]));
+                EXPECT_FALSE(it == syndromeIndices.end());   
+            }
+        }
+    }
 }

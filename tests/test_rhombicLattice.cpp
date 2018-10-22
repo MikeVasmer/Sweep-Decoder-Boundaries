@@ -183,7 +183,7 @@ TEST(createFaces, correctFacesL4)
     {
         EXPECT_EQ(faceToVertices[i], expectedVertices[i]);
     }
-    vvint expectedEdges = {{112, 114, 448, 562}, {126, 128, 462, 576}, {147, 153, 567, 601}, {151, 254, 562, 564}, {130, 153, 459, 461}, {151, 174, 480, 482}, {165, 188, 494, 496}, {165, 268, 576, 578}, {168, 170, 504, 618}, {168, 174, 588, 622}, {182, 188, 602, 636}}; // Next faceIndex = 11
+    vvint expectedEdges = {{112, 114, 448, 562}, {126, 128, 462, 576}, {147, 153, 567, 601}, {151, 254, 562, 564}, {130, 153, 459, 461}, {151, 174, 480, 482}, {165, 188, 494, 496}, {165, 268, 576, 578}, {168, 170, 504, 618}, {168, 174, 588, 622}, {182, 188, 602, 636}, {186, 289, 597, 599}, {182, 184, 518, 632}, {147, 149, 483, 597}, {186, 209, 515, 517}, {231, 233, 567, 681}, {231, 235, 672, 683}, {153, 233, 562, 566}}; // Next faceIndex = 18
     for (int i = 0; i < expectedEdges.size(); ++i)
     {
         EXPECT_EQ(faceToEdges[i], expectedEdges[i]);
@@ -250,5 +250,126 @@ TEST(createUpEdgesMap, correctNumberOfUpEdgesAllVertexTypes)
             EXPECT_EQ(vertexToUpEdges[testVertices[i]].size(), expectedUpEdgeNumbers[i][j]);
         }
         ++j;
+    }
+}
+
+TEST(createVertexToEdges, correctNumberOfEdges)
+{
+    int l = 6;
+    RhombicLattice lattice = RhombicLattice(l);
+    lattice.createVertexToEdges();
+    vvint vertexToEdges = lattice.getVertexToEdges();
+    for (int vertexIndex = 0; vertexIndex < 2 * l * l * l; ++vertexIndex)
+    {
+        cartesian4 coordinate = lattice.indexToCoordinate(vertexIndex);
+        if (coordinate.w == 0)
+        {
+            if ((coordinate.x + coordinate.y + coordinate.z) % 2 == 1)
+            {
+                if (coordinate.x == 0 && coordinate.y == 0 && coordinate.z == 0)
+                {
+                    EXPECT_EQ(vertexToEdges[vertexIndex].size(), 1);
+                }
+                else if (coordinate.x != 0 && coordinate.y == 0 && coordinate.z == 0)
+                {
+                    EXPECT_EQ(vertexToEdges[vertexIndex].size(), 2);
+                }
+                else if (coordinate.x == 0 && coordinate.y != 0 && coordinate.z == 0)
+                {
+                    EXPECT_EQ(vertexToEdges[vertexIndex].size(), 2);
+                }
+                else if (coordinate.x == 0 && coordinate.y == 0 && coordinate.z != 0)
+                {
+                    EXPECT_EQ(vertexToEdges[vertexIndex].size(), 2);
+                }
+                else if (coordinate.x == 0 && coordinate.y != 0 && coordinate.z != 0)
+                {
+                    EXPECT_EQ(vertexToEdges[vertexIndex].size(), 4);
+                }
+                else if (coordinate.x != 0 && coordinate.y == 0 && coordinate.z != 0)
+                {
+                    EXPECT_EQ(vertexToEdges[vertexIndex].size(), 4);
+                }
+                else if (coordinate.x != 0 && coordinate.y != 0 && coordinate.z == 0)
+                {
+                    EXPECT_EQ(vertexToEdges[vertexIndex].size(), 4);
+                }
+                else
+                {
+                    EXPECT_EQ(vertexToEdges[vertexIndex].size(), 8);
+                }
+            }
+        }
+        else
+        {
+           if ((coordinate.x + coordinate.y + coordinate.z) % 2 == 1)
+           {
+               if (coordinate.x == l - 1 && coordinate.y == l - 1 && coordinate.z == l - 1)
+                {
+                    EXPECT_EQ(vertexToEdges[vertexIndex].size(), 1);
+                }
+                else if (coordinate.x != l - 1 && coordinate.y == l - 1 && coordinate.z == l - 1)
+                {
+                    EXPECT_EQ(vertexToEdges[vertexIndex].size(), 1);
+                }
+                else if (coordinate.x == l - 1 && coordinate.y != l - 1 && coordinate.z == l - 1)
+                {
+                    EXPECT_EQ(vertexToEdges[vertexIndex].size(), 1);
+                }
+                else if (coordinate.x == l - 1 && coordinate.y == l - 1 && coordinate.z != l - 1)
+                {
+                    EXPECT_EQ(vertexToEdges[vertexIndex].size(), 1);
+                }
+                else if (coordinate.x == l - 1 && coordinate.y != l - 1 && coordinate.z != l - 1)
+                {
+                    EXPECT_EQ(vertexToEdges[vertexIndex].size(), 2);
+                }
+                else if (coordinate.x != l - 1 && coordinate.y == l - 1 && coordinate.z != l - 1)
+                {
+                    EXPECT_EQ(vertexToEdges[vertexIndex].size(), 2);
+                }
+                else if (coordinate.x != l - 1 && coordinate.y != l - 1 && coordinate.z == l - 1)
+                {
+                    EXPECT_EQ(vertexToEdges[vertexIndex].size(), 2);
+                }
+                else
+                {
+                    EXPECT_EQ(vertexToEdges[vertexIndex].size(), 4);
+                }
+           }
+           else
+           {
+               // l - 1 cubed is an odd coordinate
+                if (coordinate.x != l - 1 && coordinate.y == l - 1 && coordinate.z == l - 1)
+                {
+                    EXPECT_EQ(vertexToEdges[vertexIndex].size(), 1);
+                }
+                else if (coordinate.x == l - 1 && coordinate.y != l - 1 && coordinate.z == l - 1)
+                {
+                    EXPECT_EQ(vertexToEdges[vertexIndex].size(), 1);
+                }
+                else if (coordinate.x == l - 1 && coordinate.y == l - 1 && coordinate.z != l - 1)
+                {
+                    EXPECT_EQ(vertexToEdges[vertexIndex].size(), 1);
+                }
+                else if (coordinate.x == l - 1 && coordinate.y != l - 1 && coordinate.z != l - 1)
+                {
+                    EXPECT_EQ(vertexToEdges[vertexIndex].size(), 2);
+                }
+                else if (coordinate.x != l - 1 && coordinate.y == l - 1 && coordinate.z != l - 1)
+                {
+                    EXPECT_EQ(vertexToEdges[vertexIndex].size(), 2);
+                }
+                else if (coordinate.x != l - 1 && coordinate.y != l - 1 && coordinate.z == l - 1)
+                {
+                    EXPECT_EQ(vertexToEdges[vertexIndex].size(), 2);
+                }
+                else
+                {
+                    EXPECT_EQ(vertexToEdges[vertexIndex].size(), 4);
+                }
+
+           }
+        }
     }
 }
