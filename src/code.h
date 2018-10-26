@@ -1,10 +1,10 @@
 #ifndef CODE_H
 #define CODE_H
 
-#include "rhombicToricLattice.h"
-#include "rhombicLattice.h"
+#include "lattice.h"
 #include <string>
 #include <set>
+#include <memory>
 // #include "gtest/gtest_prod.h"
 
 class Code
@@ -15,7 +15,8 @@ class Code
     vint syndrome;
     vint flipBits;
     std::set<int> syndromeIndices;
-    RhombicToricLattice lattice;
+    std::unique_ptr<Lattice> lattice;
+    // RhombicToricLattice lattice;
     int numberOfFaces;
     int numberOfEdges;
     int latticeParity;
@@ -40,7 +41,7 @@ class Code
     vstr findSweepEdges(const int vertexIndex, const std::string &direction);
     vint faceVertices(const int vertexIndex, vstr directions);
     void buildLogicals();
-    void buildSyndrome();
+    void buildSyndromeIndices();
     bool checkCorrection();
     void setError(const std::set<int> &error); // for testing
     void clearSyndrome();
@@ -50,7 +51,7 @@ class Code
     // Getter methods
     vint& getFlipBits();
     vint& getSyndrome();
-    RhombicToricLattice& getLattice();
+    Lattice& getLattice();
     std::set<int>& getError();
     vvint getLogicals();
     std::set<int>& getSyndromeIndices();

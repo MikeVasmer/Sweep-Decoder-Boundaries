@@ -17,7 +17,7 @@ endif()
 # Turn on with 'cmake -Dprofile=ON'
 option(profile "Profile using grpof")
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 
 set(SOURCE_FILES main.cpp)
 add_executable(RhombicSweep ${SOURCE_FILES})

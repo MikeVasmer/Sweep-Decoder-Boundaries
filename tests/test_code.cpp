@@ -4025,7 +4025,7 @@ TEST(checkCorrection, handlesLogicalXOps)
     
 }
 
-TEST(buildSyndrome, syndromeCorrectSize)
+TEST(buildSyndromeIndices, syndromeCorrectSize)
 {
     std::vector<int> lList = {4, 6, 8, 10};
     double p = 0.1;
@@ -4038,7 +4038,7 @@ TEST(buildSyndrome, syndromeCorrectSize)
     }
 }
 
-TEST(buildSyndrome, syndromeCorrectEdges)
+TEST(buildSyndromeIndices, syndromeCorrectEdges)
 {
     std::vector<int> lList = {4, 6, 8, 10};
     double p = 0.1;
@@ -4062,3 +4062,8 @@ TEST(buildSyndrome, syndromeCorrectEdges)
         }
     }
 }
+
+// TEST(buildLogical, correctCodesWithBoundaries)
+// {
+    
+// }

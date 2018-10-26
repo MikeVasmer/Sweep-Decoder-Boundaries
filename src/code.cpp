@@ -1,5 +1,6 @@
 #include "code.h"
 #include "rhombicToricLattice.h"
+#include "rhombicLattice.h"
 #include <string>
 #include "pcg_random.hpp"
 #include <random>
@@ -24,8 +25,7 @@ std::uniform_int_distribution<int> distInt0To1(0, 1);
 Code::Code(const int ll, const std::string &lType, const double dataP, const double measP) : l(ll),
                                                                                              p(dataP),
                                                                                              q(measP),
-                                                                                             latticeType(lType),
-                                                                                             lattice(ll)
+                                                                                             latticeType(lType)
 {
     if (dataP < 0 || dataP > 1)
     {
@@ -39,20 +39,22 @@ Code::Code(const int ll, const std::string &lType, const double dataP, const dou
     {
         numberOfFaces = (3 * l * l * l);
         latticeParity = 0;
+        lattice = std::make_unique<RhombicToricLattice>(l);
     }
     else if (lType == "rhombic boundaries")
     {
         numberOfFaces = 3 * pow(l - 1, 3) - 4 * pow(l - 1, 2) + 2 * (l - 1);
         latticeParity = 1;
-        buildSyndrome();
+        lattice = std::make_unique<RhombicLattice>(l);
+        buildSyndromeIndices();
     }
     numberOfEdges = 2 * 7 * l * l * l;
     syndrome.assign(numberOfEdges, 0);
     flipBits.assign(numberOfFaces, 0);
-    lattice.createFaces();
-    lattice.createUpEdgesMap();
-    lattice.createVertexToEdges();
-    upEdgesMap = lattice.getUpEdgesMap();
+    lattice->createFaces();
+    lattice->createUpEdgesMap();
+    lattice->createVertexToEdges();
+    upEdgesMap = lattice->getUpEdgesMap();
     buildLogicals();
 }
 
@@ -80,7 +82,7 @@ void Code::generateDataError()
 void Code::calculateSyndrome()
 {
     clearSyndrome();
-    vvint faceToEdges = lattice.getFaceToEdges();
+    vvint faceToEdges = lattice->getFaceToEdges();
     for (const int errorIndex : error)
     {
         vint edges = faceToEdges[errorIndex];
@@ -99,11 +101,11 @@ void Code::calculateSyndrome()
     }
 }
 
-void Code::buildSyndrome()
+void Code::buildSyndromeIndices()
 {
     for (int i = 0; i < l * l * l; ++i)
     {
-        const cartesian4 coordinate = lattice.indexToCoordinate(i);
+        const cartesian4 coordinate = lattice->indexToCoordinate(i);
         if (coordinate.z == 0 || coordinate.y == 0 || coordinate.y == l - 1)
         {
             continue;
@@ -116,43 +118,43 @@ void Code::buildSyndrome()
                 {
                     if (coordinate.x != 0)
                     {
-                        syndromeIndices.insert(lattice.edgeIndex(i, "yz", 1));
-                        syndromeIndices.insert(lattice.edgeIndex(i, "xy", -1));   
+                        syndromeIndices.insert(lattice->edgeIndex(i, "yz", 1));
+                        syndromeIndices.insert(lattice->edgeIndex(i, "xy", -1));   
                     }
                     if (coordinate.x != l - 1)
                     {
-                        syndromeIndices.insert(lattice.edgeIndex(i, "xyz", 1));
-                        syndromeIndices.insert(lattice.edgeIndex(i, "xz", 1));
+                        syndromeIndices.insert(lattice->edgeIndex(i, "xyz", 1));
+                        syndromeIndices.insert(lattice->edgeIndex(i, "xz", 1));
                     }
                 }
                 else if (coordinate.z == l - 1)
                 {
                     if (coordinate.x != 0)
                     {
-                        syndromeIndices.insert(lattice.edgeIndex(i, "xyz", -1));
-                        syndromeIndices.insert(lattice.edgeIndex(i, "xz", -1));   
+                        syndromeIndices.insert(lattice->edgeIndex(i, "xyz", -1));
+                        syndromeIndices.insert(lattice->edgeIndex(i, "xz", -1));   
                     }
                     if (coordinate.x != l - 1)
                     {
-                        syndromeIndices.insert(lattice.edgeIndex(i, "yz", -1));
-                        syndromeIndices.insert(lattice.edgeIndex(i, "xy", 1));   
+                        syndromeIndices.insert(lattice->edgeIndex(i, "yz", -1));
+                        syndromeIndices.insert(lattice->edgeIndex(i, "xy", 1));   
                     }
                 }
                 else
                 {
                     if (coordinate.x != 0)
                     {
-                        syndromeIndices.insert(lattice.edgeIndex(i, "xyz", -1));
-                        syndromeIndices.insert(lattice.edgeIndex(i, "xy", -1));
-                        syndromeIndices.insert(lattice.edgeIndex(i, "xz", -1));
-                        syndromeIndices.insert(lattice.edgeIndex(i, "yz", 1));
+                        syndromeIndices.insert(lattice->edgeIndex(i, "xyz", -1));
+                        syndromeIndices.insert(lattice->edgeIndex(i, "xy", -1));
+                        syndromeIndices.insert(lattice->edgeIndex(i, "xz", -1));
+                        syndromeIndices.insert(lattice->edgeIndex(i, "yz", 1));
                     }
                     if (coordinate.x != l - 1)
                     {
-                        syndromeIndices.insert(lattice.edgeIndex(i, "xyz", 1));
-                        syndromeIndices.insert(lattice.edgeIndex(i, "xy", 1));
-                        syndromeIndices.insert(lattice.edgeIndex(i, "xz", 1));
-                        syndromeIndices.insert(lattice.edgeIndex(i, "yz", -1));
+                        syndromeIndices.insert(lattice->edgeIndex(i, "xyz", 1));
+                        syndromeIndices.insert(lattice->edgeIndex(i, "xy", 1));
+                        syndromeIndices.insert(lattice->edgeIndex(i, "xz", 1));
+                        syndromeIndices.insert(lattice->edgeIndex(i, "yz", -1));
                         
                     }
                 }
@@ -180,9 +182,9 @@ vint &Code::getSyndrome()
     return syndrome;
 }
 
-RhombicToricLattice &Code::getLattice()
+Lattice &Code::getLattice()
 {
-    return lattice;
+    return *lattice;
 }
 
 std::set<int> &Code::getError()
@@ -212,9 +214,9 @@ void Code::generateMeasError()
 
 bool Code::checkExtremalVertex(const int vertexIndex, const std::string &direction)
 {
-    auto upEdgesMap = lattice.getUpEdgesMap();
+    auto upEdgesMap = lattice->getUpEdgesMap();
     vint upEdges = upEdgesMap[direction][vertexIndex];
-    vvint vertexToEdges = lattice.getVertexToEdges();
+    vvint vertexToEdges = lattice->getVertexToEdges();
     vint edges = vertexToEdges[vertexIndex];
     bool edgeInSyndrome = false;
     for (const int edgeIndex : edges)
@@ -291,7 +293,7 @@ void Code::sweep(const std::string &direction, bool greedy)
         {
             continue;
         }
-        cartesian4 coordinate = lattice.indexToCoordinate(vertexIndex);
+        cartesian4 coordinate = lattice->indexToCoordinate(vertexIndex);
         if (coordinate.w == 0)
         {
             if ((coordinate.x + coordinate.y + coordinate.z) % 2 == latticeParity)
@@ -300,7 +302,7 @@ void Code::sweep(const std::string &direction, bool greedy)
             }
             else
             {
-                throw std::invalid_argument("Odd w=0 vertex (ie not present in rhombic lattice) has up-edges.");
+                throw std::invalid_argument("Vertex not present in lattice has up-edges.");
             }
         }
         else
@@ -327,7 +329,7 @@ void Code::sweep(const std::string &direction, bool greedy)
 
 void Code::localFlip(vint &vertices)
 {
-    int faceIndex = lattice.findFace(vertices);
+    int faceIndex = lattice->findFace(vertices);
     flipBits[faceIndex] = (flipBits[faceIndex] + 1) % 2;
 }
 
@@ -339,35 +341,35 @@ vstr Code::findSweepEdges(const int vertexIndex, const std::string &direction)
     {
         if (syndrome[edge] == 1)
         {
-            if (lattice.edgeIndex(vertexIndex, "xyz", 1) == edge)
+            if (lattice->edgeIndex(vertexIndex, "xyz", 1) == edge)
             {
                 sweepEdges.push_back("xyz");
             }
-            else if (lattice.edgeIndex(vertexIndex, "xyz", -1) == edge)
+            else if (lattice->edgeIndex(vertexIndex, "xyz", -1) == edge)
             {
                 sweepEdges.push_back("-xyz");
             }
-            else if (lattice.edgeIndex(vertexIndex, "xy", 1) == edge)
+            else if (lattice->edgeIndex(vertexIndex, "xy", 1) == edge)
             {
                 sweepEdges.push_back("xy");
             }
-            else if (lattice.edgeIndex(vertexIndex, "xy", -1) == edge)
+            else if (lattice->edgeIndex(vertexIndex, "xy", -1) == edge)
             {
                 sweepEdges.push_back("-xy");
             }
-            else if (lattice.edgeIndex(vertexIndex, "yz", 1) == edge)
+            else if (lattice->edgeIndex(vertexIndex, "yz", 1) == edge)
             {
                 sweepEdges.push_back("yz");
             }
-            else if (lattice.edgeIndex(vertexIndex, "yz", -1) == edge)
+            else if (lattice->edgeIndex(vertexIndex, "yz", -1) == edge)
             {
                 sweepEdges.push_back("-yz");
             }
-            else if (lattice.edgeIndex(vertexIndex, "xz", 1) == edge)
+            else if (lattice->edgeIndex(vertexIndex, "xz", 1) == edge)
             {
                 sweepEdges.push_back("xz");
             }
-            else if (lattice.edgeIndex(vertexIndex, "xz", -1) == edge)
+            else if (lattice->edgeIndex(vertexIndex, "xz", -1) == edge)
             {
                 sweepEdges.push_back("-xz");
             }
@@ -404,10 +406,10 @@ vint Code::faceVertices(const int vertexIndex, vstr directions)
     {
         throw std::invalid_argument("Second and third directions (& signs) must be the same otherwise the vertices do not form a face.");
     }
-    int neighbourVertex = lattice.neighbour(vertexIndex, directions[0], signs[0]);
+    int neighbourVertex = lattice->neighbour(vertexIndex, directions[0], signs[0]);
     vint vertices = {vertexIndex, neighbourVertex,
-                     lattice.neighbour(vertexIndex, directions[1], signs[1]),
-                     lattice.neighbour(neighbourVertex, directions[2], signs[2])};
+                     lattice->neighbour(vertexIndex, directions[1], signs[1]),
+                     lattice->neighbour(neighbourVertex, directions[2], signs[2])};
     std::sort(vertices.begin(), vertices.end());
     return vertices;
 }
@@ -422,7 +424,7 @@ void Code::sweepFullVertex(const int vertexIndex, vstr &sweepEdges, const std::s
     std::string edge0 = upEdgeDirections[0];
     std::string edge1 = upEdgeDirections[1];
     std::string edge2 = upEdgeDirections[2];
-    cartesian4 coordinate = lattice.indexToCoordinate(vertexIndex);
+    cartesian4 coordinate = lattice->indexToCoordinate(vertexIndex);
     auto sweepDirectionIndex = std::distance(sweepEdges.begin(), std::find(sweepEdges.begin(), sweepEdges.end(), sweepDirection));
     if (sweepEdges.size() == 4)
     {
@@ -548,68 +550,103 @@ void Code::clearFlipBits()
 
 void Code::buildLogicals()
 {
-    for (int i = 0; i < l; i += 2)
+    if (latticeType == "rhombic toric")
     {
-        int vertexIndex = lattice.coordinateToIndex({i, 0, 0, 0});
-        int neighbourVertex = lattice.neighbour(vertexIndex, "xz", -1);
-        vint faceVertices = {vertexIndex,
-                             neighbourVertex,
-                             lattice.neighbour(vertexIndex, "xyz", -1),
-                             lattice.neighbour(neighbourVertex, "xyz", -1)};
-        std::sort(faceVertices.begin(), faceVertices.end());
-        logicalZ1.push_back(lattice.findFace(faceVertices));
-        neighbourVertex = lattice.neighbour(vertexIndex, "xy", 1);
-        faceVertices = {vertexIndex,
-                        neighbourVertex,
-                        lattice.neighbour(vertexIndex, "yz", -1),
-                        lattice.neighbour(neighbourVertex, "yz", -1)};
-        std::sort(faceVertices.begin(), faceVertices.end());
-        logicalZ1.push_back(lattice.findFace(faceVertices));
+        for (int i = 0; i < l; i += 2)
+        {
+            int vertexIndex = lattice->coordinateToIndex({i, 0, 0, 0});
+            int neighbourVertex = lattice->neighbour(vertexIndex, "xz", -1);
+            vint faceVertices = {vertexIndex,
+                                neighbourVertex,
+                                lattice->neighbour(vertexIndex, "xyz", -1),
+                                lattice->neighbour(neighbourVertex, "xyz", -1)};
+            std::sort(faceVertices.begin(), faceVertices.end());
+            logicalZ1.push_back(lattice->findFace(faceVertices));
+            neighbourVertex = lattice->neighbour(vertexIndex, "xy", 1);
+            faceVertices = {vertexIndex,
+                            neighbourVertex,
+                            lattice->neighbour(vertexIndex, "yz", -1),
+                            lattice->neighbour(neighbourVertex, "yz", -1)};
+            std::sort(faceVertices.begin(), faceVertices.end());
+            logicalZ1.push_back(lattice->findFace(faceVertices));
+        }
+        for (int i = 0; i < l; i += 2)
+        {
+            int vertexIndex = lattice->coordinateToIndex({0, i, 0, 0});
+            int neighbourVertex = lattice->neighbour(vertexIndex, "yz", -1);
+            vint faceVertices = {vertexIndex,
+                                neighbourVertex,
+                                lattice->neighbour(vertexIndex, "xyz", -1),
+                                lattice->neighbour(neighbourVertex, "xyz", -1)};
+            std::sort(faceVertices.begin(), faceVertices.end());
+            logicalZ2.push_back(lattice->findFace(faceVertices));
+            neighbourVertex = lattice->neighbour(vertexIndex, "xy", 1);
+            faceVertices = {vertexIndex,
+                            neighbourVertex,
+                            lattice->neighbour(vertexIndex, "xz", -1),
+                            lattice->neighbour(neighbourVertex, "xz", -1)};
+            std::sort(faceVertices.begin(), faceVertices.end());
+            logicalZ2.push_back(lattice->findFace(faceVertices));
+        }
+        for (int i = 0; i < l; i += 2)
+        {
+            int vertexIndex = lattice->coordinateToIndex({0, 0, i, 0});
+            int neighbourVertex = lattice->neighbour(vertexIndex, "xz", -1);
+            vint faceVertices = {vertexIndex,
+                                neighbourVertex,
+                                lattice->neighbour(vertexIndex, "xyz", -1),
+                                lattice->neighbour(neighbourVertex, "xyz", -1)};
+            std::sort(faceVertices.begin(), faceVertices.end());
+            logicalZ3.push_back(lattice->findFace(faceVertices));
+            neighbourVertex = lattice->neighbour(vertexIndex, "yz", 1);
+            faceVertices = {vertexIndex,
+                            neighbourVertex,
+                            lattice->neighbour(vertexIndex, "xy", -1),
+                            lattice->neighbour(neighbourVertex, "xy", -1)};
+            std::sort(faceVertices.begin(), faceVertices.end());
+            logicalZ3.push_back(lattice->findFace(faceVertices));
+        }
     }
-    for (int i = 0; i < l; i += 2)
+    else if (latticeType == "rhombic boundaries")
     {
-        int vertexIndex = lattice.coordinateToIndex({0, i, 0, 0});
-        int neighbourVertex = lattice.neighbour(vertexIndex, "yz", -1);
-        vint faceVertices = {vertexIndex,
-                             neighbourVertex,
-                             lattice.neighbour(vertexIndex, "xyz", -1),
-                             lattice.neighbour(neighbourVertex, "xyz", -1)};
-        std::sort(faceVertices.begin(), faceVertices.end());
-        logicalZ2.push_back(lattice.findFace(faceVertices));
-        neighbourVertex = lattice.neighbour(vertexIndex, "xy", 1);
-        faceVertices = {vertexIndex,
-                        neighbourVertex,
-                        lattice.neighbour(vertexIndex, "xz", -1),
-                        lattice.neighbour(neighbourVertex, "xz", -1)};
-        std::sort(faceVertices.begin(), faceVertices.end());
-        logicalZ2.push_back(lattice.findFace(faceVertices));
-    }
-    for (int i = 0; i < l; i += 2)
-    {
-        int vertexIndex = lattice.coordinateToIndex({0, 0, i, 0});
-        int neighbourVertex = lattice.neighbour(vertexIndex, "xz", -1);
-        vint faceVertices = {vertexIndex,
-                             neighbourVertex,
-                             lattice.neighbour(vertexIndex, "xyz", -1),
-                             lattice.neighbour(neighbourVertex, "xyz", -1)};
-        std::sort(faceVertices.begin(), faceVertices.end());
-        logicalZ3.push_back(lattice.findFace(faceVertices));
-        neighbourVertex = lattice.neighbour(vertexIndex, "yz", 1);
-        faceVertices = {vertexIndex,
-                        neighbourVertex,
-                        lattice.neighbour(vertexIndex, "xy", -1),
-                        lattice.neighbour(neighbourVertex, "xy", -1)};
-        std::sort(faceVertices.begin(), faceVertices.end());
-        logicalZ3.push_back(lattice.findFace(faceVertices));
+        for (int i = 0; i < l; i +=2)
+        {
+            cartesian4 coordinate = {i, 0, 1, 0};
+            int vertexIndex = lattice->coordinateToIndex(coordinate);
+            int neighbourVertex = lattice->neighbour(vertexIndex, "xyz", 1);
+            vint faceVertices = {vertexIndex,
+                                neighbourVertex,
+                                lattice->neighbour(vertexIndex, "xy", 1),
+                                lattice->neighbour(neighbourVertex, "xy", 1)};
+            std::sort(faceVertices.begin(), faceVertices.end());
+            logicalZ1.push_back(lattice->findFace(faceVertices));
+            if (i != 0)
+            {
+                neighbourVertex = lattice->neighbour(vertexIndex, "yz", 1);
+                faceVertices = {vertexIndex,
+                                    neighbourVertex,
+                                    lattice->neighbour(vertexIndex, "xz", -1),
+                                    lattice->neighbour(neighbourVertex, "xz", -1)};
+                std::sort(faceVertices.begin(), faceVertices.end());
+                logicalZ1.push_back(lattice->findFace(faceVertices));
+            }
+        }
     }
 }
 
 vvint Code::getLogicals()
 {
     vvint logicals;
-    logicals.push_back(logicalZ1);
-    logicals.push_back(logicalZ2);
-    logicals.push_back(logicalZ3);
+    if (latticeType == "rhombic toric")
+    {
+        logicals.push_back(logicalZ1);
+        logicals.push_back(logicalZ2);
+        logicals.push_back(logicalZ3);
+    }
+    else
+    {
+        logicals.push_back(logicalZ1);
+    }
     return logicals;
 }
 
@@ -628,29 +665,32 @@ bool Code::checkCorrection()
     {
         return false;
     }
-    for (int faceIndex : logicalZ2)
+    if (latticeType == "rhombic toric")
     {
-        if (error.find(faceIndex) != error.end())
+        for (int faceIndex : logicalZ2)
         {
-            parityZ2 = (parityZ2 + 1) % 2;
-            // std::cout << faceIndex << std::endl;
+            if (error.find(faceIndex) != error.end())
+            {
+                parityZ2 = (parityZ2 + 1) % 2;
+                // std::cout << faceIndex << std::endl;
+            }
         }
-    }
-    if (parityZ2 % 2 == 1)
-    {
-        return false;
-    }
-    for (int faceIndex : logicalZ3)
-    {
-        if (error.find(faceIndex) != error.end())
+        if (parityZ2 % 2 == 1)
         {
-            parityZ3 = (parityZ3 + 1) % 2;
-            // std::cout << faceIndex << std::endl;
+            return false;
         }
-    }
-    if (parityZ3 % 2 == 1)
-    {
-        return false;
+        for (int faceIndex : logicalZ3)
+        {
+            if (error.find(faceIndex) != error.end())
+            {
+                parityZ3 = (parityZ3 + 1) % 2;
+                // std::cout << faceIndex << std::endl;
+            }
+        }
+        if (parityZ3 % 2 == 1)
+        {
+            return false;
+        }
     }
     return true;
 }

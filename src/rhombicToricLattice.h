@@ -12,6 +12,7 @@ class RhombicToricLattice : public Lattice
 
   public:
     RhombicToricLattice(const int l);
+    RhombicToricLattice();
     int neighbour(const int vertexIndex, const std::string &direction, const int sign);
     void createFaces();
     void createVertexToEdges();

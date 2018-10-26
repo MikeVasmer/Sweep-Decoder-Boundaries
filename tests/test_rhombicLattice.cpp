@@ -198,8 +198,8 @@ TEST(createFaces, correctNumberOfFacesInVertexToFacesL4)
     auto &vertexToFaces = lattice.getVertexToFaces();
 
     // Order is ascending y, then x, then z
-    vint vertexList = {16, 24, 21, 29, 18, 26, 23, 31, 36, 44, 33, 41, 38, 46, 35, 43, 48, 56, 53, 61, 50, 58, 55, 63};
-    vint faceNumberList = {1, 3, 8, 3, 3, 8, 3, 1, 4, 1, 4, 12, 12, 4, 1, 4, 1, 3, 8, 3, 3, 8, 3, 1};
+    vint vertexList = {0, 16, 24, 21, 29, 18, 26, 23, 31, 36, 44, 33, 41, 38, 46, 35, 43, 48, 56, 53, 61, 50, 58, 55, 63};
+    vint faceNumberList = {0, 1, 3, 8, 3, 3, 8, 3, 1, 4, 1, 4, 12, 12, 4, 1, 4, 1, 3, 8, 3, 3, 8, 3, 1};
 
     for (int i = 0; i < vertexList.size(); ++i)
     {

@@ -54,6 +54,7 @@ protected:
   std::map<std::string, vvint> upEdgesMap;
   vvint vertexToEdges;
   Lattice(const int l);
+  Lattice();
   void addFace(const int vertexIndex, const int faceIndex, const vstr &directions, const vint &signs);
 
 public:
