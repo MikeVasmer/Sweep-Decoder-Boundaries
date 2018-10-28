@@ -16,6 +16,7 @@ class Code
     vint flipBits;
     std::set<int> syndromeIndices;
     std::unique_ptr<Lattice> lattice;
+    std::vector<int> sweepIndices;
     // RhombicToricLattice lattice;
     int numberOfFaces;
     int numberOfEdges;
@@ -37,13 +38,15 @@ class Code
     void localFlip(vint &vertices);
     void sweepFullVertex(const int vertexIndex, vstr &sweepEdges, const std::string &sweepDirection, const vstr &edges);
     void sweepHalfVertex(const int vertexIndex, vstr &sweepEdges, const std::string &sweepDirection, const vstr &edges);
+    void sweepHalfVertexBoundary(const int vertexIndex, vstr &sweepEdges, const std::string &sweepDirection, const vstr &edges);
     void sweep(const std::string &direction, bool greedy);
     vstr findSweepEdges(const int vertexIndex, const std::string &direction);
     vint faceVertices(const int vertexIndex, vstr directions);
     void buildLogicals();
     void buildSyndromeIndices();
+    void buildSweepIndices();
     bool checkCorrection();
-    void setError(const std::set<int> &error); // for testing
+    void setError(const std::set<int> &error);
     void clearSyndrome();
     void clearFlipBits();
     void setSyndrome(vint syndrome);
@@ -55,6 +58,7 @@ class Code
     std::set<int>& getError();
     vvint getLogicals();
     std::set<int>& getSyndromeIndices();
+    vint& getSweepIndices();
 };
 
 #endif

@@ -150,8 +150,9 @@ TEST(createFaces, correctNumberOfFacesCreated)
             int i = 0;
             for (auto vs : faceToVertices)
             {
-                // if (!(vs[0] == 63 || vs[1] == 63))
+                // if (!(vs[0] == 21 || vs[1] == 21))
                 // {
+                //     ++i;
                 //     continue;
                 // }
                 std::cout << "Face Index = " << i << std::endl;

@@ -5,6 +5,7 @@
 #include <cmath>
 #include <algorithm>
 #include <map>
+#include <sstream>
 
 RhombicLattice::RhombicLattice(const int length) : Lattice(length)
 {
@@ -96,7 +97,20 @@ int RhombicLattice::neighbour(const int vertexIndex, const std::string &directio
     }
     if (coordinate.x < 0 || coordinate.x >= l || coordinate.y < 0 || coordinate.y >= l || coordinate.z < 0 || coordinate.z >= l)
     {
-        throw std::invalid_argument("Vertex is outside the lattice!");
+        std::ostringstream stream;
+        cartesian4 errorCoord = indexToCoordinate(vertexIndex);
+        std::string errorDir;
+        if (sign == 1)
+        {
+            errorDir = "+" + direction;
+        }
+        else if (sign == -1)
+        {
+            errorDir = "-" + direction;
+        }
+        stream << "Neighbour of vertex " << errorCoord << " in " << errorDir << " direction is outside the lattice!";
+        std::string errorMessage = stream.str();
+        throw std::invalid_argument(errorMessage);
     }
     else
     {

@@ -3,12 +3,13 @@
 #include "code.h"
 #include "decoder.h"
 #include <chrono>
+#include <string>
 
 int main(int argc, char *argv[])
 {
-    if (argc < 5)
+    if (argc < 6)
     {
-        std::cout << "Less than five arguments" << std::endl;
+        std::cout << "Less than six arguments" << std::endl;
         for (int i = 0; i < argc; ++i)
         {
             std::cout << "Argument " << i << " = " << argv[i] << std::endl;
@@ -21,6 +22,9 @@ int main(int argc, char *argv[])
     double q = std::atof(argv[3]);
     std::string sweepDir(argv[4]);
     int rounds = std::atoi(argv[5]); 
+    std::string latticeType(argv[6]);
+
+    std::vector<bool> succ;
 
     // std::cout << "l = " << l << std::endl
     //           << "rounds = " << rounds << std::endl
@@ -29,13 +33,24 @@ int main(int argc, char *argv[])
     //           << "sweep dir = " << sweepDir << std::endl;
 
     auto start = std::chrono::high_resolution_clock::now();
-    auto succ = runToric(l, rounds, p, q, sweepDir);
+    if (latticeType == "rhombic toric")
+    {
+        succ = runToric(l, rounds, p, q, sweepDir);
+    }
+    else if (latticeType == "rhombic boundaries")
+    {
+        succ = runBoundaries(l, rounds, p, q);    
+    }
+    else
+    {
+        throw std::invalid_argument("Invalid lattice type.");
+    }
     auto finish = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> elapsed = finish - start;
 
-    std::cout << succ[0] << "," // Decoding succeeded
-              << succ[1] << "," // Clean syndrome
-              << elapsed.count()
+    std::cout << succ[0] << ", " // Decoding succeeded
+              << succ[1] << ", " // Clean syndrome
+              << elapsed.count() << "s"
               << std::endl;
 
     // Profiling

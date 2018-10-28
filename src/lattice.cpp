@@ -4,6 +4,7 @@
 #include <cmath>
 #include <algorithm>
 #include <map>
+#include <sstream>
 
 int sgn(int x) { return (x > 0) - (x < 0); }
 
@@ -122,7 +123,10 @@ int Lattice::findFace(vint &vertices)
             return face.faceIndex;
         }
     }
-    throw std::invalid_argument("Input vertices do not correspond to a face.");
+    std::ostringstream stream;
+    stream << "Input vertices: " << indexToCoordinate(vertices[0]) << ", " << indexToCoordinate(vertices[1]) << ", " << indexToCoordinate(vertices[2]) << ", " << indexToCoordinate(vertices[3]) << " do not correspond to a face.";
+    std::string errorMessage = stream.str();
+    throw std::invalid_argument(errorMessage);
 }
 
 const vvint &Lattice::getFaceToVertices() const

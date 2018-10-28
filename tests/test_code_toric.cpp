@@ -3978,7 +3978,7 @@ TEST(checkCorrection, handlesStabilisers)
     double p = 0.1;
     Code code = Code(l, type, p, p);
 
-    // No error 
+    // No error
     EXPECT_TRUE(code.checkCorrection());
     // Stabiliser error
     code.setError({0, 2, 3, 19, 20, 22, 23, 29, 63, 64, 156, 157});
@@ -3993,77 +3993,33 @@ TEST(checkCorrection, handlesLogicalXOps)
     Code code = Code(l, type, p, p);
 
     std::set<int> logicalX3 = {0, 1, 58, 87,
-                                24, 25, 82, 63,
-                                6, 7, 52, 93,
-                                12, 13, 64, 51,
-                                30, 31, 76, 69,
-                                36, 37, 88, 75,
-                                18, 19, 70, 57,
-                                42, 43, 94, 81};
+                               24, 25, 82, 63,
+                               6, 7, 52, 93,
+                               12, 13, 64, 51,
+                               30, 31, 76, 69,
+                               36, 37, 88, 75,
+                               18, 19, 70, 57,
+                               42, 43, 94, 81};
     code.setError(logicalX3);
     EXPECT_FALSE(code.checkCorrection());
     std::set<int> logicalX2 = {0, 2, 3, 23,
-                                6, 8, 9, 17,
-                                96, 98, 99, 119,
-                                48, 50, 51, 65,
-                                54, 56, 57, 71,
-                                144, 146, 147, 161,
-                                102, 104, 105, 113,
-                                150, 152, 153, 167};
+                               6, 8, 9, 17,
+                               96, 98, 99, 119,
+                               48, 50, 51, 65,
+                               54, 56, 57, 71,
+                               144, 146, 147, 161,
+                               102, 104, 105, 113,
+                               150, 152, 153, 167};
     code.setError(logicalX2);
     EXPECT_FALSE(code.checkCorrection());
     std::set<int> logicalX1 = {1, 2, 4, 5,
-                                25, 26, 28, 29,
-                                97, 98, 100, 101,
-                                61, 62, 64, 65,
-                                121, 122, 124, 125,
-                                85, 86, 88, 89,
-                                157, 158, 160, 161,
-                                181, 182, 184, 185};
+                               25, 26, 28, 29,
+                               97, 98, 100, 101,
+                               61, 62, 64, 65,
+                               121, 122, 124, 125,
+                               85, 86, 88, 89,
+                               157, 158, 160, 161,
+                               181, 182, 184, 185};
     code.setError(logicalX1);
     EXPECT_FALSE(code.checkCorrection());
-    
 }
-
-TEST(buildSyndromeIndices, syndromeCorrectSize)
-{
-    std::vector<int> lList = {4, 6, 8, 10};
-    double p = 0.1;
-    for (int l : lList)
-    {
-        Code code = Code(l, "rhombic boundaries", p, p);
-        auto syndromeIndices = code.getSyndromeIndices();
-        int expectedNumberOfEdges = 4 * (l - 2) * (l - 2) * (l - 1);
-        EXPECT_EQ(syndromeIndices.size(), expectedNumberOfEdges);
-    }
-}
-
-TEST(buildSyndromeIndices, syndromeCorrectEdges)
-{
-    std::vector<int> lList = {4, 6, 8, 10};
-    double p = 0.1;
-    for (int l : lList)
-    {
-        Code code = Code(l, "rhombic boundaries", p, p);
-        auto &syndromeIndices = code.getSyndromeIndices();
-        std::vector<cartesian4> coordinateList = {{0, 2, 1, 0}, {1, 1, 1, 0}, {l - 1, 1, 1, 0}, {0, 1, l - 2, 0}, {2, 1, l - 2, 0}, {l - 1, 2, l - 2, 0}, {0, 2, l - 1}, {2, 2, l - 1}, {l - 1, 1, l - 1}};
-        std::vector<vstr> expectedEdgeDirections = {{"xyz", "xz"}, {"xyz", "xz", "yz", "xy"}, {"xy", "yz"}, {"xyz", "xz", "xy", "yz"}, {"xyz", "xz", "xy", "yz", "xyz", "xz", "xy", "yz"}, {"xyz", "xz", "xy", "yz"}, {"xy", "yz"}, {"xyz", "xz", "xy", "yz"}, {"xyz", "xz"}};
-        std::vector<vint> expectedEdgeSigns = {{1, 1}, {1, 1, 1, -1}, {-1, 1}, {1, 1, 1, -1}, {1, 1, 1, 1, -1, -1, -1, -1}, {-1, -1, -1, 1}, {1, -1}, {-1, -1, 1, -1}, {-1, -1}};
-        auto &lattice = code.getLattice();
-        for (int i = 0; i < coordinateList.size(); ++i)
-        {
-            // std::cout << coordinateList[i] << std::endl;
-            int vertexIndex = lattice.coordinateToIndex(coordinateList[i]); 
-            for (int j = 0; j < expectedEdgeDirections[i].size(); ++j)
-            {
-                auto it = syndromeIndices.find(lattice.edgeIndex(vertexIndex, expectedEdgeDirections[i][j], expectedEdgeSigns[i][j]));
-                EXPECT_FALSE(it == syndromeIndices.end());   
-            }
-        }
-    }
-}
-
-// TEST(buildLogical, correctCodesWithBoundaries)
-// {
-    
-// }
