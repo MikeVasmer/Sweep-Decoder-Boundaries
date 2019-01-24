@@ -108,7 +108,7 @@ int RhombicLattice::neighbour(const int vertexIndex, const std::string &directio
         {
             errorDir = "-" + direction;
         }
-        stream << "Neighbour of vertex " << errorCoord << " in " << errorDir << " direction is outside the lattice!";
+        stream << "RhombicLattice::neighbour, " << errorDir << " neighbour of " << errorCoord << " is outside the lattice.";
         std::string errorMessage = stream.str();
         throw std::invalid_argument(errorMessage);
     }

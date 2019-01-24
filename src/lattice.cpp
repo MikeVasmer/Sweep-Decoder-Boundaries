@@ -124,7 +124,7 @@ int Lattice::findFace(vint &vertices)
         }
     }
     std::ostringstream stream;
-    stream << "Input vertices: " << indexToCoordinate(vertices[0]) << ", " << indexToCoordinate(vertices[1]) << ", " << indexToCoordinate(vertices[2]) << ", " << indexToCoordinate(vertices[3]) << " do not correspond to a face.";
+    stream << "Lattice::findFace, no face found for vertices " << indexToCoordinate(vertices[0]) << ", " << indexToCoordinate(vertices[1]) << ", " << indexToCoordinate(vertices[2]) << ", " << indexToCoordinate(vertices[3]);
     std::string errorMessage = stream.str();
     throw std::invalid_argument(errorMessage);
 }

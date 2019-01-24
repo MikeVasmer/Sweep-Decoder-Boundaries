@@ -160,8 +160,8 @@ TEST(calculateSyndrome, noInvalidSyndromeIndicesBothErrorsRhombicBoundaries)
                 {
                     // if (std::find(boundarySyndromeIndices.begin(), boundarySyndromeIndices.end(), i) == boundarySyndromeIndices.end())
                     // {
-                        auto it = syndromeIndices.find(i);
-                        EXPECT_FALSE(it == syndromeIndices.end());
+                    auto it = syndromeIndices.find(i);
+                    EXPECT_FALSE(it == syndromeIndices.end());
                     // }
                 }
             }
@@ -169,32 +169,37 @@ TEST(calculateSyndrome, noInvalidSyndromeIndicesBothErrorsRhombicBoundaries)
     }
 }
 
-
-TEST(sweep, runsForSingleQubitErrorsRhombicBoundariesL4L6)
+TEST(calculateSyndrome, noSyndromeStabilizerErrors)
 {
-    vint ls = {4, 6};
+    vint ls = {4};
+    double p = 0.1;
     for (auto l : ls)
     {
-        double p = 0.1;
-        vstr sweepDirections = {"xyz", "xz", "-xy", "yz", "xy", "-yz", "-xyz", "-xz"};
-        int numberOfFaces = 3 * pow(l - 1, 3) - 4 * pow(l - 1, 2) + 2 * (l - 1);
-        for (auto &sweepDirection
-            : sweepDirections) {
-            Code code = Code(l, "rhombic boundaries", p, p);
-            for (int i = 0; i < numberOfFaces; ++i)
-            {
-                code.setError({i});
-                code.calculateSyndrome();
-                EXPECT_NO_THROW(code.sweep(sweepDirection, true));
-            }
+        Code code = Code(l, "rhombic boundaries", p, p);
+        std::set<int> error = {16, 36, 40};
+        // Lattice &lattice = code.getLattice();
+        // auto vertexToFaces = lattice.getVertexToFaces();
+        // cartesian4 coordinate = {1, 1, 3, 0};
+        // int vertex = lattice.coordinateToIndex(coordinate);
+        // for (auto face : vertexToFaces[vertex])
+        // {
+        //     std::cout << face.faceIndex << std::endl;
+        // }
+        code.setError(error);
+        code.calculateSyndrome();
+        // code.printUnsatisfiedStabilisers();
+        auto syndrome = code.getSyndrome();
+        for (auto value : syndrome)
+        {
+            EXPECT_EQ(value, 0);
         }
+        // EXPECT
     }
 }
 
-
-TEST(sweep, runsWithoutErrorsNoBoundaries)
+TEST(sweep, runsWithoutErrorsBoundaries)
 {
-    vint ls = {4, 8};
+    vint ls = {4, 6};
     for (auto l : ls)
     {
         double p = 0.1;
@@ -215,7 +220,7 @@ TEST(sweep, runsWithoutErrorsNoBoundaries)
 
 TEST(sweep, correctsSingleQubitErrors)
 {
-    vint ls = {4, 6, 8, 10};
+    vint ls = {4, 6};
     for (auto l : ls)
     {
         double p = 0.1;
@@ -236,7 +241,7 @@ TEST(sweep, correctsSingleQubitErrors)
             code.calculateSyndrome();
             // std::cout << "Initial syndrome: " << std::endl;
             // code.printUnsatisfiedStabilisers();
-            for (auto &sweepDirection : sweepDirections) 
+            for (auto &sweepDirection : sweepDirections)
             {
                 for (int j = 0; j < 1; ++j)
                 {
@@ -263,9 +268,7 @@ TEST(sweep, correctsTwoQubitErrors)
 {
     vint ls = {4};
     double p = 0.1;
-    // vstr sweepDirections = {"xyz", "xy", "yz", "xz", "-xyz", "-xy", "-yz", "-xz"};
-    vstr sweepDirections = {"xyz", "xy", "yz", "xz", "-xyz", "-xy", "-yz", "-xz", "xyz", "xy", "yz", "xz", "-xyz", "-xy", "-yz", "-xz"};
-    int sweepCycle = 2;
+    vstr sweepDirections = {"xyz", "xy", "yz", "xz", "-xyz", "-xy", "-yz", "-xz"};
     for (auto const l : ls)
     {
         Code code = Code(l, "rhombic boundaries", p, p);
@@ -273,34 +276,104 @@ TEST(sweep, correctsTwoQubitErrors)
         int numberOfFaces = 3 * pow(l - 1, 3) - 4 * pow(l - 1, 2) + 2 * (l - 1);
         auto &lattice = code.getLattice();
         auto &faceToVertices = lattice.getFaceToVertices();
+        int repeats = 2;
+        int sweepsPerDirection = l;
         for (int i = 0; i < numberOfFaces; ++i)
         {
             auto &f2vi = faceToVertices[i];
             for (int j = i + 1; j < numberOfFaces; ++j)
-            { 
+            {
                 code.setError({i, j});
                 code.calculateSyndrome();
-                for (auto &sweepDirection : sweepDirections) 
+                // std::cout << "Error = " << i << "," << j << std::endl;
+                // std::cout << "Unsatisifed stabilizers = " << std::endl;
+                // code.printUnsatisfiedStabilisers();
+                for (int r = 0; r < repeats; ++r)
                 {
-                    for (int i = 0; i < sweepCycle; ++i)
+                    for (auto &sweepDirection : sweepDirections)
                     {
-                        code.sweep(sweepDirection, true);
-                        code.calculateSyndrome();
+                        for (int s = 0; s < sweepsPerDirection; ++s)
+                        {
+                            code.sweep(sweepDirection, true);
+                            code.calculateSyndrome();
+                        }
                     }
                 }
                 for (int k = 0; k < syndrome.size(); ++k)
                 {
                     EXPECT_EQ(syndrome[k], 0);
-                    if (syndrome[k] == 1)
-                    {
-                        std::cout << "Syndrome index = " << k << std::endl;
-                        std::cout << "i = " << i << ", " << "error vertices = " << lattice.indexToCoordinate(f2vi[0]) << " " << lattice.indexToCoordinate(f2vi[1]) << " " << lattice.indexToCoordinate(f2vi[2]) << " " << lattice.indexToCoordinate(f2vi[3]) << std::endl;
-                        auto &f2vj = faceToVertices[j];
-                        std::cout << "j = " << j << ", " << "error vertices = " << lattice.indexToCoordinate(f2vj[0]) << " " << lattice.indexToCoordinate(f2vj[1]) << " " << lattice.indexToCoordinate(f2vj[2]) << " " << lattice.indexToCoordinate(f2vj[3]) << std::endl;
-                    }
+                    // if (syndrome[k] == 1)
+                    // {
+                    //     std::cout << "Syndrome index = " << k << std::endl;
+                    //     std::cout << "i = " << i << ", " << "error vertices = " << lattice.indexToCoordinate(f2vi[0]) << " " << lattice.indexToCoordinate(f2vi[1]) << " " << lattice.indexToCoordinate(f2vi[2]) << " " << lattice.indexToCoordinate(f2vi[3]) << std::endl;
+                    //     auto &f2vj = faceToVertices[j];
+                    //     std::cout << "j = " << j << ", " << "error vertices = " << lattice.indexToCoordinate(f2vj[0]) << " " << lattice.indexToCoordinate(f2vj[1]) << " " << lattice.indexToCoordinate(f2vj[2]) << " " << lattice.indexToCoordinate(f2vj[3]) << std::endl;
+                    //     std::cerr << "Error:" << std::endl;
+                    //     code.printError();
+                    //     std::cerr << "Unsatisfied stabilizers:" << std::endl;
+                    //     code.printUnsatisfiedStabilisers();
+                    // }
                 }
             }
         }
+    }
+}
+
+TEST(sweep, allDirectionsSweepCorrectly)
+{
+    int l = 4;
+    double p = 0.1;
+    Code code = Code(l, "rhombic boundaries", p, p);
+    std::set<int> error = {13, 18};
+    code.setError(error);
+    code.calculateSyndrome();
+    auto &syndrome = code.getSyndrome();
+    vint expectedSyndrome = {147, 258, 564, 597};
+    for (int j = 0; j < syndrome.size(); ++j)
+    {
+        if (std::find(expectedSyndrome.begin(), expectedSyndrome.end(), j) != expectedSyndrome.end())
+        {
+            EXPECT_EQ(syndrome[j], 1);
+        }
+        else
+        {
+            EXPECT_EQ(syndrome[j], 0);
+        }
+        
+    }
+
+    vstr sweepDirections = {"xyz", "xy", "yz", "xz", "-xyz", "-xy", "-yz", "-xz"};
+    vvint expectedSyndromes = {expectedSyndrome, expectedSyndrome, expectedSyndrome, {147, 597}, {147, 597}, {147, 597}, {}, {}};
+
+    for (int i = 0; i < 8; ++i)
+    {
+        code.sweep(sweepDirections[i], true);
+        code.calculateSyndrome();
+        for (int j = 0; j < syndrome.size(); ++j)
+        {
+            if (std::find(expectedSyndromes[i].begin(), expectedSyndromes[i].end(), j) != expectedSyndromes[i].end())
+            {
+                EXPECT_EQ(syndrome[j], 1);
+            }
+            else
+            {
+                EXPECT_EQ(syndrome[j], 0);
+            }
+        }
+    }
+
+    error = {12, 36};
+    code.setError(error);
+    code.calculateSyndrome();
+    // code.printUnsatisfiedStabilisers();
+    for (int i = 0; i < 8; ++i)
+    {
+        code.sweep(sweepDirections[i], true);
+        code.calculateSyndrome();
+    }
+    for (auto &s : syndrome)
+    {
+        EXPECT_EQ(s, 0);
     }
 }
 

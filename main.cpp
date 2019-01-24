@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
 {
     if (argc < 6)
     {
-        std::cout << "Less than six arguments" << std::endl;
+        std::cout << "Fewer than six arguments" << std::endl;
         for (int i = 0; i < argc; ++i)
         {
             std::cout << "Argument " << i << " = " << argv[i] << std::endl;
@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
 
     std::cout << succ[0] << ", " // Decoding succeeded
               << succ[1] << ", " // Clean syndrome
-              << elapsed.count() << "s"
+              << elapsed.count() // "s" <<
               << std::endl;
 
     // Profiling

@@ -38,6 +38,7 @@ class Code
     void localFlip(vint &vertices);
     void sweepFullVertex(const int vertexIndex, vstr &sweepEdges, const std::string &sweepDirection, const vstr &edges);
     void sweepHalfVertex(const int vertexIndex, vstr &sweepEdges, const std::string &sweepDirection, const vstr &edges);
+    void sweepFullVertexBoundary(const int vertexIndex, vstr &sweepEdges, const std::string &sweepDirection, const vstr &edges);
     void sweepHalfVertexBoundary(const int vertexIndex, vstr &sweepEdges, const std::string &sweepDirection, const vstr &edges);
     void sweep(const std::string &direction, bool greedy);
     vstr findSweepEdges(const int vertexIndex, const std::string &direction);
@@ -51,6 +52,7 @@ class Code
     void clearFlipBits();
     void setSyndrome(vint syndrome);
     void printUnsatisfiedStabilisers();
+    void printError();
     // Getter methods
     vint& getFlipBits();
     vint& getSyndrome();

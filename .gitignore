@@ -69,6 +69,7 @@ RhombicSweep
 
 # data
 data/
+*.json
 
 # pycache
 __pycache__/

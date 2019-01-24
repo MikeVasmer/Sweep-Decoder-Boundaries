@@ -33,7 +33,7 @@ def generate_data(l, p, q, sweep_direction, rounds, trials, job_number, lattice_
     if lattice_type == 'rhombic toric':
         data['Sweep direction'] = sweep_direction
     data['Lattice Type'] = lattice_type
-    data['Job RunTime'] = elapsed_time
+    data['Job RunTime (s)'] = elapsed_time
     if lattice_type == 'rhombic toric':
         json_file = "L={}_rounds={}_p={:0.4f}_q={:0.4f}_trials={}_sweepDir={}_latticeType={}_job={}.json".format(
             l, rounds, p, q, trials, sweep_direction, lattice_type, job_number)
