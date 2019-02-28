@@ -46,10 +46,10 @@ int Lattice::edgeIndex(const int vertexIndex, const std::string &direction, cons
     {
         throw std::invalid_argument("Sign must be either 1 or -1.");
     }
-    if (!(direction == "xy" || direction == "xz" || direction == "yz" ||
+    if (!(direction == "x" || direction == "y" || direction == "z" || direction == "xy" || direction == "xz" || direction == "yz" ||
           direction == "xyz"))
     {
-        throw std::invalid_argument("Direction must be one of 'xy', 'xz', 'yz' or 'xyz'.");
+        throw std::invalid_argument("Direction must be one of 'x', 'y', 'z', xy', 'xz', 'yz' or 'xyz'.");
     }
 
     int edgeIndex;

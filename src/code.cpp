@@ -575,7 +575,7 @@ void Code::sweepFullVertex(const int vertexIndex, vstr &sweepEdges, const std::s
         }
         catch (const std::invalid_argument &e)
         {
-            std::cerr << "WARNING: " << e.what() << std::endl;
+            // std::cerr << "WARNING: " << e.what() << std::endl;
         }
         try
         {
@@ -584,7 +584,7 @@ void Code::sweepFullVertex(const int vertexIndex, vstr &sweepEdges, const std::s
         }
         catch (const std::invalid_argument &e)
         {
-            std::cerr << "WARNING: " << e.what() << std::endl;
+            // std::cerr << "WARNING: " << e.what() << std::endl;
         }
         try
         {
@@ -593,7 +593,7 @@ void Code::sweepFullVertex(const int vertexIndex, vstr &sweepEdges, const std::s
         }
         catch (const std::invalid_argument &e)
         {
-            std::cerr << "WARNING: " << e.what() << std::endl;
+            // std::cerr << "WARNING: " << e.what() << std::endl;
         }
     }
     else if (sweepDirectionIndex < sweepEdges.size())
@@ -614,7 +614,7 @@ void Code::sweepFullVertex(const int vertexIndex, vstr &sweepEdges, const std::s
             }
             catch (const std::invalid_argument &e)
             {
-                std::cerr << "WARNING: " << e.what() << std::endl;
+                // std::cerr << "WARNING: " << e.what() << std::endl;
             }
         }
         else if (sweepEdges[0] == edge2)
@@ -626,7 +626,7 @@ void Code::sweepFullVertex(const int vertexIndex, vstr &sweepEdges, const std::s
             }
             catch (const std::invalid_argument &e)
             {
-                std::cerr << "WARNING: " << e.what() << std::endl;
+                // std::cerr << "WARNING: " << e.what() << std::endl;
             }
         }
         else if (sweepEdges[0] == edge1)
@@ -638,7 +638,7 @@ void Code::sweepFullVertex(const int vertexIndex, vstr &sweepEdges, const std::s
             }
             catch (const std::invalid_argument &e)
             {
-                std::cerr << "WARNING: " << e.what() << std::endl;
+                // std::cerr << "WARNING: " << e.what() << std::endl;
             }
         }
         else
@@ -664,7 +664,7 @@ void Code::sweepFullVertex(const int vertexIndex, vstr &sweepEdges, const std::s
             }
             catch (const std::invalid_argument &e)
             {
-                std::cerr << "WARNING: " << e.what() << std::endl;
+                // std::cerr << "WARNING: " << e.what() << std::endl;
             }
             try
             {
@@ -673,7 +673,7 @@ void Code::sweepFullVertex(const int vertexIndex, vstr &sweepEdges, const std::s
             }
             catch (const std::invalid_argument &e)
             {
-                std::cerr << "WARNING: " << e.what() << std::endl;
+                // std::cerr << "WARNING: " << e.what() << std::endl;
             }
         }
         else if ((sweepEdges[0] == edge0 && sweepEdges[1] == edge1) ||
@@ -686,7 +686,7 @@ void Code::sweepFullVertex(const int vertexIndex, vstr &sweepEdges, const std::s
             }
             catch (const std::invalid_argument &e)
             {
-                std::cerr << "WARNING: " << e.what() << std::endl;
+                // std::cerr << "WARNING: " << e.what() << std::endl;
             }
             try
             {
@@ -695,7 +695,7 @@ void Code::sweepFullVertex(const int vertexIndex, vstr &sweepEdges, const std::s
             }
             catch (const std::invalid_argument &e)
             {
-                std::cerr << "WARNING: " << e.what() << std::endl;
+                // std::cerr << "WARNING: " << e.what() << std::endl;
             }
         }
         else if ((sweepEdges[0] == edge1 && sweepEdges[1] == edge2) ||
@@ -708,7 +708,7 @@ void Code::sweepFullVertex(const int vertexIndex, vstr &sweepEdges, const std::s
             }
             catch (const std::invalid_argument &e)
             {
-                std::cerr << "WARNING: " << e.what() << std::endl;
+                // std::cerr << "WARNING: " << e.what() << std::endl;
             }
             try
             {
@@ -717,7 +717,7 @@ void Code::sweepFullVertex(const int vertexIndex, vstr &sweepEdges, const std::s
             }
             catch (const std::invalid_argument &e)
             {
-                std::cerr << "WARNING: " << e.what() << std::endl;
+                // std::cerr << "WARNING: " << e.what() << std::endl;
             }
         }
         else
@@ -751,7 +751,7 @@ void Code::sweepHalfVertex(const int vertexIndex, vstr &sweepEdges, const std::s
         }
         catch (const std::invalid_argument &e)
         {
-            std::cerr << "WARNING: " << e.what() << std::endl;
+            // std::cerr << "WARNING: " << e.what() << std::endl;
         }
     }
     else if ((sweepEdges[0] == edge0 && sweepEdges[1] == edge1) ||
@@ -765,7 +765,7 @@ void Code::sweepHalfVertex(const int vertexIndex, vstr &sweepEdges, const std::s
         }
         catch (const std::invalid_argument &e)
         {
-            std::cerr << "WARNING: " << e.what() << std::endl;
+            // std::cerr << "WARNING: " << e.what() << std::endl;
         }
     }
     else if ((sweepEdges[0] == edge1 && sweepEdges[1] == edge2) ||
@@ -779,7 +779,7 @@ void Code::sweepHalfVertex(const int vertexIndex, vstr &sweepEdges, const std::s
         }
         catch (const std::invalid_argument &e)
         {
-            std::cerr << "WARNING: " << e.what() << std::endl;
+            // std::cerr << "WARNING: " << e.what() << std::endl;
         }
     }
     else

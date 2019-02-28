@@ -2,7 +2,7 @@
 #include "gtest/gtest.h"
 #include <string>
 
-TEST(Lattice, ExceptsInvalidLatticeSizes)
+TEST(Lattice, excepts_invalid_lattice_sizes)
 {
     int l = 2;
     EXPECT_THROW(RhombicToricLattice lattice = RhombicToricLattice(l), std::invalid_argument);
@@ -12,7 +12,7 @@ TEST(Lattice, ExceptsInvalidLatticeSizes)
     EXPECT_THROW(RhombicToricLattice lattice = RhombicToricLattice(l), std::invalid_argument);
 }
 
-TEST(indexToCoordinate, HandlesPositiveInput)
+TEST(indexToCoordinate, handles_positive_indices)
 {
     int l = 4;
     RhombicToricLattice lattice = RhombicToricLattice(l);
@@ -27,7 +27,7 @@ TEST(indexToCoordinate, HandlesPositiveInput)
     EXPECT_EQ(lattice.indexToCoordinate(vertexIndex), coordinate);
 }
 
-TEST(indexToCoordinate, ExceptsNegativeInput)
+TEST(indexToCoordinate, excepts_negative_indices)
 {
     int l = 4;
     RhombicToricLattice lattice = RhombicToricLattice(l);
@@ -35,7 +35,7 @@ TEST(indexToCoordinate, ExceptsNegativeInput)
     EXPECT_THROW(lattice.indexToCoordinate(vertexIndex), std::invalid_argument);
 }
 
-TEST(coordinateToIndex, ExceptsInvalidCoordinates)
+TEST(coordinateToIndex, excepts_negative_coordinates)
 {
     int l = 4;
     RhombicToricLattice lattice = RhombicToricLattice(l);
@@ -47,7 +47,7 @@ TEST(coordinateToIndex, ExceptsInvalidCoordinates)
     EXPECT_THROW(lattice.coordinateToIndex({-1, -1, -1, -1}), std::invalid_argument);
 }
 
-TEST(coordinateToIndex, HandlesPositiveInput)
+TEST(coordinateToIndex, handles_positive_coordinates)
 {
     int l = 4;
     RhombicToricLattice lattice = RhombicToricLattice(l);
@@ -62,7 +62,7 @@ TEST(coordinateToIndex, HandlesPositiveInput)
     EXPECT_EQ(lattice.indexToCoordinate(vertexIndex), coordinate);
 }
 
-TEST(neighbourRhombicToric, ExceptsInvalidSigns)
+TEST(neighbourRhombicToric, excepts_invalid_signs)
 {
     int l = 4;
     RhombicToricLattice lattice = RhombicToricLattice(l);
@@ -74,7 +74,7 @@ TEST(neighbourRhombicToric, ExceptsInvalidSigns)
     EXPECT_THROW(lattice.neighbour(vertexIndex, direction, -6), std::invalid_argument);
 }
 
-// TEST(createFacesBCC, HandlesValidInput)
+// TEST(createFacesBCC, handles_valid_input)
 // {
 //     int l = 4;
 //     BCCLattice latticeBCC = RhombicToricLattice(l);

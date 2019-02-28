@@ -4,7 +4,7 @@
 #include <string>
 #include <iostream>
 
-TEST(Code, ExceptsInvalidProbabilities)
+TEST(Code, excepts_invalid_probabilities)
 {
     int latticeLength = 4;
     std::string latticeType = "rhombic toric";
@@ -15,7 +15,7 @@ TEST(Code, ExceptsInvalidProbabilities)
     }
 }
 
-TEST(Code, SyndromeCorrectSize)
+TEST(Code, syndrome_correct_size)
 {
     std::vector<int> latticeLengths = {4, 6, 8, 10};
     std::string latticeType = "rhombic toric";
@@ -27,7 +27,7 @@ TEST(Code, SyndromeCorrectSize)
     }
 }
 
-TEST(calculateSyndrome, correctlyCalculatesError)
+TEST(calculateSyndrome, correctly_calculates_error)
 {
     int latticeLength = 6;
     std::string latticeType = "rhombic toric";
@@ -52,7 +52,7 @@ TEST(calculateSyndrome, correctlyCalculatesError)
     }
 }
 
-TEST(calculateSyndrome, correctlyCalculatesStabiliserError)
+TEST(calculateSyndrome, correctly_calculates_stabilizer_error)
 {
     int latticeLength = 4;
     std::string latticeType = "rhombic toric";
@@ -68,7 +68,7 @@ TEST(calculateSyndrome, correctlyCalculatesStabiliserError)
     }
 }
 
-TEST(generateDataError, handlesOneErrorProbability)
+TEST(generateDataError, handles_error_probability_one)
 {
     int l = 4;
     std::string latticeType = "rhombic toric";
@@ -78,7 +78,7 @@ TEST(generateDataError, handlesOneErrorProbability)
     EXPECT_EQ(code.getError().size(), 3 * l * l * l);
 }
 
-TEST(generateDataError, handlesZeroErrorProbability)
+TEST(generateDataError, handles_error_probability_zero)
 {
     int l = 6;
     std::string latticeType = "rhombic toric";
@@ -88,7 +88,7 @@ TEST(generateDataError, handlesZeroErrorProbability)
     EXPECT_EQ(code.getError().size(), 0);
 }
 
-TEST(generateMeasError, handlesOneErrorProbability)
+TEST(generateMeasError, handles_error_probability_one)
 {
     int l = 6;
     std::string latticeType = "rhombic toric";
@@ -102,7 +102,7 @@ TEST(generateMeasError, handlesOneErrorProbability)
     }
 }
 
-TEST(generateMeasError, handlesZeroErrorProbability)
+TEST(generateMeasError, handles_error_probability_zero)
 {
     int l = 4;
     std::string latticeType = "rhombic toric";
@@ -116,7 +116,7 @@ TEST(generateMeasError, handlesZeroErrorProbability)
     }
 }
 
-TEST(checkExtremalVertex, correctVerticesExtremalOneError)
+TEST(checkExtremalVertex, correct_extremal_vertices_one_error)
 {
     int l = 4;
     std::string latticeType = "rhombic toric";
@@ -173,7 +173,7 @@ TEST(checkExtremalVertex, correctVerticesExtremalOneError)
     EXPECT_FALSE(code.checkExtremalVertex(1, "-xy"));
 }
 
-TEST(checkExtremalVertex, correctVerticesExtremalTwoErrors)
+TEST(checkExtremalVertex, correct_extremal_vertices_two_errors)
 {
     int l = 6;
     std::string latticeType = "rhombic toric";
@@ -246,7 +246,7 @@ TEST(checkExtremalVertex, correctVerticesExtremalTwoErrors)
     EXPECT_FALSE(code.checkExtremalVertex(1, "yz"));
 }
 
-TEST(localFlip, flipFaceOnceTwice)
+TEST(localFlip, flips_correctly_one_and_twice)
 {
     int l = 8;
     std::string latticeType = "rhombic toric";
@@ -263,7 +263,7 @@ TEST(localFlip, flipFaceOnceTwice)
     }
 }
 
-TEST(findSweepEdges, correctEdgesOneError)
+TEST(findSweepEdges, correct_edges_one_error)
 {
     int l = 4;
     std::string type = "rhombic toric";
@@ -368,7 +368,7 @@ TEST(findSweepEdges, correctEdgesOneError)
     EXPECT_EQ(upEdgesInSynd.size(), 0);
 }
 
-TEST(faceVertices, handlesReasonableInput)
+TEST(faceVertices, handles_valid_input)
 {
     int l = 6;
     std::string type = "rhombic toric";
@@ -396,7 +396,7 @@ TEST(faceVertices, handlesReasonableInput)
     EXPECT_EQ(code.faceVertices(345, {"-xy", "-xz", "-xz"}), expectedVertices);
 }
 
-TEST(faceVertices, exceptsTooManyDirections)
+TEST(faceVertices, excepts_too_many_directions)
 {
     int l = 6;
     std::string type = "rhombic toric";
@@ -405,7 +405,7 @@ TEST(faceVertices, exceptsTooManyDirections)
     EXPECT_THROW(code.faceVertices(0, {"xyz", "-xy", "xy", "xz"}), std::invalid_argument);
 }
 
-TEST(faceVertices, exceptsInvalidSigns)
+TEST(faceVertices, excepts_invalid_signs)
 {
     int l = 6;
     std::string type = "rhombic toric";
@@ -415,7 +415,7 @@ TEST(faceVertices, exceptsInvalidSigns)
     EXPECT_THROW(code.faceVertices(0, {"xyz", "xy", "-xy"}), std::invalid_argument);
 }
 
-TEST(faceVertices, exceptsInvalidDirections)
+TEST(faceVertices, excepts_invalid_directions)
 {
     int l = 6;
     std::string type = "rhombic toric";
@@ -425,7 +425,7 @@ TEST(faceVertices, exceptsInvalidDirections)
     EXPECT_THROW(code.faceVertices(0, {"xyz", "-xy", "xy"}), std::invalid_argument);
 }
 
-TEST(sweepFullVertex, handlesQubitErrorsXY)
+TEST(sweepFullVertex, handles_qubits_errors_xy)
 {
     int l = 4;
     std::string type = "rhombic toric";
@@ -564,7 +564,7 @@ TEST(sweepFullVertex, handlesQubitErrorsXY)
     }
 }
 
-TEST(sweepFullVertex, handlesMeasurementErrorsXY)
+TEST(sweepFullVertex, handles_measurement_errors_xy)
 {
     int l = 4;
     std::string type = "rhombic toric";
@@ -664,7 +664,7 @@ TEST(sweepFullVertex, handlesMeasurementErrorsXY)
     }
 }
 
-TEST(sweepHalfVertex, handlesQubitErrorsXY)
+TEST(sweepHalfVertex, handles_qubit_errors_xy)
 {
     int l = 6;
     std::string type = "rhombic toric";
@@ -783,7 +783,7 @@ TEST(sweepHalfVertex, handlesQubitErrorsXY)
     }
 }
 
-TEST(sweepHalfVertex, handlesMeasurementErrorsXY)
+TEST(sweepHalfVertex, handles_measurement_errors_xy)
 {
     int l = 6;
     std::string type = "rhombic toric";
@@ -816,7 +816,7 @@ TEST(sweepHalfVertex, handlesMeasurementErrorsXY)
     }
 }
 
-TEST(sweepFullVertex, handlesQubitErrorsMinusXY)
+TEST(sweepFullVertex, handles_qubit_errors_minus_xy)
 {
     int l = 4;
     std::string type = "rhombic toric";
@@ -955,7 +955,7 @@ TEST(sweepFullVertex, handlesQubitErrorsMinusXY)
     }
 }
 
-TEST(sweepFullVertex, handlesMeasurementErrorsMinusXY)
+TEST(sweepFullVertex, handles_measurement_errors_minus_xy)
 {
     int l = 4;
     std::string type = "rhombic toric";
@@ -1048,7 +1048,7 @@ TEST(sweepFullVertex, handlesMeasurementErrorsMinusXY)
     }
 }
 
-TEST(sweepFullVertex, handlesQubitErrorsXZ)
+TEST(sweepFullVertex, handles_qubit_errors_xz)
 {
     int l = 4;
     std::string type = "rhombic toric";
@@ -1187,7 +1187,7 @@ TEST(sweepFullVertex, handlesQubitErrorsXZ)
     }
 }
 
-TEST(sweepFullVertex, handlesMeasurementErrorsXZ)
+TEST(sweepFullVertex, handles_measurement_errors_xz)
 {
     int l = 4;
     std::string type = "rhombic toric";
@@ -1280,7 +1280,7 @@ TEST(sweepFullVertex, handlesMeasurementErrorsXZ)
     }
 }
 
-TEST(sweepFullVertex, handlesQubitErrorsMinusXZ)
+TEST(sweepFullVertex, handles_qubit_errors_minus_xz)
 {
     int l = 4;
     std::string type = "rhombic toric";
@@ -1419,7 +1419,7 @@ TEST(sweepFullVertex, handlesQubitErrorsMinusXZ)
     }
 }
 
-TEST(sweepFullVertex, handlesMeasurementErrorsMinusXZ)
+TEST(sweepFullVertex, handles_measurement_errors_minus_xz)
 {
     int l = 4;
     std::string type = "rhombic toric";
@@ -1512,7 +1512,7 @@ TEST(sweepFullVertex, handlesMeasurementErrorsMinusXZ)
     }
 }
 
-TEST(sweepFullVertex, handlesQubitErrorsYZ)
+TEST(sweepFullVertex, handles_qubit_errors_yz)
 {
     int l = 4;
     std::string type = "rhombic toric";
@@ -1651,7 +1651,7 @@ TEST(sweepFullVertex, handlesQubitErrorsYZ)
     }
 }
 
-TEST(sweepFullVertex, handlesMeasurementErrorsYZ)
+TEST(sweepFullVertex, handles_measurement_errors_yz)
 {
     int l = 4;
     std::string type = "rhombic toric";
@@ -1744,7 +1744,7 @@ TEST(sweepFullVertex, handlesMeasurementErrorsYZ)
     }
 }
 
-TEST(sweepFullVertex, handlesQubitErrorsMinusYZ)
+TEST(sweepFullVertex, handles_qubit_errors_minus_yz)
 {
     int l = 4;
     std::string type = "rhombic toric";
@@ -1883,7 +1883,7 @@ TEST(sweepFullVertex, handlesQubitErrorsMinusYZ)
     }
 }
 
-TEST(sweepFullVertex, handlesMeasurementErrorsMinusYZ)
+TEST(sweepFullVertex, handles_measurement_errors_minus_yz)
 {
     int l = 4;
     std::string type = "rhombic toric";
@@ -1976,7 +1976,7 @@ TEST(sweepFullVertex, handlesMeasurementErrorsMinusYZ)
     }
 }
 
-TEST(sweepFullVertex, handlesQubitErrorsXYZ)
+TEST(sweepFullVertex, handles_qubit_errors_xyz)
 {
     int l = 4;
     std::string type = "rhombic toric";
@@ -2114,7 +2114,7 @@ TEST(sweepFullVertex, handlesQubitErrorsXYZ)
     }
 }
 
-TEST(sweepFullVertex, handlesMeasurementErrorsYXZ)
+TEST(sweepFullVertex, handles_measurement_errors_xyz)
 {
     int l = 4;
     std::string type = "rhombic toric";
@@ -2207,7 +2207,7 @@ TEST(sweepFullVertex, handlesMeasurementErrorsYXZ)
     }
 }
 
-TEST(sweepFullVertex, handlesQubitErrorsMinusXYZ)
+TEST(sweepFullVertex, handles_qubit_errors_minus_xyz)
 {
     int l = 4;
     std::string type = "rhombic toric";
@@ -2347,7 +2347,7 @@ TEST(sweepFullVertex, handlesQubitErrorsMinusXYZ)
     }
 }
 
-TEST(sweepFullVertex, handlesMeasurementErrorsMinusYXZ)
+TEST(sweepFullVertex, handles_measurement_errors_minus_xyz)
 {
     int l = 4;
     std::string type = "rhombic toric";
@@ -2440,7 +2440,7 @@ TEST(sweepFullVertex, handlesMeasurementErrorsMinusYXZ)
     }
 }
 
-TEST(sweepHalfVertex, handlesQubitErrorsMinusXY)
+TEST(sweepHalfVertex, handles_qubit_errors_minus_xy)
 {
     int l = 6;
     std::string type = "rhombic toric";
@@ -2559,7 +2559,7 @@ TEST(sweepHalfVertex, handlesQubitErrorsMinusXY)
     }
 }
 
-TEST(sweepHalfVertex, handlesQubitErrorsXZ)
+TEST(sweepHalfVertex, handles_qubit_errors_xz)
 {
     int l = 6;
     std::string type = "rhombic toric";
@@ -2678,7 +2678,7 @@ TEST(sweepHalfVertex, handlesQubitErrorsXZ)
     }
 }
 
-TEST(sweepHalfVertex, handlesQubitErrorsMinusXZ)
+TEST(sweepHalfVertex, handles_qubit_errors_minus_xz)
 {
     int l = 6;
     std::string type = "rhombic toric";
@@ -2797,7 +2797,7 @@ TEST(sweepHalfVertex, handlesQubitErrorsMinusXZ)
     }
 }
 
-TEST(sweepHalfVertex, handlesQubitErrorsYZ)
+TEST(sweepHalfVertex, handles_qubit_errors_yz)
 {
     int l = 6;
     std::string type = "rhombic toric";
@@ -2916,7 +2916,7 @@ TEST(sweepHalfVertex, handlesQubitErrorsYZ)
     }
 }
 
-TEST(sweepHalfVertex, handlesQubitErrorsMinusYZ)
+TEST(sweepHalfVertex, handles_qubit_errors_minus_yz)
 {
     int l = 6;
     std::string type = "rhombic toric";
@@ -3035,7 +3035,7 @@ TEST(sweepHalfVertex, handlesQubitErrorsMinusYZ)
     }
 }
 
-TEST(sweepHalfVertex, handlesQubitErrorsXYZ)
+TEST(sweepHalfVertex, handles_qubit_errors_xyz)
 {
     int l = 6;
     std::string type = "rhombic toric";
@@ -3154,7 +3154,7 @@ TEST(sweepHalfVertex, handlesQubitErrorsXYZ)
     }
 }
 
-TEST(sweepHalfVertex, handlesQubitErrorsMinusXYZ)
+TEST(sweepHalfVertex, handles_qubit_errors_minus_xyz)
 {
     int l = 6;
     std::string type = "rhombic toric";
@@ -3273,7 +3273,7 @@ TEST(sweepHalfVertex, handlesQubitErrorsMinusXYZ)
     }
 }
 
-TEST(sweepHalfVertex, handlesMeasurementErrorsXZ)
+TEST(sweepHalfVertex, handles_measurement_errors_xz)
 {
     int l = 6;
     std::string type = "rhombic toric";
@@ -3304,7 +3304,7 @@ TEST(sweepHalfVertex, handlesMeasurementErrorsXZ)
     }
 }
 
-TEST(sweepHalfVertex, handlesMeasurementErrorsYZ)
+TEST(sweepHalfVertex, handles_measurement_errors_yz)
 {
     int l = 6;
     std::string type = "rhombic toric";
@@ -3335,7 +3335,7 @@ TEST(sweepHalfVertex, handlesMeasurementErrorsYZ)
     }
 }
 
-TEST(sweepHalfVertex, handlesMeasurementErrorsMinusXYZ)
+TEST(sweepHalfVertex, handles_measurement_errors_minus_xyz)
 {
     int l = 6;
     std::string type = "rhombic toric";
@@ -3366,7 +3366,7 @@ TEST(sweepHalfVertex, handlesMeasurementErrorsMinusXYZ)
     }
 }
 
-TEST(sweepHalfVertex, handlesMeasurementErrorsMinusXY)
+TEST(sweepHalfVertex, handles_measurement_errors_minus_xy)
 {
     int l = 6;
     std::string type = "rhombic toric";
@@ -3397,7 +3397,7 @@ TEST(sweepHalfVertex, handlesMeasurementErrorsMinusXY)
     }
 }
 
-TEST(sweepHalfVertex, handlesMeasurementErrorsMinusXZ)
+TEST(sweepHalfVertex, handles_measurement_errors_minus_xz)
 {
     int l = 6;
     std::string type = "rhombic toric";
@@ -3428,7 +3428,7 @@ TEST(sweepHalfVertex, handlesMeasurementErrorsMinusXZ)
     }
 }
 
-TEST(sweepHalfVertex, handlesMeasurementErrorsMinusYZ)
+TEST(sweepHalfVertex, handles_measurement_errors_minus_yz)
 {
     int l = 6;
     std::string type = "rhombic toric";
@@ -3459,7 +3459,7 @@ TEST(sweepHalfVertex, handlesMeasurementErrorsMinusYZ)
     }
 }
 
-TEST(sweepHalfVertex, handlesMeasurementErrorsXYZ)
+TEST(sweepHalfVertex, handles_measurement_errors_xyz)
 {
     int l = 6;
     std::string type = "rhombic toric";
@@ -3490,7 +3490,7 @@ TEST(sweepHalfVertex, handlesMeasurementErrorsXYZ)
     }
 }
 
-TEST(sweep, handlesQubitErrorsXYZ)
+TEST(sweep, handles_qubit_errors_xyz)
 {
     int l = 4;
     std::string type = "rhombic toric";
@@ -3550,7 +3550,7 @@ TEST(sweep, handlesQubitErrorsXYZ)
     }
 }
 
-TEST(sweep, handlesQubitErrorsMinusXYZ)
+TEST(sweep, handles_qubit_errors_minus_xyz)
 {
     int l = 4;
     std::string type = "rhombic toric";
@@ -3609,7 +3609,7 @@ TEST(sweep, handlesQubitErrorsMinusXYZ)
     }
 }
 
-TEST(sweep, handlesQubitErrorsXY)
+TEST(sweep, handles_qubit_errors_xy)
 {
     int l = 4;
     std::string type = "rhombic toric";
@@ -3668,7 +3668,7 @@ TEST(sweep, handlesQubitErrorsXY)
     }
 }
 
-TEST(sweep, handlesQubitErrorsMinusXY)
+TEST(sweep, handles_qubit_errors_minus_xy)
 {
     int l = 4;
     std::string type = "rhombic toric";
@@ -3728,7 +3728,7 @@ TEST(sweep, handlesQubitErrorsMinusXY)
     }
 }
 
-TEST(sweep, handlesQubitErrorsXZ)
+TEST(sweep, handles_qubit_errors_xz)
 {
     int l = 6;
     std::string type = "rhombic toric";
@@ -3787,7 +3787,7 @@ TEST(sweep, handlesQubitErrorsXZ)
     }
 }
 
-TEST(sweep, handlesQubitErrorsMinusXZ)
+TEST(sweep, handles_qubit_errors_minus_xz)
 {
     int l = 6;
     std::string type = "rhombic toric";
@@ -3841,7 +3841,7 @@ TEST(sweep, handlesQubitErrorsMinusXZ)
     }
 }
 
-TEST(sweep, handlesQubitErrorsYZ)
+TEST(sweep, handles_qubit_errors_yz)
 {
     int l = 6;
     std::string type = "rhombic toric";
@@ -3896,7 +3896,7 @@ TEST(sweep, handlesQubitErrorsYZ)
     }
 }
 
-TEST(sweep, handlesQubitErrorsMinusYZ)
+TEST(sweep, handles_qubit_errors_minus_yz)
 {
     // Same as XZ test by symmetry
     int l = 6;
@@ -3956,7 +3956,7 @@ TEST(sweep, handlesQubitErrorsMinusYZ)
     }
 }
 
-TEST(buildLogical, correctFunctionl4)
+TEST(buildLogical, correct_steps_lattice_size_4)
 {
     int l = 4;
     std::string type = "rhombic toric";
@@ -3971,7 +3971,7 @@ TEST(buildLogical, correctFunctionl4)
     EXPECT_EQ(logicals.at(2), expectedZ3);
 }
 
-TEST(checkCorrection, handlesStabilisers)
+TEST(checkCorrection, handles_stabilizers)
 {
     int l = 4;
     std::string type = "rhombic toric";
@@ -3985,7 +3985,7 @@ TEST(checkCorrection, handlesStabilisers)
     EXPECT_TRUE(code.checkCorrection());
 }
 
-TEST(checkCorrection, handlesLogicalXOps)
+TEST(checkCorrection, handles_logical_x_operators)
 {
     int l = 4;
     std::string type = "rhombic toric";

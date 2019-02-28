@@ -2,7 +2,7 @@
 #include "gtest/gtest.h"
 #include <string>
 
-TEST(Lattice, ExceptsInvalidLatticeSizes)
+TEST(RhombicLattice, excepts_invalid_lattice_sizes)
 {
     int l = 2;
     EXPECT_THROW(RhombicLattice lattice = RhombicLattice(l), std::invalid_argument);
@@ -12,7 +12,7 @@ TEST(Lattice, ExceptsInvalidLatticeSizes)
     EXPECT_THROW(RhombicLattice lattice = RhombicLattice(l), std::invalid_argument);
 }
 
-TEST(neighbour, ExceptsInvalidDirections)
+TEST(neighbour, excepts_invalid_direction)
 {
     int l = 4;
     RhombicLattice lattice = RhombicLattice(l);
@@ -22,7 +22,7 @@ TEST(neighbour, ExceptsInvalidDirections)
     EXPECT_THROW(lattice.neighbour(vertexIndex, direction, sign), std::invalid_argument);
 }
 
-TEST(neighbour, ExceptsVerticesBeyondLatticeBoundaries)
+TEST(neighbour, excepts_outside_lattice)
 {
     int l = 4;
     RhombicLattice lattice = RhombicLattice(l);
@@ -50,7 +50,7 @@ TEST(neighbour, ExceptsVerticesBeyondLatticeBoundaries)
     }
 }
 
-TEST(neighbour, HandlesValidInput)
+TEST(neighbour, handles_valid_input)
 {
     int l = 4;
     RhombicLattice lattice = RhombicLattice(l);
@@ -86,7 +86,7 @@ TEST(neighbour, HandlesValidInput)
     EXPECT_EQ(lattice.neighbour(vertexIndex, "xz", -1), 25);
 }
 
-TEST(edgeIndex, ExceptsEdgesBeyondLatticeBoundaries)
+TEST(edgeIndex, excepts_edges_beyond_lattice_boundaries)
 {
     int l = 4;
     RhombicLattice lattice = RhombicLattice(l);
@@ -99,7 +99,7 @@ TEST(edgeIndex, ExceptsEdgesBeyondLatticeBoundaries)
     EXPECT_THROW(lattice.edgeIndex(vertexIndex, "yz", -1), std::invalid_argument);
 }
 
-TEST(edgeIndex, ExceptsInvalidDirections)
+TEST(edgeIndex, excepts_invalid_directions)
 {
     int l = 6;
     RhombicLattice lattice = RhombicLattice(l);
@@ -109,7 +109,7 @@ TEST(edgeIndex, ExceptsInvalidDirections)
     EXPECT_THROW(lattice.edgeIndex(vertexIndex, direction, sign), std::invalid_argument);
 }
 
-TEST(edgeIndex, ExceptsInvalidSigns)
+TEST(edgeIndex, excepts_invalid_signs)
 {
     int l = 4;
     RhombicLattice lattice = RhombicLattice(l);
@@ -121,7 +121,7 @@ TEST(edgeIndex, ExceptsInvalidSigns)
     EXPECT_THROW(lattice.edgeIndex(vertexIndex, direction, -6), std::invalid_argument);
 }
 
-TEST(edgeIndex, HandlesValidInput)
+TEST(edgeIndex, handles_valid_input)
 {
     int l = 4;
     RhombicLattice lattice = RhombicLattice(l);
@@ -136,7 +136,7 @@ TEST(edgeIndex, HandlesValidInput)
     EXPECT_EQ(lattice.edgeIndex(vertexIndex, "yz", -1), 606);
 }
 
-TEST(createFaces, correctNumberOfFacesCreated)
+TEST(createFaces, correct_number_of_faces_created)
 {
     std::vector<int> ls = {4, 6, 8, 10};
     for (int l : ls)
@@ -171,7 +171,7 @@ TEST(createFaces, correctNumberOfFacesCreated)
     }
 }
 
-TEST(createFaces, correctFacesL4)
+TEST(createFaces, correct_faces_created)
 {
     int l = 4;
     RhombicLattice lattice = RhombicLattice(l);
@@ -191,7 +191,7 @@ TEST(createFaces, correctFacesL4)
     }
 }
 
-TEST(createFaces, correctNumberOfFacesInVertexToFacesL4)
+TEST(createFaces, correct_number_of_faces_in_vertex_to_faces)
 {
     int l = 4;
     RhombicLattice lattice = RhombicLattice(l);
@@ -208,7 +208,7 @@ TEST(createFaces, correctNumberOfFacesInVertexToFacesL4)
     }
 }
 
-TEST(findFace, handlesValidInput)
+TEST(findFace, handles_valid_input)
 {
     int l = 4;
     RhombicLattice lattice = RhombicLattice(l);
@@ -222,7 +222,7 @@ TEST(findFace, handlesValidInput)
     }
 }
 
-TEST(createUpEdgesMap, correctNumberOfUpEdgesAllVertexTypes)
+TEST(createUpEdgesMap, correct_number_of_up_edges_all_vertex_types)
 {
     int l = 4;
     RhombicLattice lattice = RhombicLattice(l);
@@ -254,7 +254,7 @@ TEST(createUpEdgesMap, correctNumberOfUpEdgesAllVertexTypes)
     }
 }
 
-TEST(createVertexToEdges, correctNumberOfEdges)
+TEST(createVertexToEdges, correct_number_of_edges)
 {
     int l = 6;
     RhombicLattice lattice = RhombicLattice(l);

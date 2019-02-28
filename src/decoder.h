@@ -50,7 +50,16 @@ std::vector<bool> runBoundaries(const int l, const int rounds,
     Code code = Code(l, "rhombic boundaries", p, q);
     vint &syndrome = code.getSyndrome();
     // vstr sweepDirections = {"xyz", "xz", "-xy", "yz", "xy", "-yz", "-xyz", "-xz"};
-    vstr sweepDirections = {"xyz", "xy", "yz", "xz", "-xyz", "-xy", "-yz", "-xz"};
+    // vstr sweepDirections = {"xyz", "xy", "yz", "xz", "-xyz", "-xy", "-yz", "-xz"};
+    // vstr sweepDirections = {"yz", "-xy", "-xyz", "-xz", "xyz", "xz", "-yz", "xy"};
+    // vstr sweepDirections = {"yz", "-yz", "-xy", "xy", "xyz", "-xyz", "xz", "-xz"};
+    // vstr sweepDirections = {"xyz", "-xy", "-yz", "-xz", "yz", "xz", "-xyz", "xy"};
+    // vstr sweepDirections = {"-xz", "xyz", "xy", "yz", "xz", "-xyz", "-xy", "-yz"};
+    // vstr sweepDirections = {"xyz", "-yz", "xz", "xy", "-xz", "-xy", "-xyz", "yz"};
+    // vstr sweepDirections = {"xyz", "-xy", "xz", "yz", "-xz", "-yz", "-xyz", "xy"};
+    // vstr sweepDirections = {"xyz", "-xz", "-yz", "-xy", "-xyz", "xz", "yz", "xy"};
+    // vstr sweepDirections = {"xyz", "-yz", "xz", "xy", "yz", "-xyz", "-xy", "-xz"};
+    vstr sweepDirections = {"xyz", "-yz", "-xz", "-xy", "-xyz", "yz", "xz", "xy"};
     // std::random_shuffle(sweepDirections.begin(), sweepDirections.end());
     int sweepCount = 0;
     // int sweepLimit = (int)ceil(log(l));
@@ -69,7 +78,7 @@ std::vector<bool> runBoundaries(const int l, const int rounds,
         code.calculateSyndrome();
         if (q > 0)
         {
-            std::cerr << "Generating measurement error." << std::endl; 
+            // std::cerr << "Generating measurement error." << std::endl; 
             code.generateMeasError();
         }
         code.sweep(sweepDirections[sweepIndex], true);
@@ -83,7 +92,7 @@ std::vector<bool> runBoundaries(const int l, const int rounds,
     // code.printUnsatisfiedStabilisers();
     // for (int r = 0; r < 12 * l; ++r)
     // for (int r = 0; r < 8 * sweepLimit * pow(l, 3); ++r)
-    for (int r = 0; r < pow(l, 3); ++r)
+    for (int r = 0; r < 8 * pow(l, 2); ++r)
     {
         if (sweepCount == sweepLimit)
         {

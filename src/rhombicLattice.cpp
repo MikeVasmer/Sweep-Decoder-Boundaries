@@ -7,11 +7,11 @@
 #include <map>
 #include <sstream>
 
-RhombicLattice::RhombicLattice(const int length) : Lattice(length)
+RhombicLattice::RhombicLattice(const int l) : Lattice(l)
 {
-    if (length < 3)
+    if (l < 3)
     {
-        throw std::invalid_argument("Lattice dimension l must be a positive integer greater than two.");
+        throw std::invalid_argument("Lattice dimension l must be greater than three.");
     }
     int numberOfFaces = 3 * pow(l - 1, 3) - 4 * pow(l - 1, 2) + 2 * (l - 1);
     faceToVertices.reserve(numberOfFaces);

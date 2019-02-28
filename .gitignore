@@ -74,4 +74,6 @@ data/
 # pycache
 __pycache__/
 
-
+# archives
+*.tar.gz
+*.zip
