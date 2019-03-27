@@ -12,6 +12,7 @@
 pcg_extras::seed_seq_from<std::random_device> seedSource;
 // Make a random number engine
 pcg32 pcg(seedSource);
+// pcg32 pcg(0); // Manual seed
 // Create distribution
 std::uniform_real_distribution<double> distDouble0To1(0, nextafter(1, 2));
 std::uniform_int_distribution<int> distInt0To2(0, 2);
@@ -35,13 +36,13 @@ Code::Code(const int ll, const std::string &lType, const double dataP, const dou
     {
         throw std::invalid_argument("Measurement error probability must be between zero and one (inclusive).");
     }
-    if (lType == "rhombic toric")
+    if (lType == "rhombic_toric")
     {
         numberOfFaces = (3 * l * l * l);
         latticeParity = 0;
         lattice = std::make_unique<RhombicToricLattice>(l);
     }
-    else if (lType == "rhombic boundaries")
+    else if (lType == "rhombic_boundaries")
     {
         numberOfFaces = 3 * pow(l - 1, 3) - 4 * pow(l - 1, 2) + 2 * (l - 1);
         latticeParity = 1;
@@ -89,7 +90,7 @@ void Code::calculateSyndrome()
         vint edges = faceToEdges[errorIndex];
         for (const int edgeIndex : edges)
         {
-            if (latticeType == "rhombic boundaries")
+            if (latticeType == "rhombic_boundaries")
             {
                 auto it = syndromeIndices.find(edgeIndex);
                 if (it == syndromeIndices.end())
@@ -165,12 +166,12 @@ void Code::buildSyndromeIndices()
 
 void Code::buildSweepIndices()
 {
-    if (latticeType == "rhombic toric")
+    if (latticeType == "rhombic_toric")
     {
         sweepIndices.assign(2 * l * l * l, 0);
         std::iota(std::begin(sweepIndices), std::end(sweepIndices), 0);
     }
-    else if (latticeType == "rhombic boundaries")
+    else if (latticeType == "rhombic_boundaries")
     {
         for (int i = 0; i < 2 * l * l * l; ++i)
         {
@@ -206,12 +207,12 @@ void Code::setError(const std::set<int> &err)
     }
 }
 
-void Code::setSyndrome(vint synd)
+void Code::setSyndrome(std::vector<int8_t>& synd)
 {
     syndrome = synd;
 }
 
-vint &Code::getSyndrome()
+std::vector<int8_t> &Code::getSyndrome()
 {
     return syndrome;
 }
@@ -230,7 +231,7 @@ void Code::generateMeasError()
 {
     for (int i = 0; i < syndrome.size(); ++i)
     {
-        if (latticeType == "rhombic boundaries")
+        if (latticeType == "rhombic_boundaries")
         {
             auto it = syndromeIndices.find(i);
             if (it == syndromeIndices.end())
@@ -339,7 +340,7 @@ void Code::sweep(const std::string &direction, bool greedy)
             continue;
         }
         cartesian4 coordinate = lattice->indexToCoordinate(vertexIndex);
-        if (sweepEdges.size() == 1 && (latticeType == "rhombic toric" || coordinate.w == 0))
+        if (sweepEdges.size() == 1 && (latticeType == "rhombic_toric" || coordinate.w == 0))
         {
             continue;
         }
@@ -347,11 +348,11 @@ void Code::sweep(const std::string &direction, bool greedy)
         {
             if ((coordinate.x + coordinate.y + coordinate.z) % 2 == latticeParity)
             {
-                // if (latticeType == "rhombic boundaries")
+                // if (latticeType == "rhombic_boundaries")
                 // {
                 //     sweepFullVertexBoundary(vertexIndex, sweepEdges, direction, edgeDirections);
                 // }
-                // else if (latticeType == "rhombic toric")
+                // else if (latticeType == "rhombic_toric")
                 // {
                 //     sweepFullVertex(vertexIndex, sweepEdges, direction, edgeDirections);
                 // }
@@ -364,7 +365,7 @@ void Code::sweep(const std::string &direction, bool greedy)
         }
         else
         {
-            if (latticeType == "rhombic boundaries")
+            if (latticeType == "rhombic_boundaries")
             {
                 // if (coordinate.y == 0)
                 // {
@@ -382,7 +383,7 @@ void Code::sweep(const std::string &direction, bool greedy)
                 // }
                 sweepHalfVertexBoundary(vertexIndex, sweepEdges, direction, edgeDirections);
             }
-            else if (latticeType == "rhombic toric")
+            else if (latticeType == "rhombic_toric")
             {
                 sweepHalfVertex(vertexIndex, sweepEdges, direction, edgeDirections);
             }
@@ -553,7 +554,7 @@ vint Code::faceVertices(const int vertexIndex, vstr directions)
     return vertices;
 }
 
-vint &Code::getFlipBits()
+std::vector<int8_t> &Code::getFlipBits()
 {
     return flipBits;
 }
@@ -1205,7 +1206,7 @@ void Code::clearFlipBits()
 
 void Code::buildLogicals()
 {
-    if (latticeType == "rhombic toric")
+    if (latticeType == "rhombic_toric")
     {
         for (int i = 0; i < l; i += 2)
         {
@@ -1262,7 +1263,7 @@ void Code::buildLogicals()
             logicalZ3.push_back(lattice->findFace(faceVertices));
         }
     }
-    else if (latticeType == "rhombic boundaries")
+    else if (latticeType == "rhombic_boundaries")
     {
         for (int i = 0; i < l; i += 2)
         {
@@ -1292,7 +1293,7 @@ void Code::buildLogicals()
 vvint Code::getLogicals()
 {
     vvint logicals;
-    if (latticeType == "rhombic toric")
+    if (latticeType == "rhombic_toric")
     {
         logicals.push_back(logicalZ1);
         logicals.push_back(logicalZ2);
@@ -1320,7 +1321,7 @@ bool Code::checkCorrection()
     {
         return false;
     }
-    if (latticeType == "rhombic toric")
+    if (latticeType == "rhombic_toric")
     {
         for (int faceIndex : logicalZ2)
         {

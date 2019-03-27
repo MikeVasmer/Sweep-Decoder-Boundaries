@@ -2,13 +2,13 @@
 #include "gtest/gtest.h"
 #include <string>
 
-TEST(RhombicToricLattice, ExceptsOddSizes)
+TEST(RhombicToricLattice, excepts_odd_L)
 {
     int l = 3;
     EXPECT_THROW(RhombicToricLattice lattice = RhombicToricLattice(l), std::invalid_argument);
 }
 
-TEST(neighbour, ExceptsInvalidDirections)
+TEST(neighbour, excepts_invalid_directions)
 {
     int l = 4;
     RhombicToricLattice lattice = RhombicToricLattice(l);
@@ -18,7 +18,7 @@ TEST(neighbour, ExceptsInvalidDirections)
     EXPECT_THROW(lattice.neighbour(vertexIndex, direction, sign), std::invalid_argument);
 }
 
-// TEST(neighbour, ExceptsInvalidLatticeDirectionCombinations)
+// TEST(neighbour, excepts_InvalidLatticeDirectionCombinations)
 // {
 //     int l = 4;
 //     RhombicToricLattice lattice = RhombicToricLattice(l);
@@ -30,7 +30,7 @@ TEST(neighbour, ExceptsInvalidDirections)
 //     EXPECT_THROW(lattice.neighbour(vertexIndex, "z", sign), std::invalid_argument);
 // }
 
-TEST(neighbour, HandlesValidInput)
+TEST(neighbour, handles_valid_input)
 {
     int l = 4;
     RhombicToricLattice lattice = RhombicToricLattice(l);
@@ -68,7 +68,7 @@ TEST(neighbour, HandlesValidInput)
     // EXPECT_EQ(latticeBCC.neighbour(vertexIndex, "z", -sign), 112);
 }
 
-TEST(edgeIndex, ExceptsInvalidDirections)
+TEST(edgeIndex, excepts_invalid_directions)
 {
     int l = 6;
     RhombicToricLattice lattice = RhombicToricLattice(l);
@@ -78,7 +78,7 @@ TEST(edgeIndex, ExceptsInvalidDirections)
     EXPECT_THROW(lattice.edgeIndex(vertexIndex, direction, sign), std::invalid_argument);
 }
 
-// TEST(edgeIndex, ExceptsInvalidLatticeDirectionCombinations)
+// TEST(edgeIndex, excepts_InvalidLatticeDirectionCombinations)
 // {
 //     int l = 6;
 //     int vertexIndex = 5;
@@ -96,7 +96,7 @@ TEST(edgeIndex, ExceptsInvalidDirections)
 //     // EXPECT_THROW(latticeCubic.edgeIndex(vertexIndex, "xyz", sign), std::invalid_argument);
 // }
 
-TEST(edgeIndex, ExceptsInvalidSigns)
+TEST(edgeIndex, excepts_invalid_signs)
 {
     int l = 4;
     RhombicToricLattice lattice = RhombicToricLattice(l);
@@ -108,7 +108,7 @@ TEST(edgeIndex, ExceptsInvalidSigns)
     EXPECT_THROW(lattice.edgeIndex(vertexIndex, direction, -6), std::invalid_argument);
 }
 
-TEST(edgeIndex, HandlesValidInput)
+TEST(edgeIndex, handles_valid_input)
 {
     int l = 6;
     RhombicToricLattice lattice = RhombicToricLattice(l);
@@ -132,7 +132,7 @@ TEST(edgeIndex, HandlesValidInput)
     // EXPECT_EQ(latticeBCC.edgeIndex(vertexIndex, "z", -sign), 1314);
 }
 
-TEST(createFaces, HandlesValidInput)
+TEST(createFaces, handles_valid_input)
 {
     int l = 6;
     RhombicToricLattice lattice = RhombicToricLattice(l);
@@ -214,7 +214,7 @@ TEST(createFaces, HandlesValidInput)
     }
 }
 
-TEST(createFaces, correctMaxEdgeIndex)
+TEST(createFaces, correct_max_edge_index)
 {
     vint ls = {4, 6, 8, 10};
     for (auto l : ls)
@@ -235,7 +235,7 @@ TEST(createFaces, correctMaxEdgeIndex)
     }
 }
 
-TEST(createFaces, correctMaxVertexIndex)
+TEST(createFaces, correct_max_vertex_index)
 {
     vint ls = {4, 6, 8, 10};
     for (auto l : ls)
@@ -256,7 +256,7 @@ TEST(createFaces, correctMaxVertexIndex)
     }
 }
 
-TEST(createFaces, correctNumberOfFaces)
+TEST(createFaces, correct_number_of_faces)
 {
     // Checked this on 29/08/18 with the preallocation turned off
     // Preallocation is turned on by default for speed purposes
@@ -283,7 +283,7 @@ TEST(createFaces, correctNumberOfFaces)
     }
 }
 
-TEST(createFaces, eachVertexinCorrectNumberOfFacesRhombicLattice)
+TEST(createFaces, vertices_in_correct_number_of_faces)
 {
     vint ls = {4, 6, 8, 10};
     for (auto l : ls)
@@ -311,7 +311,7 @@ TEST(createFaces, eachVertexinCorrectNumberOfFacesRhombicLattice)
     }
 }
 
-TEST(createUpEdgesMap, verticesHaveCorrectNumberOfUpEdges)
+TEST(createUpEdgesMap, vertices_have_correct_number_of_up_edges)
 {
     vint ls = {4, 6, 8, 10};
     for (auto l : ls)
@@ -384,7 +384,7 @@ TEST(createUpEdgesMap, verticesHaveCorrectNumberOfUpEdges)
     }
 }
 
-TEST(createUpEdgesMap, correctEdgesCreated)
+TEST(createUpEdgesMap, correct_edges_created)
 {
     int l = 4;
     RhombicToricLattice lattice = RhombicToricLattice(l);
@@ -424,7 +424,7 @@ TEST(createUpEdgesMap, correctEdgesCreated)
     }
 }
 
-TEST(findFace, ExceptsInvalidVertexListSize)
+TEST(findFace, excepts_invalid_vertex_list_size)
 {
     int l = 8;
     RhombicToricLattice lattice = RhombicToricLattice(l);
@@ -435,7 +435,7 @@ TEST(findFace, ExceptsInvalidVertexListSize)
     EXPECT_THROW(lattice.findFace(badVertexList), std::invalid_argument);
 }
 
-TEST(findFace, correctFacesFound)
+TEST(findFace, correct_faces_found)
 {
     int l = 8;
     RhombicToricLattice lattice = RhombicToricLattice(l);
@@ -447,7 +447,7 @@ TEST(findFace, correctFacesFound)
     EXPECT_EQ(lattice.findFace(expectedVertices), 2);
 }
 
-TEST(createVertexToEdges, correctEdgesCreated)
+TEST(createVertexToEdges, correct_edges_created)
 {
     int l = 6;
     RhombicToricLattice lattice = RhombicToricLattice(l);
@@ -481,7 +481,7 @@ TEST(createVertexToEdges, correctEdgesCreated)
     }
 }
 
-TEST(createVertexToEdges, correctNumberOfEdgesForEachVertex)
+TEST(createVertexToEdges, correct_number_of_edges_each_vertex)
 {
     int l = 6;
     RhombicToricLattice lattice = RhombicToricLattice(l);

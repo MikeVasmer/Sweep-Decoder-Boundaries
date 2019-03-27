@@ -12,8 +12,10 @@ class Code
   private:
     const int l;
     std::set<int> error;
-    vint syndrome;
-    vint flipBits;
+    // vint syndrome;
+    // vint flipBits;
+    std::vector<int8_t> syndrome;
+    std::vector<int8_t> flipBits;
     std::set<int> syndromeIndices;
     std::unique_ptr<Lattice> lattice;
     std::vector<int> sweepIndices;
@@ -50,12 +52,12 @@ class Code
     void setError(const std::set<int> &error);
     void clearSyndrome();
     void clearFlipBits();
-    void setSyndrome(vint syndrome);
+    void setSyndrome(std::vector<int8_t>& syndrome);
     void printUnsatisfiedStabilisers();
     void printError();
     // Getter methods
-    vint& getFlipBits();
-    vint& getSyndrome();
+    std::vector<int8_t>& getFlipBits();
+    std::vector<int8_t>& getSyndrome();
     Lattice& getLattice();
     std::set<int>& getError();
     vvint getLogicals();

@@ -7,7 +7,7 @@
 
 int main(int argc, char *argv[])
 {
-    if (argc < 6)
+    if (argc < 9)
     {
         std::cout << "Fewer than six arguments" << std::endl;
         for (int i = 0; i < argc; ++i)
@@ -21,8 +21,11 @@ int main(int argc, char *argv[])
     double p = std::atof(argv[2]);
     double q = std::atof(argv[3]);
     std::string sweepDir(argv[4]);
-    int rounds = std::atoi(argv[5]); 
+    int rounds = std::atoi(argv[5]);
     std::string latticeType(argv[6]);
+    int sweepLimit = std::atoi(argv[7]);
+    std::string sweepSchedule(argv[8]);
+    int timeout = std::atoi(argv[9]);
 
     std::vector<bool> succ;
 
@@ -33,13 +36,13 @@ int main(int argc, char *argv[])
     //           << "sweep dir = " << sweepDir << std::endl;
 
     auto start = std::chrono::high_resolution_clock::now();
-    if (latticeType == "rhombic toric")
+    if (latticeType == "rhombic_toric")
     {
-        succ = runToric(l, rounds, p, q, sweepDir);
+        succ = runToric(l, rounds, p, q, sweepDir, timeout);
     }
-    else if (latticeType == "rhombic boundaries")
+    else if (latticeType == "rhombic_boundaries")
     {
-        succ = runBoundaries(l, rounds, p, q);    
+        succ = runBoundaries(l, rounds, p, q, sweepLimit, sweepSchedule, timeout);
     }
     else
     {
