@@ -312,7 +312,7 @@ void RhombicLattice::createUpEdgesMap()
                         }
                         catch (const std::invalid_argument &e)
                         {
-                            // Edge includes vertex outside lattice, only happens for rhombic codes with boundaries
+                            // Edge includes vertex outside lattice
                         }
                         try
                         {

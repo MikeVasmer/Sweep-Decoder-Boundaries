@@ -107,8 +107,260 @@ void CubicLattice::createFaces()
 
 void CubicLattice::createUpEdgesMap()
 {
+    std::vector<std::string> directionList = {"xyz", "xy", "xz", "yz",
+                                              "-xyz", "-xy", "-xz", "-yz"};
+    for (const auto &direction : directionList)
+    {
+        vvint vertexToUpEdges;
+        vertexToUpEdges.assign(pow(l, 3), {});
+        for (int vertexIndex = 0; vertexIndex < pow(l, 3); ++vertexIndex)
+        {
+            cartesian4 coordinate = indexToCoordinate(vertexIndex);
+            if (direction == "xyz")
+            {
+                try
+                {
+                    vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "x", 1));
+                }
+                catch(const std::invalid_argument& e)
+                {
+                    // Edge to vertex outside lattice
+                }
+                try
+                {
+                    vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "y", 1));
+                }
+                catch(const std::invalid_argument& e)
+                {
+                }
+                try
+                {
+                    vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "z", 1));
+                }
+                catch(const std::invalid_argument& e)
+                {
+                }
+            }
+            else if (direction == "xy")
+            {
+                try
+                {
+                    vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "x", 1));
+                }
+                catch(const std::invalid_argument& e)
+                {
+                }
+                try
+                {
+                    vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "y", 1));
+                }
+                catch(const std::invalid_argument& e)
+                {
+                }
+                try
+                {
+                    vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "z", -1));
+                }
+                catch(const std::invalid_argument& e)
+                {
+                }
+            }
+            else if (direction == "xz")
+            {
+                try
+                {
+                    vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "x", 1));
+                }
+                catch(const std::invalid_argument& e)
+                {
+                }
+                try
+                {
+                    vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "y", -1));
+                }
+                catch(const std::invalid_argument& e)
+                {
+                }
+                try
+                {
+                    vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "z", 1));
+                }
+                catch(const std::invalid_argument& e)
+                {
+                }
+            }
+            else if (direction == "yz")
+            {
+                try
+                {
+                    vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "x", -1));
+                }
+                catch(const std::invalid_argument& e)
+                {
+                }
+                try
+                {
+                    vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "y", 1));
+                }
+                catch(const std::invalid_argument& e)
+                {
+                }
+                try
+                {
+                    vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "z", 1));
+                }
+                catch(const std::invalid_argument& e)
+                {
+                }
+            }
+            else if (direction == "-xyz")
+            {
+                try
+                {
+                    vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "x", -1));
+                }
+                catch(const std::invalid_argument& e)
+                {
+                }
+                try
+                {
+                    vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "y", -1));
+                }
+                catch(const std::invalid_argument& e)
+                {
+                }
+                try
+                {
+                    vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "z", -1));
+                }
+                catch(const std::invalid_argument& e)
+                {
+                }
+            }
+            else if (direction == "-xy")
+            {
+                try
+                {
+                    vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "x", -1));
+                }
+                catch(const std::invalid_argument& e)
+                {
+                }
+                try
+                {
+                    vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "y", -1));
+                }
+                catch(const std::invalid_argument& e)
+                {
+                }
+                try
+                {
+                    vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "z", 1));
+                }
+                catch(const std::invalid_argument& e)
+                {
+                }
+            }
+            else if (direction == "-xz")
+            {
+                try
+                {
+                    vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "x", -1));
+                }
+                catch(const std::invalid_argument& e)
+                {
+                }
+                try
+                {
+                    vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "y", 1));
+                }
+                catch(const std::invalid_argument& e)
+                {
+                }
+                try
+                {
+                    vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "z", -1));
+                }
+                catch(const std::invalid_argument& e)
+                {
+                }
+            }
+            else if (direction == "-yz")
+            {
+                try
+                {
+                    vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "x", 1));
+                }
+                catch(const std::invalid_argument& e)
+                {
+                }
+                try
+                {
+                    vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "y", -1));
+                }
+                catch(const std::invalid_argument& e)
+                {
+                }
+                try
+                {
+                    vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "z", -1));
+                }
+                catch(const std::invalid_argument& e)
+                {
+                }
+            }
+        }
+        upEdgesMap.insert(std::pair<std::string, vvint>(direction, vertexToUpEdges));
+    }
 }
 
 void CubicLattice::createVertexToEdges()
 {
+    for (int vertexIndex = 0; vertexIndex < pow(l, 3); ++vertexIndex)
+    {
+        cartesian4 coordinate = indexToCoordinate(vertexIndex);
+        try 
+        {
+            vertexToEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "x", 1));
+        }
+        catch(const std::invalid_argument& e)
+        {
+            // Invalid edge
+        }
+        try 
+        {
+            vertexToEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "y", 1));
+        }
+        catch(const std::invalid_argument& e)
+        {
+        }
+        try 
+        {
+            vertexToEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "z", 1));
+        }
+        catch(const std::invalid_argument& e)
+        {
+        }
+        try 
+        {
+            vertexToEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "x", -1));
+        }
+        catch(const std::invalid_argument& e)
+        {
+        }
+        try 
+        {
+            vertexToEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "y", -1));
+        }
+        catch(const std::invalid_argument& e)
+        {
+        }
+        try 
+        {
+            vertexToEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "z", -1));
+        }
+        catch(const std::invalid_argument& e)
+        {
+        }
+    }
 }

@@ -1,6 +1,7 @@
 #include "rhombicLattice.h"
 #include "gtest/gtest.h"
 #include <string>
+#include <cmath>
 
 TEST(RhombicLattice, excepts_invalid_lattice_sizes)
 {
@@ -208,7 +209,7 @@ TEST(createFaces, correct_number_of_faces_in_vertex_to_faces)
     }
 }
 
-TEST(findFace, handles_valid_input)
+TEST(findFace, finds_valid_faces)
 {
     int l = 4;
     RhombicLattice lattice = RhombicLattice(l);

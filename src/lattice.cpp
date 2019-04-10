@@ -112,7 +112,11 @@ int Lattice::findFace(vint &vertices)
 {
     if (vertices.size() != 4)
     {
-        throw std::invalid_argument("Vertex list must contain exactly four vertices.");
+        throw std::invalid_argument("Lattice::findFace, vertex list must contain exactly four vertices.");
+    }
+    else if (vertices[0] < 0 || vertices[1] < 0 || vertices[2] < 0 || vertices[3] < 0)
+    {
+        throw std::invalid_argument("Lattice::findFace, vertex indices cannot be negative.");
     }
     std::sort(vertices.begin(), vertices.end());
     auto v0Faces = vertexToFaces[vertices[0]];

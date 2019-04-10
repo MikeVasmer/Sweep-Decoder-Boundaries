@@ -4,6 +4,7 @@
 #include <string>
 #include <iostream>
 #include <chrono>
+#include <cmath>
 
 TEST(buildSyndromeIndices, syndrome_correct_size)
 {
