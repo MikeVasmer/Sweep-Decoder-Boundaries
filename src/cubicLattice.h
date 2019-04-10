@@ -1,5 +1,5 @@
-#ifndef RHOMBIC_LATTICE_H
-#define RHOMBIC_LATTICE_H
+#ifndef CUBIC_LATTICE_H
+#define CUBIC_LATTICE_H
 
 #include <vector>
 #include <string>

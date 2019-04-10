@@ -1,4 +1,4 @@
-#include "code.h"
+#include "rhombicCode.h"
 #include "rhombicLattice.h"
 #include "gtest/gtest.h"
 #include <string>
@@ -12,7 +12,7 @@ TEST(buildSyndromeIndices, syndrome_correct_size)
     double p = 0.1;
     for (int l : lList)
     {
-        Code code = Code(l, "rhombic_boundaries", p, p);
+        RhombicCode code = RhombicCode(l, p, p, true);
         auto &syndromeIndices = code.getSyndromeIndices();
         int expectedNumberOfEdges = 4 * (l - 2) * (l - 2) * (l - 1);
         EXPECT_EQ(syndromeIndices.size(), expectedNumberOfEdges);
@@ -25,7 +25,7 @@ TEST(buildSyndromeIndices, syndrome_correct_edges)
     double p = 0.1;
     for (int l : lList)
     {
-        Code code = Code(l, "rhombic_boundaries", p, p);
+        RhombicCode code = RhombicCode(l, p, p, true);
         auto &syndromeIndices = code.getSyndromeIndices();
         std::vector<cartesian4> coordinateList = {{0, 2, 1, 0}, {1, 1, 1, 0}, {l - 1, 1, 1, 0}, {0, 1, l - 2, 0}, {2, 1, l - 2, 0}, {l - 1, 2, l - 2, 0}, {0, 2, l - 1}, {2, 2, l - 1}, {l - 1, 1, l - 1}};
         std::vector<vstr> expectedEdgeDirections = {{"xyz", "xz"}, {"xyz", "xz", "yz", "xy"}, {"xy", "yz"}, {"xyz", "xz", "xy", "yz"}, {"xyz", "xz", "xy", "yz", "xyz", "xz", "xy", "yz"}, {"xyz", "xz", "xy", "yz"}, {"xy", "yz"}, {"xyz", "xz", "xy", "yz"}, {"xyz", "xz"}};
@@ -48,7 +48,7 @@ TEST(checkCorrection, handles_stabiliser_errors)
 {
     int l = 4;
     double p = 0.1;
-    Code code = Code(l, "rhombic_boundaries", p, p);
+    RhombicCode code = RhombicCode(l, p, p, true);
     std::set<int> error = {5, 8, 9, 11, 13, 14, 26, 28};
     code.setError(error);
     code.calculateSyndrome();
@@ -65,7 +65,7 @@ TEST(checkCorrection, handles_logical_X_errors)
 {
     int l = 4;
     double p = 0.1;
-    Code code = Code(l, "rhombic_boundaries", p, p);
+    RhombicCode code = RhombicCode(l, p, p, true);
     std::set<int> error = {0, 3, 5, 8, 9, 18, 30, 32, 36, 39, 41, 44, 45};
     code.setError(error);
     code.calculateSyndrome();
@@ -84,7 +84,7 @@ TEST(buildLogical, logical_correct_weight)
     double p = 0.1;
     for (auto l : ls)
     {
-        Code code = Code(l, "rhombic_boundaries", p, p);
+        RhombicCode code = RhombicCode(l, p, p, true);
         auto logicals = code.getLogicals();
         int expectedWeight = l - 1;
         EXPECT_EQ(logicals[0].size(), expectedWeight);
@@ -97,7 +97,7 @@ TEST(calculateSyndrome, no_invalid_syndromes_data_errors)
     double p = 0.1;
     for (auto l : ls)
     {
-        Code code = Code(l, "rhombic_boundaries", p, p);
+        RhombicCode code = RhombicCode(l, p, p, true);
         auto &syndromeIncdices = code.getSyndromeIndices();
         auto &syndrome = code.getSyndrome();
         for (int j = 0; j < 5; ++j)
@@ -122,7 +122,7 @@ TEST(calculateSyndrome, no_invalid_syndromes_meas_errors)
     double p = 0.1;
     for (auto l : ls)
     {
-        Code code = Code(l, "rhombic_boundaries", p, p);
+        RhombicCode code = RhombicCode(l, p, p, true);
         auto &syndromeIncdices = code.getSyndromeIndices();
         auto &syndrome = code.getSyndrome();
         for (int j = 0; j < 5; ++j)
@@ -146,7 +146,7 @@ TEST(calculateSyndrome, no_invalid_syndromes_both_errors)
     double p = 0.1;
     for (auto l : ls)
     {
-        Code code = Code(l, "rhombic_boundaries", p, p);
+        RhombicCode code = RhombicCode(l, p, p, true);
         auto &syndromeIndices = code.getSyndromeIndices();
         auto &syndrome = code.getSyndrome();
         // auto &boundarySyndromeIndices = code.getBoundarySyndromeIndices();
@@ -176,7 +176,7 @@ TEST(calculateSyndrome, no_syndrome_stabilizer_errors)
     double p = 0.1;
     for (auto l : ls)
     {
-        Code code = Code(l, "rhombic_boundaries", p, p);
+        RhombicCode code = RhombicCode(l, p, p, true);
         std::set<int> error = {16, 36, 40};
         // Lattice &lattice = code.getLattice();
         // auto vertexToFaces = lattice.getVertexToFaces();
@@ -207,7 +207,7 @@ TEST(sweep, runs_without_errors)
                 vstr sweepDirections = {"xyz", "xz", "-xy", "yz", "xy", "-yz", "-xyz", "-xz"};
         for (auto &sweepDirection
             : sweepDirections) {
-            Code code = Code(l, "rhombic_boundaries", p, p);
+            RhombicCode code = RhombicCode(l, p, p, true);
             for (int i = 0; i < 5; ++i)
             {
                 code.generateDataError();
@@ -228,7 +228,7 @@ TEST(sweep, corrects_single_qubit_errors)
         vstr sweepDirections = {"xyz", "xy", "yz", "xz", "-xyz", "-xy", "-yz", "-xz"};
         // vstr sweepDirections = {"-xyz"};
         int numberOfFaces = 3 * pow(l - 1, 3) - 4 * pow(l - 1, 2) + 2 * (l - 1);
-        Code code = Code(l, "rhombic_boundaries", p, p);
+        RhombicCode code = RhombicCode(l, p, p, true);
         auto &syndrome = code.getSyndrome();
         auto &lattice = code.getLattice();
         auto &faceToVertices = lattice.getFaceToVertices();
@@ -272,7 +272,7 @@ TEST(sweep, corrects_two_qubit_errors)
     vstr sweepDirections = {"xyz", "xy", "yz", "xz", "-xyz", "-xy", "-yz", "-xz"};
     for (auto const l : ls)
     {
-        Code code = Code(l, "rhombic_boundaries", p, p);
+        RhombicCode code = RhombicCode(l, p, p, true);
         auto &syndrome = code.getSyndrome();
         int numberOfFaces = 3 * pow(l - 1, 3) - 4 * pow(l - 1, 2) + 2 * (l - 1);
         auto &lattice = code.getLattice();
@@ -324,7 +324,7 @@ TEST(sweep, all_directions_sweep_correctly)
 {
     int l = 4;
     double p = 0.1;
-    Code code = Code(l, "rhombic_boundaries", p, p);
+    RhombicCode code = RhombicCode(l, p, p, true);
     std::set<int> error = {13, 18};
     code.setError(error);
     code.calculateSyndrome();
@@ -430,7 +430,7 @@ TEST(buildSweepIndices, correct_indices_L4)
 {
     int l = 4;
     double p = 0.1;
-    Code code = Code(l, "rhombic_boundaries", p, p);
+    RhombicCode code = RhombicCode(l, p, p, true);
     vint &sweepIndices = code.getSweepIndices();
     auto &lattice = code.getLattice();
     vint expectedIndices = {21, 23, 24, 26, 36, 38, 41, 43, 53, 55, 56, 58, 80, 81, 82, 84, 85, 86, 88, 89, 90, 96, 97, 98, 100, 101, 102, 104, 105, 106};
@@ -446,7 +446,7 @@ TEST(buildSweepIndices, correct_number_of_indices)
     double p = 0.1;
     for (auto const l : ls)
     {
-        Code code = Code(l, "rhombic_boundaries", p, p);
+        RhombicCode code = RhombicCode(l, p, p, true);
         vint &sweepIndices = code.getSweepIndices();
         int expectedSize = ((l - 1) * (l - 1) * (l - 2) + ((l * (l - 2) * (l - 1)) / 2));
         EXPECT_EQ(sweepIndices.size(), expectedSize);

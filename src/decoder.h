@@ -3,7 +3,7 @@
 
 #include <string>
 #include "rhombicToricLattice.h"
-#include "code.h"
+#include "rhombicCode.h"
 #include <algorithm>
 #include <cmath>
 
@@ -13,7 +13,7 @@ std::vector<bool> runToric(const int l, const int rounds,
                            const int timeout)
 {
     std::vector<bool> success = {false, false};
-    Code code = Code(l, "rhombic_toric", p, q);
+    RhombicCode code = RhombicCode(l, p, q, false);
     std::vector<int8_t> &syndrome = code.getSyndrome();
     for (int r = 0; r < rounds; ++r)
     {
@@ -51,7 +51,7 @@ std::vector<bool> runBoundaries(const int l, const int rounds,
                                 const int timeout)
 {
     std::vector<bool> success = {false, false};
-    Code code = Code(l, "rhombic_boundaries", p, q);
+    RhombicCode code = RhombicCode(l, p, q, true);
     std::vector<int8_t> &syndrome = code.getSyndrome();
     vstr sweepDirections = {"xyz", "xz", "-xy", "yz", "xy", "-yz", "-xyz", "-xz"};
     // vstr sweepDirections = {"xyz", "xz", "-xy", "yz", "xy", "-yz", "-xyz", "-xz"};

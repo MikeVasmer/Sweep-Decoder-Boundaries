@@ -1,4 +1,4 @@
-#include "code.h"
+#include "rhombicCode.h"
 #include "rhombicLattice.h"
 #include "gtest/gtest.h"
 #include <string>
@@ -6,22 +6,20 @@
 
 TEST(Code, excepts_invalid_probabilities)
 {
-    int latticeLength = 4;
-    std::string latticeType = "rhombic_toric";
+    int l = 4;
     std::vector<std::pair<double, double>> errorProbabilities = {{2, 0.1}, {-2, 0.2}, {0.5, 3}, {0.8, -1}};
     for (const auto &errorPair : errorProbabilities)
     {
-        EXPECT_THROW(Code code(latticeLength, latticeType, errorPair.first, errorPair.second), std::invalid_argument);
+        EXPECT_THROW(RhombicCode code(l, errorPair.first, errorPair.second, false), std::invalid_argument);
     }
 }
 
-TEST(Code, syndrome_correct_size)
+TEST(RhombicCode, syndrome_correct_size)
 {
     std::vector<int> latticeLengths = {4, 6, 8, 10};
-    std::string latticeType = "rhombic_toric";
     for (const int l : latticeLengths)
     {
-        Code code(l, latticeType, 0.1, 0.1);
+        RhombicCode code(l, 0.1, 0.1, false);
         auto syndrome = code.getSyndrome();
         EXPECT_EQ(syndrome.size(), 2 * 7 * l * l * l);
     }
@@ -30,10 +28,9 @@ TEST(Code, syndrome_correct_size)
 TEST(calculateSyndrome, correctly_calculates_error)
 {
     int latticeLength = 6;
-    std::string latticeType = "rhombic_toric";
     double p = 0.1;
     double q = p;
-    Code code = Code(latticeLength, latticeType, p, q);
+    RhombicCode code = RhombicCode(latticeLength, p, q, false);
     std::set<int> error = {0, 1};
     code.setError(error);
     code.calculateSyndrome();
@@ -55,10 +52,10 @@ TEST(calculateSyndrome, correctly_calculates_error)
 TEST(calculateSyndrome, correctly_calculates_stabilizer_error)
 {
     int latticeLength = 4;
-    std::string latticeType = "rhombic_toric";
+
     double p = 0.1;
     double q = p;
-    Code code = Code(latticeLength, latticeType, p, q);
+    RhombicCode code = RhombicCode(latticeLength, p, q, false);
     code.setError({0, 2, 3, 19, 20, 22, 23, 29, 63, 64, 156, 157});
     code.calculateSyndrome();
     auto syndrome = code.getSyndrome();
@@ -71,9 +68,8 @@ TEST(calculateSyndrome, correctly_calculates_stabilizer_error)
 TEST(generateDataError, handles_error_probability_one)
 {
     int l = 4;
-    std::string latticeType = "rhombic_toric";
     double p = 1;
-    Code code = Code(l, latticeType, p, p);
+    RhombicCode code = RhombicCode(l, p, p, false);
     code.generateDataError();
     EXPECT_EQ(code.getError().size(), 3 * l * l * l);
 }
@@ -81,9 +77,8 @@ TEST(generateDataError, handles_error_probability_one)
 TEST(generateDataError, handles_error_probability_zero)
 {
     int l = 6;
-    std::string latticeType = "rhombic_toric";
     double p = 0;
-    Code code = Code(l, latticeType, p, p);
+    RhombicCode code = RhombicCode(l, p, p, false);
     code.generateDataError();
     EXPECT_EQ(code.getError().size(), 0);
 }
@@ -91,9 +86,8 @@ TEST(generateDataError, handles_error_probability_zero)
 TEST(generateMeasError, handles_error_probability_one)
 {
     int l = 6;
-    std::string latticeType = "rhombic_toric";
     double p = 1;
-    Code code = Code(l, latticeType, p, p);
+    RhombicCode code = RhombicCode(l, p, p, false);
     code.generateMeasError();
     auto syndrome = code.getSyndrome();
     for (const int value : syndrome)
@@ -105,9 +99,8 @@ TEST(generateMeasError, handles_error_probability_one)
 TEST(generateMeasError, handles_error_probability_zero)
 {
     int l = 4;
-    std::string latticeType = "rhombic_toric";
     double p = 0;
-    Code code = Code(l, latticeType, p, p);
+    RhombicCode code = RhombicCode(l, p, p, false);
     code.generateMeasError();
     auto syndrome = code.getSyndrome();
     for (const int value : syndrome)
@@ -119,9 +112,8 @@ TEST(generateMeasError, handles_error_probability_zero)
 TEST(checkExtremalVertex, correct_extremal_vertices_one_error)
 {
     int l = 4;
-    std::string latticeType = "rhombic_toric";
     double p = 0.1;
-    Code code = Code(l, latticeType, p, p);
+    RhombicCode code = RhombicCode(l, p, p, false);
     code.setError({0});
     code.calculateSyndrome();
     EXPECT_TRUE(code.checkExtremalVertex(0, "xyz"));
@@ -176,9 +168,8 @@ TEST(checkExtremalVertex, correct_extremal_vertices_one_error)
 TEST(checkExtremalVertex, correct_extremal_vertices_two_errors)
 {
     int l = 6;
-    std::string latticeType = "rhombic_toric";
     double p = 0.1;
-    Code code = Code(l, latticeType, p, p);
+    RhombicCode code = RhombicCode(l, p, p, false);
     code.setError({0, 1});
     code.calculateSyndrome();
     EXPECT_TRUE(code.checkExtremalVertex(0, "xyz"));
@@ -249,9 +240,8 @@ TEST(checkExtremalVertex, correct_extremal_vertices_two_errors)
 TEST(localFlip, flips_correctly_one_and_twice)
 {
     int l = 8;
-    std::string latticeType = "rhombic_toric";
     double p = 0.1;
-    Code code = Code(l, latticeType, p, p);
+    RhombicCode code = RhombicCode(l, p, p, false);
     vint vs = {0, 72, 512, 519};
     code.localFlip(vs);
     std::vector<int8_t> &flipBits = code.getFlipBits();
@@ -266,9 +256,8 @@ TEST(localFlip, flips_correctly_one_and_twice)
 TEST(findSweepEdges, correct_edges_one_error)
 {
     int l = 4;
-    std::string type = "rhombic_toric";
     double p = 0.1;
-    Code code = Code(l, type, p, p);
+    RhombicCode code = RhombicCode(l, p, p, false);
     code.setError({120});
     code.calculateSyndrome();
 
@@ -371,9 +360,8 @@ TEST(findSweepEdges, correct_edges_one_error)
 TEST(faceVertices, handles_valid_input)
 {
     int l = 6;
-    std::string type = "rhombic_toric";
     double p = 0.1;
-    Code code = Code(l, type, p, p);
+    RhombicCode code = RhombicCode(l, p, p, false);
 
     // Full vertex
     vint expectedVertices = {86, 93, 266, 302};
@@ -399,18 +387,16 @@ TEST(faceVertices, handles_valid_input)
 TEST(faceVertices, excepts_too_many_directions)
 {
     int l = 6;
-    std::string type = "rhombic_toric";
     double p = 0.1;
-    Code code = Code(l, type, p, p);
+    RhombicCode code = RhombicCode(l, p, p, false);
     EXPECT_THROW(code.faceVertices(0, {"xyz", "-xy", "xy", "xz"}), std::invalid_argument);
 }
 
 TEST(faceVertices, excepts_invalid_signs)
 {
     int l = 6;
-    std::string type = "rhombic_toric";
     double p = 0.1;
-    Code code = Code(l, type, p, p);
+    RhombicCode code = RhombicCode(l, p, p, false);
     EXPECT_THROW(code.faceVertices(0, {"xyz", "-xy", "xy"}), std::invalid_argument);
     EXPECT_THROW(code.faceVertices(0, {"xyz", "xy", "-xy"}), std::invalid_argument);
 }
@@ -418,9 +404,8 @@ TEST(faceVertices, excepts_invalid_signs)
 TEST(faceVertices, excepts_invalid_directions)
 {
     int l = 6;
-    std::string type = "rhombic_toric";
     double p = 0.1;
-    Code code = Code(l, type, p, p);
+    RhombicCode code = RhombicCode(l, p, p, false);
     EXPECT_THROW(code.faceVertices(0, {"xyz", "xy", "xz"}), std::invalid_argument);
     EXPECT_THROW(code.faceVertices(0, {"xyz", "-xy", "xy"}), std::invalid_argument);
 }
@@ -428,9 +413,8 @@ TEST(faceVertices, excepts_invalid_directions)
 TEST(sweepFullVertex, handles_qubits_errors_xy)
 {
     int l = 4;
-    std::string type = "rhombic_toric";
     double p = 0.1;
-    Code code = Code(l, type, p, p);
+    RhombicCode code = RhombicCode(l, p, p, false);
 
     // One error
     // xy -xz face of vertex 27
@@ -567,9 +551,8 @@ TEST(sweepFullVertex, handles_qubits_errors_xy)
 TEST(sweepFullVertex, handles_measurement_errors_xy)
 {
     int l = 4;
-    std::string type = "rhombic_toric";
     double p = 0.1;
-    Code code = Code(l, type, p, p);
+    RhombicCode code = RhombicCode(l, p, p, false);
 
     // 3 sweep edges around vertex
     // xy, xyz, -yz edges of vertex 27
@@ -667,9 +650,8 @@ TEST(sweepFullVertex, handles_measurement_errors_xy)
 TEST(sweepHalfVertex, handles_qubit_errors_xy)
 {
     int l = 6;
-    std::string type = "rhombic_toric";
     double p = 0.1;
-    Code code = Code(l, type, p, p);
+    RhombicCode code = RhombicCode(l, p, p, false);
 
     // One error
     // xyx -xz face of vertex 283
@@ -786,9 +768,8 @@ TEST(sweepHalfVertex, handles_qubit_errors_xy)
 TEST(sweepHalfVertex, handles_measurement_errors_xy)
 {
     int l = 6;
-    std::string type = "rhombic_toric";
     double p = 0.1;
-    Code code = Code(l, type, p, p);
+    RhombicCode code = RhombicCode(l, p, p, false);
 
     // Three sweep edges at vertex 283
     // xyz, -yz and -xz edges
@@ -819,9 +800,8 @@ TEST(sweepHalfVertex, handles_measurement_errors_xy)
 TEST(sweepFullVertex, handles_qubit_errors_minus_xy)
 {
     int l = 4;
-    std::string type = "rhombic_toric";
     double p = 0.1;
-    Code code = Code(l, type, p, p);
+    RhombicCode code = RhombicCode(l, p, p, false);
 
     // One error
     // -xyz -xy face of vertex 0
@@ -958,9 +938,8 @@ TEST(sweepFullVertex, handles_qubit_errors_minus_xy)
 TEST(sweepFullVertex, handles_measurement_errors_minus_xy)
 {
     int l = 4;
-    std::string type = "rhombic_toric";
     double p = 0.1;
-    Code code = Code(l, type, p, p);
+    RhombicCode code = RhombicCode(l, p, p, false);
 
     // 3 sweep edges around vertex
     // -xy, xz, -xyz edges of vertex 0
@@ -1051,9 +1030,8 @@ TEST(sweepFullVertex, handles_measurement_errors_minus_xy)
 TEST(sweepFullVertex, handles_qubit_errors_xz)
 {
     int l = 4;
-    std::string type = "rhombic_toric";
     double p = 0.1;
-    Code code = Code(l, type, p, p);
+    RhombicCode code = RhombicCode(l, p, p, false);
 
     // Two errors
     // xy -yz and xy xyz faces of vertex 27
@@ -1190,9 +1168,8 @@ TEST(sweepFullVertex, handles_qubit_errors_xz)
 TEST(sweepFullVertex, handles_measurement_errors_xz)
 {
     int l = 4;
-    std::string type = "rhombic_toric";
     double p = 0.1;
-    Code code = Code(l, type, p, p);
+    RhombicCode code = RhombicCode(l, p, p, false);
 
     // 3 sweep edges around vertex
     // xz, xyz, -yz edges of vertex 27
@@ -1283,9 +1260,8 @@ TEST(sweepFullVertex, handles_measurement_errors_xz)
 TEST(sweepFullVertex, handles_qubit_errors_minus_xz)
 {
     int l = 4;
-    std::string type = "rhombic_toric";
     double p = 0.1;
-    Code code = Code(l, type, p, p);
+    RhombicCode code = RhombicCode(l, p, p, false);
 
     // One error
     // xy -xz face of vertex 27
@@ -1422,9 +1398,8 @@ TEST(sweepFullVertex, handles_qubit_errors_minus_xz)
 TEST(sweepFullVertex, handles_measurement_errors_minus_xz)
 {
     int l = 4;
-    std::string type = "rhombic_toric";
     double p = 0.1;
-    Code code = Code(l, type, p, p);
+    RhombicCode code = RhombicCode(l, p, p, false);
 
     // 3 sweep edges around vertex
     // -xz, -xyz, yz edges of vertex 27
@@ -1515,9 +1490,8 @@ TEST(sweepFullVertex, handles_measurement_errors_minus_xz)
 TEST(sweepFullVertex, handles_qubit_errors_yz)
 {
     int l = 4;
-    std::string type = "rhombic_toric";
     double p = 0.1;
-    Code code = Code(l, type, p, p);
+    RhombicCode code = RhombicCode(l, p, p, false);
 
     // Two errors
     // xy -xz and xy xyz faces of vertex 27
@@ -1654,9 +1628,8 @@ TEST(sweepFullVertex, handles_qubit_errors_yz)
 TEST(sweepFullVertex, handles_measurement_errors_yz)
 {
     int l = 4;
-    std::string type = "rhombic_toric";
     double p = 0.1;
-    Code code = Code(l, type, p, p);
+    RhombicCode code = RhombicCode(l, p, p, false);
 
     // 3 sweep edges around vertex
     // -xz, xyz, yz edges of vertex 27
@@ -1747,9 +1720,8 @@ TEST(sweepFullVertex, handles_measurement_errors_yz)
 TEST(sweepFullVertex, handles_qubit_errors_minus_yz)
 {
     int l = 4;
-    std::string type = "rhombic_toric";
     double p = 0.1;
-    Code code = Code(l, type, p, p);
+    RhombicCode code = RhombicCode(l, p, p, false);
 
     // One error
     // xy -yz face of vertex 27
@@ -1886,9 +1858,8 @@ TEST(sweepFullVertex, handles_qubit_errors_minus_yz)
 TEST(sweepFullVertex, handles_measurement_errors_minus_yz)
 {
     int l = 4;
-    std::string type = "rhombic_toric";
     double p = 0.1;
-    Code code = Code(l, type, p, p);
+    RhombicCode code = RhombicCode(l, p, p, false);
 
     // 3 sweep edges around vertex
     // xz, -xyz, -yz edges of vertex 27
@@ -1979,9 +1950,8 @@ TEST(sweepFullVertex, handles_measurement_errors_minus_yz)
 TEST(sweepFullVertex, handles_qubit_errors_xyz)
 {
     int l = 4;
-    std::string type = "rhombic_toric";
     double p = 0.1;
-    Code code = Code(l, type, p, p);
+    RhombicCode code = RhombicCode(l, p, p, false);
 
     // One Error
     // xy xyz face of vertex 27
@@ -2117,9 +2087,8 @@ TEST(sweepFullVertex, handles_qubit_errors_xyz)
 TEST(sweepFullVertex, handles_measurement_errors_xyz)
 {
     int l = 4;
-    std::string type = "rhombic_toric";
     double p = 0.1;
-    Code code = Code(l, type, p, p);
+    RhombicCode code = RhombicCode(l, p, p, false);
 
     // 3 sweep edges around vertex
     // xyz, yz and xz edges of vertex 27
@@ -2210,9 +2179,8 @@ TEST(sweepFullVertex, handles_measurement_errors_xyz)
 TEST(sweepFullVertex, handles_qubit_errors_minus_xyz)
 {
     int l = 4;
-    std::string type = "rhombic_toric";
     double p = 0.1;
-    Code code = Code(l, type, p, p);
+    RhombicCode code = RhombicCode(l, p, p, false);
 
     // Two Errors
     // xy -yz and xy -xz faces of vertex 27
@@ -2350,9 +2318,8 @@ TEST(sweepFullVertex, handles_qubit_errors_minus_xyz)
 TEST(sweepFullVertex, handles_measurement_errors_minus_xyz)
 {
     int l = 4;
-    std::string type = "rhombic_toric";
     double p = 0.1;
-    Code code = Code(l, type, p, p);
+    RhombicCode code = RhombicCode(l, p, p, false);
 
     // 3 sweep edges around vertex
     // -xyz, -yz and -xz edges of vertex 27
@@ -2443,9 +2410,8 @@ TEST(sweepFullVertex, handles_measurement_errors_minus_xyz)
 TEST(sweepHalfVertex, handles_qubit_errors_minus_xy)
 {
     int l = 6;
-    std::string type = "rhombic_toric";
     double p = 0.1;
-    Code code = Code(l, type, p, p);
+    RhombicCode code = RhombicCode(l, p, p, false);
 
     // One error
     // xz yz face of vertex 309
@@ -2562,9 +2528,8 @@ TEST(sweepHalfVertex, handles_qubit_errors_minus_xy)
 TEST(sweepHalfVertex, handles_qubit_errors_xz)
 {
     int l = 6;
-    std::string type = "rhombic_toric";
     double p = 0.1;
-    Code code = Code(l, type, p, p);
+    RhombicCode code = RhombicCode(l, p, p, false);
 
     // One error
     // xyx -yz face of vertex 283
@@ -2681,9 +2646,8 @@ TEST(sweepHalfVertex, handles_qubit_errors_xz)
 TEST(sweepHalfVertex, handles_qubit_errors_minus_xz)
 {
     int l = 6;
-    std::string type = "rhombic_toric";
     double p = 0.1;
-    Code code = Code(l, type, p, p);
+    RhombicCode code = RhombicCode(l, p, p, false);
 
     // One error
     // xy yz face of vertex 309
@@ -2800,9 +2764,8 @@ TEST(sweepHalfVertex, handles_qubit_errors_minus_xz)
 TEST(sweepHalfVertex, handles_qubit_errors_yz)
 {
     int l = 6;
-    std::string type = "rhombic_toric";
     double p = 0.1;
-    Code code = Code(l, type, p, p);
+    RhombicCode code = RhombicCode(l, p, p, false);
 
     // One error
     // xyx -xz face of vertex 283
@@ -2919,9 +2882,8 @@ TEST(sweepHalfVertex, handles_qubit_errors_yz)
 TEST(sweepHalfVertex, handles_qubit_errors_minus_yz)
 {
     int l = 6;
-    std::string type = "rhombic_toric";
     double p = 0.1;
-    Code code = Code(l, type, p, p);
+    RhombicCode code = RhombicCode(l, p, p, false);
 
     // One error
     // xy xz face of vertex 309
@@ -3038,9 +3000,8 @@ TEST(sweepHalfVertex, handles_qubit_errors_minus_yz)
 TEST(sweepHalfVertex, handles_qubit_errors_xyz)
 {
     int l = 6;
-    std::string type = "rhombic_toric";
     double p = 0.1;
-    Code code = Code(l, type, p, p);
+    RhombicCode code = RhombicCode(l, p, p, false);
 
     // One error
     // xy xz face of vertex 309
@@ -3157,9 +3118,8 @@ TEST(sweepHalfVertex, handles_qubit_errors_xyz)
 TEST(sweepHalfVertex, handles_qubit_errors_minus_xyz)
 {
     int l = 6;
-    std::string type = "rhombic_toric";
     double p = 0.1;
-    Code code = Code(l, type, p, p);
+    RhombicCode code = RhombicCode(l, p, p, false);
 
     // One error
     // -xz -yz face of vertex 283
@@ -3276,9 +3236,8 @@ TEST(sweepHalfVertex, handles_qubit_errors_minus_xyz)
 TEST(sweepHalfVertex, handles_measurement_errors_xz)
 {
     int l = 6;
-    std::string type = "rhombic_toric";
     double p = 0.1;
-    Code code = Code(l, type, p, p);
+    RhombicCode code = RhombicCode(l, p, p, false);
 
     // Three sweep edges at vertex 283
     // xyz, -yz and -xy edges
@@ -3307,9 +3266,8 @@ TEST(sweepHalfVertex, handles_measurement_errors_xz)
 TEST(sweepHalfVertex, handles_measurement_errors_yz)
 {
     int l = 6;
-    std::string type = "rhombic_toric";
     double p = 0.1;
-    Code code = Code(l, type, p, p);
+    RhombicCode code = RhombicCode(l, p, p, false);
 
     // Three sweep edges at vertex 283
     // xyz, -xy and -xz edges
@@ -3338,9 +3296,8 @@ TEST(sweepHalfVertex, handles_measurement_errors_yz)
 TEST(sweepHalfVertex, handles_measurement_errors_minus_xyz)
 {
     int l = 6;
-    std::string type = "rhombic_toric";
     double p = 0.1;
-    Code code = Code(l, type, p, p);
+    RhombicCode code = RhombicCode(l, p, p, false);
 
     // Three sweep edges at vertex 283
     // -xy, -yz and -xz edges
@@ -3369,9 +3326,8 @@ TEST(sweepHalfVertex, handles_measurement_errors_minus_xyz)
 TEST(sweepHalfVertex, handles_measurement_errors_minus_xy)
 {
     int l = 6;
-    std::string type = "rhombic_toric";
     double p = 0.1;
-    Code code = Code(l, type, p, p);
+    RhombicCode code = RhombicCode(l, p, p, false);
 
     // Three sweep edges at vertex 309
     // -xyz, yz and xz edges
@@ -3400,9 +3356,8 @@ TEST(sweepHalfVertex, handles_measurement_errors_minus_xy)
 TEST(sweepHalfVertex, handles_measurement_errors_minus_xz)
 {
     int l = 6;
-    std::string type = "rhombic_toric";
     double p = 0.1;
-    Code code = Code(l, type, p, p);
+    RhombicCode code = RhombicCode(l, p, p, false);
 
     // Three sweep edges at vertex 309
     // -xyz, yz and xz edges
@@ -3431,9 +3386,8 @@ TEST(sweepHalfVertex, handles_measurement_errors_minus_xz)
 TEST(sweepHalfVertex, handles_measurement_errors_minus_yz)
 {
     int l = 6;
-    std::string type = "rhombic_toric";
     double p = 0.1;
-    Code code = Code(l, type, p, p);
+    RhombicCode code = RhombicCode(l, p, p, false);
 
     // Three sweep edges at vertex 309
     // -xyz, yz and xz edges
@@ -3462,9 +3416,8 @@ TEST(sweepHalfVertex, handles_measurement_errors_minus_yz)
 TEST(sweepHalfVertex, handles_measurement_errors_xyz)
 {
     int l = 6;
-    std::string type = "rhombic_toric";
     double p = 0.1;
-    Code code = Code(l, type, p, p);
+    RhombicCode code = RhombicCode(l, p, p, false);
 
     // Three sweep edges at vertex 309
     // -xyz, yz and xz edges
@@ -3493,9 +3446,8 @@ TEST(sweepHalfVertex, handles_measurement_errors_xyz)
 TEST(sweep, handles_qubit_errors_xyz)
 {
     int l = 4;
-    std::string type = "rhombic_toric";
     double p = 0.1;
-    Code code = Code(l, type, p, p);
+    RhombicCode code = RhombicCode(l, p, p, false);
 
     code.setError({44, 45, 151});
     code.calculateSyndrome();
@@ -3553,9 +3505,8 @@ TEST(sweep, handles_qubit_errors_xyz)
 TEST(sweep, handles_qubit_errors_minus_xyz)
 {
     int l = 4;
-    std::string type = "rhombic_toric";
     double p = 0.1;
-    Code code = Code(l, type, p, p);
+    RhombicCode code = RhombicCode(l, p, p, false);
 
     code.setError({44, 45, 151});
     code.calculateSyndrome();
@@ -3612,9 +3563,8 @@ TEST(sweep, handles_qubit_errors_minus_xyz)
 TEST(sweep, handles_qubit_errors_xy)
 {
     int l = 4;
-    std::string type = "rhombic_toric";
     double p = 0.1;
-    Code code = Code(l, type, p, p);
+    RhombicCode code = RhombicCode(l, p, p, false);
 
     code.setError({44, 45, 151});
     code.calculateSyndrome();
@@ -3671,9 +3621,8 @@ TEST(sweep, handles_qubit_errors_xy)
 TEST(sweep, handles_qubit_errors_minus_xy)
 {
     int l = 4;
-    std::string type = "rhombic_toric";
     double p = 0.1;
-    Code code = Code(l, type, p, p);
+    RhombicCode code = RhombicCode(l, p, p, false);
 
     code.setError({44, 45, 151});
     code.calculateSyndrome();
@@ -3731,9 +3680,8 @@ TEST(sweep, handles_qubit_errors_minus_xy)
 TEST(sweep, handles_qubit_errors_xz)
 {
     int l = 6;
-    std::string type = "rhombic_toric";
     double p = 0.1;
-    Code code = Code(l, type, p, p);
+    RhombicCode code = RhombicCode(l, p, p, false);
 
     code.setError({259, 478, 350});
     code.calculateSyndrome();
@@ -3790,9 +3738,8 @@ TEST(sweep, handles_qubit_errors_xz)
 TEST(sweep, handles_qubit_errors_minus_xz)
 {
     int l = 6;
-    std::string type = "rhombic_toric";
     double p = 0.1;
-    Code code = Code(l, type, p, p);
+    RhombicCode code = RhombicCode(l, p, p, false);
 
     code.setError({259, 478, 350});
     code.calculateSyndrome();
@@ -3844,9 +3791,8 @@ TEST(sweep, handles_qubit_errors_minus_xz)
 TEST(sweep, handles_qubit_errors_yz)
 {
     int l = 6;
-    std::string type = "rhombic_toric";
     double p = 0.1;
-    Code code = Code(l, type, p, p);
+    RhombicCode code = RhombicCode(l, p, p, false);
 
     code.setError({259, 478, 350});
     code.calculateSyndrome();
@@ -3900,9 +3846,8 @@ TEST(sweep, handles_qubit_errors_minus_yz)
 {
     // Same as XZ test by symmetry
     int l = 6;
-    std::string type = "rhombic_toric";
     double p = 0.1;
-    Code code = Code(l, type, p, p);
+    RhombicCode code = RhombicCode(l, p, p, false);
 
     code.setError({259, 478, 350});
     code.calculateSyndrome();
@@ -3959,9 +3904,8 @@ TEST(sweep, handles_qubit_errors_minus_yz)
 TEST(buildLogical, correct_steps_lattice_size_4)
 {
     int l = 4;
-    std::string type = "rhombic_toric";
     double p = 0.1;
-    Code code = Code(l, type, p, p);
+    RhombicCode code = RhombicCode(l, p, p, false);
     auto logicals = code.getLogicals();
     vint expectedZ1 = {151, 4, 145, 10};
     EXPECT_EQ(logicals.at(0), expectedZ1);
@@ -3974,9 +3918,8 @@ TEST(buildLogical, correct_steps_lattice_size_4)
 TEST(checkCorrection, handles_stabilizers)
 {
     int l = 4;
-    std::string type = "rhombic_toric";
     double p = 0.1;
-    Code code = Code(l, type, p, p);
+    RhombicCode code = RhombicCode(l, p, p, false);
 
     // No error
     EXPECT_TRUE(code.checkCorrection());
@@ -3988,9 +3931,8 @@ TEST(checkCorrection, handles_stabilizers)
 TEST(checkCorrection, handles_logical_x_operators)
 {
     int l = 4;
-    std::string type = "rhombic_toric";
     double p = 0.1;
-    Code code = Code(l, type, p, p);
+    RhombicCode code = RhombicCode(l, p, p, false);
 
     std::set<int> logicalX3 = {0, 1, 58, 87,
                                24, 25, 82, 63,
