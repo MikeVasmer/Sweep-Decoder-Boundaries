@@ -1,21 +1,21 @@
 import data_generator
 import time
 
-l_list = [6, 8, 10]
+l_list = [6]
 rounds_list = [0]
 p_list = [0.15, 0.175, 0.2, 0.225]
 q = 0
-trials = 100
+trials = 50
 sweep_direction = 'xyz'
 lattice_type = 'rhombic_boundaries'
 sweep_schedules = ['alternating_XZ', 'alternating_XY', 'alternating_YZ', 'rotating_XZ', 'rotating_XY', 'rotating_YZ', 'random']
 job_number = 1
 
 
-for l in l_list:
-    timeouts = [144 * l]
-    sweep_limit = l // 2
-    for sweep_schedule in sweep_schedules:
+for sweep_schedule in sweep_schedules:
+    for l in l_list:
+        timeouts = [144 * l]
+        sweep_limit = l // 2
         for timeout in timeouts:
         # timeout = 8 * l * l
             for r in rounds_list:

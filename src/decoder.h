@@ -6,6 +6,11 @@
 #include "rhombicCode.h"
 #include <algorithm>
 #include <cmath>
+#include "pcg_random.hpp"
+
+pcg_extras::seed_seq_from<std::random_device> seed;
+pcg32 pcg(seed);
+std::uniform_int_distribution<int> distInt0To7(0, 7);
 
 std::vector<bool> runToric(const int l, const int rounds,
                            const double p, const double q,
@@ -53,39 +58,55 @@ std::vector<bool> runBoundaries(const int l, const int rounds,
     std::vector<bool> success = {false, false};
     RhombicCode code = RhombicCode(l, p, q, true);
     std::vector<int8_t> &syndrome = code.getSyndrome();
-    vstr sweepDirections = {"xyz", "xz", "-xy", "yz", "xy", "-yz", "-xyz", "-xz"};
-    // vstr sweepDirections = {"xyz", "xz", "-xy", "yz", "xy", "-yz", "-xyz", "-xz"};
-    // vstr sweepDirections = {"xyz", "xy", "yz", "xz", "-xyz", "-xy", "-yz", "-xz"};
-    // vstr sweepDirections = {"yz", "-yz", "-xy", "xy", "xyz", "-xyz", "xz", "-xz"};
-    // vstr sweepDirections = {"xyz", "-xy", "-yz", "-xz", "yz", "xz", "-xyz", "xy"};
-    // vstr sweepDirections = {"-xz", "xyz", "xy", "yz", "xz", "-xyz", "-xy", "-yz"};
-    // vstr sweepDirections = {"xyz", "-yz", "xz", "xy", "-xz", "-xy", "-xyz", "yz"};
-    // vstr sweepDirections = {"xyz", "-xy", "xz", "yz", "-xz", "-yz", "-xyz", "xy"};
-    // vstr sweepDirections = {"xyz", "-xz", "-yz", "-xy", "-xyz", "xz", "yz", "xy"};
-    // vstr sweepDirections = {"xyz", "-yz", "xz", "xy", "yz", "-xyz", "-xy", "-xz"};
-    if (sweepSchedule == "alternating")
+    vstr sweepDirections = {"xyz", "xy", "xz", "yz", "-xyz", "-xy", "-xz", "-yz"};
+    bool randomSchedule = false;
+    int sweepIndex = 0;
+    int sweepCount = 0;
+    if (sweepSchedule == "rotating_XZ")
+    {
+        sweepDirections = {"xyz", "xy", "-xz", "yz", "xz", "-yz", "-xyz", "-xy"};
+    }
+    else if (sweepSchedule == "alternating_XZ")
     {
         sweepDirections = {"xyz", "-xz", "-yz", "-xy", "-xyz", "xz", "yz", "xy"};
     }
+    else if (sweepSchedule == "rotating_YZ")
+    {
+        sweepDirections = {"xyz", "xy", "-yz", "xz", "yz", "-xz", "-xyz", "-xy"};
+    }
+    else if (sweepSchedule == "alternating_YZ")
+    {
+        sweepDirections = {"xyz", "-yz", "-xz", "-xy", "-xyz", "yz", "xz", "xy"};
+    }
+    else if (sweepSchedule == "rotating_XY")
+    {
+        sweepDirections = {"xyz", "yz", "-xy", "xz", "xy", "-xz", "-xyz", "-yz"};
+    }
+    else if (sweepSchedule == "alternating_XY")
+    {
+        sweepDirections = {"xyz", "-xy", "-xz", "-yz", "-xyz", "xy", "xz", "yz"};
+    }
     else if (sweepSchedule == "random")
     {
-        std::random_shuffle(sweepDirections.begin(), sweepDirections.end());
-    }
-    else if (sweepSchedule == "rotating")
-    {
-        sweepDirections = {"yz", "-xy", "-xyz", "-xz", "xyz", "xz", "-yz", "xy"};
+        randomSchedule = true;
+        sweepIndex = distInt0To7(pcg);
     }
     else 
     {
         throw std::invalid_argument("Invalid sweep schedule.");
     }
-    int sweepCount = 0;
-    int sweepIndex = 0;
     for (int r = 0; r < rounds; ++r)
     {
         if (sweepCount == sweepLimit)
         {
-            sweepIndex = (sweepIndex + 1) % 8;
+            if (randomSchedule)
+            {
+                sweepIndex = distInt0To7(pcg);
+            }
+            else
+            {
+                sweepIndex = (sweepIndex + 1) % 8;
+            }
             sweepCount = 0;
         }
         code.generateDataError();
@@ -108,7 +129,14 @@ std::vector<bool> runBoundaries(const int l, const int rounds,
     {
         if (sweepCount == l)
         {
-            sweepIndex = (sweepIndex + 1) % 8;
+            if (randomSchedule)
+            {
+                sweepIndex = distInt0To7(pcg);
+            }
+            else
+            {
+                sweepIndex = (sweepIndex + 1) % 8;
+            }
             sweepCount = 0;
         }
         code.sweep(sweepDirections[sweepIndex], true);
