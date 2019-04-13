@@ -1,11 +1,8 @@
 #ifndef RHOMBIC_CODE_H
 #define RHOMBIC_CODE_H
 
-#include "lattice.h"
 #include "code.h"
 #include <string>
-#include <set>
-#include <memory>
 
 class RhombicCode : public Code
 {

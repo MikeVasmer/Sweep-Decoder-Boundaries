@@ -79,9 +79,9 @@ std::set<int> &Code::getError()
 
 bool Code::checkExtremalVertex(const int vertexIndex, const std::string &direction)
 {
-    auto upEdgesMap = lattice->getUpEdgesMap();
+    auto &upEdgesMap = lattice->getUpEdgesMap();
     vint upEdges = upEdgesMap[direction][vertexIndex];
-    vvint vertexToEdges = lattice->getVertexToEdges();
+    auto &vertexToEdges = lattice->getVertexToEdges();
     vint edges = vertexToEdges[vertexIndex];
     bool edgeInSyndrome = false;
     for (const int edgeIndex : edges)
@@ -151,7 +151,7 @@ void Code::clearSyndrome()
 
 void Code::clearFlipBits()
 {
-    flipBits.assign(numberOfFlipBits, 0);
+    flipBits.assign(numberOfFaces, 0);
 }
 
 void Code::printUnsatisfiedStabilisers()
@@ -167,7 +167,7 @@ void Code::printUnsatisfiedStabilisers()
 
 void Code::printError()
 {
-    auto faceToVertices = lattice->getFaceToVertices();
+    auto &faceToVertices = lattice->getFaceToVertices();
     for (auto &face : error)
     {
         vint vertices = faceToVertices[face];
@@ -253,7 +253,7 @@ bool Code::checkCorrection()
 void Code::calculateSyndrome()
 {
     clearSyndrome();
-    vvint faceToEdges = lattice->getFaceToEdges();
+    auto &faceToEdges = lattice->getFaceToEdges();
     for (const int errorIndex : error)
     {
         vint edges = faceToEdges[errorIndex];

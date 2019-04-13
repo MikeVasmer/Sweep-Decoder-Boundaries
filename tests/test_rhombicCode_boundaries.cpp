@@ -98,7 +98,7 @@ TEST(calculateSyndrome, no_invalid_syndromes_data_errors)
     for (auto l : ls)
     {
         RhombicCode code = RhombicCode(l, p, p, true);
-        auto &syndromeIncdices = code.getSyndromeIndices();
+        auto &syndromeIndices = code.getSyndromeIndices();
         auto &syndrome = code.getSyndrome();
         for (int j = 0; j < 5; ++j)
         {
@@ -108,8 +108,8 @@ TEST(calculateSyndrome, no_invalid_syndromes_data_errors)
             {
                 if (syndrome[i] == 1)
                 {
-                    auto it = syndromeIncdices.find(i);
-                    EXPECT_FALSE(it == syndromeIncdices.end());
+                    auto it = syndromeIndices.find(i);
+                    EXPECT_FALSE(it == syndromeIndices.end());
                 }
             }
         }
@@ -149,7 +149,6 @@ TEST(calculateSyndrome, no_invalid_syndromes_both_errors)
         RhombicCode code = RhombicCode(l, p, p, true);
         auto &syndromeIndices = code.getSyndromeIndices();
         auto &syndrome = code.getSyndrome();
-        // auto &boundarySyndromeIndices = code.getBoundarySyndromeIndices();
         for (int j = 0; j < 5; ++j)
         {
             code.generateDataError();
@@ -159,11 +158,8 @@ TEST(calculateSyndrome, no_invalid_syndromes_both_errors)
             {
                 if (syndrome[i] == 1)
                 {
-                    // if (std::find(boundarySyndromeIndices.begin(), boundarySyndromeIndices.end(), i) == boundarySyndromeIndices.end())
-                    // {
                     auto it = syndromeIndices.find(i);
                     EXPECT_FALSE(it == syndromeIndices.end());
-                    // }
                 }
             }
         }
@@ -189,7 +185,7 @@ TEST(calculateSyndrome, no_syndrome_stabilizer_errors)
         code.setError(error);
         code.calculateSyndrome();
         // code.printUnsatisfiedStabilisers();
-        auto syndrome = code.getSyndrome();
+        auto &syndrome = code.getSyndrome();
         for (auto value : syndrome)
         {
             EXPECT_EQ(value, 0);

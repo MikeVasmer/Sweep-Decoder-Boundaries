@@ -24,7 +24,6 @@ RhombicCode::RhombicCode(const int l, const double p, const double q, bool bound
         lattice = std::make_unique<RhombicToricLattice>(l);
     }
     numberOfEdges = 2 * 7 * pow(l, 3);
-    numberOfFlipBits = 3 * pow(l, 3);
     buildSweepIndices();
     syndrome.assign(numberOfEdges, 0);
     flipBits.assign(numberOfFaces, 0);

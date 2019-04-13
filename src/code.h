@@ -15,7 +15,6 @@ protected:
   const int l;
   int numberOfFaces;
   int numberOfEdges;
-  int numberOfFlipBits;
   std::vector<int8_t> syndrome;
   std::vector<int8_t> flipBits;
   std::set<int> syndromeIndices;
