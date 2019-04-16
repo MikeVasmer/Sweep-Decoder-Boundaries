@@ -4,7 +4,7 @@ C++ implementation of the sweep rule decoder for topological quantum codes with 
 
 ## Build instructions
 
-Use [CMake](https://cmake.org/) to build. Tested on Linux (Ubuntu 16.04). During the build process CMake will automatically download [googletest](https://github.com/google/googletest) and [pcg-cpp](https://github.com/imneme/pcg-cpp).
+Use [CMake](https://cmake.org/) to build. During the build process CMake will automatically download [googletest](https://github.com/google/googletest) and [pcg-cpp](https://github.com/imneme/pcg-cpp).
 
 ### Step-by-step instructions
 
@@ -18,6 +18,8 @@ Use [CMake](https://cmake.org/) to build. Tested on Linux (Ubuntu 16.04). During
 - `cmake -DCMAKE_BUILD_TYPE=Debug ../`
 - `make`
 - `make test`
+
+Tested on Linux (Ubuntu 16.04).
 
 ## Usage
 
