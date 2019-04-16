@@ -40,9 +40,9 @@ int main(int argc, char *argv[])
     {
         succ = runToric(l, rounds, p, q, sweepDir, timeout);
     }
-    else if (latticeType == "rhombic_boundaries")
+    else if (latticeType == "rhombic_boundaries" || latticeType == "cubic_boundaries")
     {
-        succ = runBoundaries(l, rounds, p, q, sweepLimit, sweepSchedule, timeout);
+        succ = runBoundaries(l, rounds, p, q, sweepLimit, sweepSchedule, timeout, latticeType);
     }
     else
     {

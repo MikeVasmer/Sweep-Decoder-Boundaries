@@ -13,6 +13,11 @@ RhombicLattice::RhombicLattice(const int l) : Lattice(l)
     {
         throw std::invalid_argument("Lattice dimension l must be greater than three.");
     }
+    if (l % 2 == 1)
+    {
+        // ToDo: Fix for odd l
+        throw std::invalid_argument("Lattice length l must be even for rhombic lattices with boundaries.");
+    }
     int numberOfFaces = 3 * pow(l - 1, 3) - 4 * pow(l - 1, 2) + 2 * (l - 1);
     faceToVertices.reserve(numberOfFaces);
     faceToEdges.reserve(numberOfFaces);

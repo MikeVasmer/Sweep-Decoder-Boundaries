@@ -204,7 +204,7 @@ TEST(sweep, runs_without_errors)
         for (auto &sweepDirection
             : sweepDirections) {
             RhombicCode code = RhombicCode(l, p, p, true);
-            for (int i = 0; i < 5; ++i)
+            for (int i = 0; i < l; ++i)
             {
                 code.generateDataError();
                 code.calculateSyndrome();
@@ -373,54 +373,6 @@ TEST(sweep, all_directions_sweep_correctly)
         EXPECT_EQ(s, 0);
     }
 }
-
-// TEST(comparison, initTime)
-// {
-//     vint ls = {4, 6, 8};
-//     double p = 0.1;
-//     for (auto const l : ls)
-//     {
-//         auto start = std::chrono::high_resolution_clock::now();
-//         Code codeToric = Code(l, "rhombic toric", p, p);
-//         auto finish = std::chrono::high_resolution_clock::now();
-//         std::chrono::duration<double> elapsed = finish - start;
-//         std::cout << "Init time, toric, l=" << l << ": " << elapsed.count() << std::endl;
-//         start = std::chrono::high_resolution_clock::now();
-//         Code codeBoundaries = Code(l, "rhombic_boundaries", p, p);
-//         finish = std::chrono::high_resolution_clock::now();
-//         elapsed = finish - start;
-//         std::cout << "Init time, boundaries, l=" << l << ": " << elapsed.count() << std::endl;
-//     }
-// }
-
-// TEST(comparison, sweep)
-// {
-//     vint ls = {4, 6, 8};
-//     double p = 0.1;
-//     for (auto const l : ls)
-//     {
-//         Code codeToric = Code(l, "rhombic toric", p, p);
-//         auto start = std::chrono::high_resolution_clock::now();
-//         for (int i = 0; i < 100; ++i)
-//         {
-//             codeToric.generateDataError();
-//             codeToric.sweep("xyz", true);
-//         }
-//         auto finish = std::chrono::high_resolution_clock::now();
-//         std::chrono::duration<double> elapsed = finish - start;
-//         std::cout << "Sweep time, toric, l=" << l << ": " << elapsed.count() << std::endl;
-//         Code codeBoundaries = Code(l, "rhombic_boundaries", p, p);
-//         start = std::chrono::high_resolution_clock::now();
-//         for (int i = 0; i < 100; ++i)
-//         {
-//             codeBoundaries.generateDataError();
-//             codeBoundaries.sweep("xyz", true);
-//         }
-//         finish = std::chrono::high_resolution_clock::now();
-//         elapsed = finish - start;
-//         std::cout << "Sweep time, boundaries, l=" << l << ": " << elapsed.count() << std::endl;
-//     }
-// }
 
 TEST(buildSweepIndices, correct_indices_L4)
 {

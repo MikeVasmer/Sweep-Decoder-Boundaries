@@ -271,3 +271,144 @@ TEST(checkCorrection, handles_stabilizer_errors)
     }
 }
 
+TEST(sweep, runs_without_errors)
+{
+    vint ls = {4, 6};
+    for (auto l : ls)
+    {
+        double p = 0.1;
+                vstr sweepDirections = {"xyz", "xz", "-xy", "yz", "xy", "-yz", "-xyz", "-xz"};
+        for (auto &sweepDirection
+            : sweepDirections) {
+            CubicCode code = CubicCode(l, p, p, true);
+            for (int i = 0; i < l; ++i)
+            {
+                code.generateDataError();
+                code.calculateSyndrome();
+                code.generateMeasError();
+                EXPECT_NO_THROW(code.sweep(sweepDirection, true));
+            }
+        }
+    }
+}
+
+TEST(sweep, corrects_single_qubit_errors)
+{
+    vint ls = {4, 6};
+    for (auto l : ls)
+    {
+        vstr sweepDirections = {"xyz", "xy", "yz", "xz", "-xyz", "-xy", "-yz", "-xz"};
+        int numberOfFaces = 3 * pow(l - 1, 3) - 4 * pow(l - 1, 2) + 2 * (l - 1);
+        CubicCode code = CubicCode(l, 0.1, 0.1, true);
+        auto &syndrome = code.getSyndrome();
+        auto &lattice = code.getLattice();
+        auto &faceToVertices = lattice.getFaceToVertices();
+        for (int i = 0; i < numberOfFaces; ++i)
+        {
+            auto &f2v = faceToVertices[i];
+            code.setError({i});
+            code.calculateSyndrome();
+            for (auto &sweepDirection : sweepDirections)
+            {
+                for (int j = 0; j < 1; ++j)
+                {
+                    code.sweep(sweepDirection, true);
+                    code.calculateSyndrome();
+                }
+            }
+        }
+        for (int k = 0; k < syndrome.size(); ++k)
+        {
+            EXPECT_EQ(syndrome[k], 0);
+        }
+    }
+}
+
+TEST(sweep, corrects_two_qubit_errors)
+{
+    vint ls = {4}; // l = 6 also works but takes ~70s!
+    vstr sweepDirections = {"xyz", "xy", "yz", "xz", "-xyz", "-xy", "-yz", "-xz"};
+    for (auto const l : ls)
+    {
+        CubicCode code = CubicCode(l, 0.1, 0.1, true);
+        auto &syndrome = code.getSyndrome();
+        int numberOfFaces = 3 * pow(l - 1, 3) - 4 * pow(l - 1, 2) + 2 * (l - 1);
+        auto &lattice = code.getLattice();
+        auto &faceToVertices = lattice.getFaceToVertices();
+        int repeats = 1;
+        int sweepsPerDirection = l;
+        for (int i = 0; i < numberOfFaces; ++i)
+        {
+            auto &f2vi = faceToVertices[i];
+            for (int j = i + 1; j < numberOfFaces; ++j)
+            {
+                code.setError({i, j});
+                code.calculateSyndrome();
+                for (int r = 0; r < repeats; ++r)
+                {
+                    for (auto &sweepDirection : sweepDirections)
+                    {
+                        for (int s = 0; s < sweepsPerDirection; ++s)
+                        {
+                            code.sweep(sweepDirection, true);
+                            code.calculateSyndrome();
+                        }
+                    }
+                }
+                for (int k = 0; k < syndrome.size(); ++k)
+                {
+                    EXPECT_EQ(syndrome[k], 0);
+                }
+            }
+        }
+    }
+}
+
+TEST(sweep, all_directions_sweep_correctly)
+{
+    CubicCode code = CubicCode(4, 0.1, 0.1, true);
+    vstr sweepDirections = {"xyz", "xy", "xz", "yz", "-xyz", "-xy", "-xz", "-yz"};
+    auto &syndrome = code.getSyndrome();
+    vvint expectedSyndromes = {{29, 40, 122}, {29, 40, 122}, {29, 40, 122}, {122, 141}, {10, 29}, {122, 141}, {29, 40, 122}, {10, 29}};
+    for (int i = 0; i < sweepDirections.size(); ++i)
+    {
+        code.setError({0, 1});
+        code.calculateSyndrome();
+        code.sweep(sweepDirections[i], true);
+        code.calculateSyndrome();
+        for (int j = 0; j < syndrome.size(); ++j)
+        {
+            if (std::find(expectedSyndromes[i].begin(), expectedSyndromes[i].end(), j) != expectedSyndromes[i].end())
+            {
+                EXPECT_EQ(syndrome[j], 1);
+            }
+            else
+            {
+                EXPECT_EQ(syndrome[j], 0);
+            }
+        }
+    }
+    sweepDirections = {"yz", "-xyz", "-xy", "-yz"};
+    expectedSyndromes = {{122, 141}, {}, {}, {10, 29}};
+    for (int i = 0; i < sweepDirections.size(); ++i)
+    {
+        code.setError({0, 1});
+        code.calculateSyndrome();
+        code.sweep(sweepDirections[i], true);
+        code.calculateSyndrome();
+        code.sweep(sweepDirections[i], true);
+        code.calculateSyndrome();
+        for (int j = 0; j < syndrome.size(); ++j)
+        {
+            if (std::find(expectedSyndromes[i].begin(), expectedSyndromes[i].end(), j) != expectedSyndromes[i].end())
+            {
+                EXPECT_EQ(syndrome[j], 1);
+            }
+            else
+            {
+                EXPECT_EQ(syndrome[j], 0);
+            }
+        }
+    }
+}
+

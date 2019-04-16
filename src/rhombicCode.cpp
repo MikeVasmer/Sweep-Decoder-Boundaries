@@ -133,7 +133,6 @@ void RhombicCode::sweep(const std::string &direction, bool greedy)
 {
     clearFlipBits();
     vstr edgeDirections;
-    vvint signsFullVertex, signsHalfVertex;
     if (direction == "xyz")
     {
         edgeDirections = {"xy", "yz", "xz"};
@@ -168,7 +167,7 @@ void RhombicCode::sweep(const std::string &direction, bool greedy)
     }
     else
     {
-        throw std::invalid_argument("Invalid direction.");
+        throw std::invalid_argument("Invalid sweep direction.");
     }
     // for (int vertexIndex = 0; vertexIndex < 2 * pow(l, 3); ++vertexIndex)
     for (auto const vertexIndex : sweepIndices)
@@ -193,7 +192,7 @@ void RhombicCode::sweep(const std::string &direction, bool greedy)
         // std::cout << "FOUND." << std::endl;
         if (sweepEdges.size() > 4)
         {
-            throw std::length_error("More than four up-edges found for a vertex.");
+            throw std::length_error("More than four up-edges found for a rhombic lattice vertex.");
         }
         if (sweepEdges.size() == 0)
         {
@@ -247,13 +246,13 @@ void RhombicCode::sweep(const std::string &direction, bool greedy)
 vstr RhombicCode::findSweepEdges(const int vertexIndex, const std::string &direction)
 {
     vstr sweepEdges;
-    vint upEdges = upEdgesMap[direction][vertexIndex];
+    auto &upEdges = upEdgesMap[direction][vertexIndex];
     for (const int edge : upEdges)
     {
         if (syndrome[edge] == 1)
         {
             int xyzEdge = -1, xyEdge = -1, xzEdge = -1, yzEdge = -1;
-            int mxyzEdge = -1, mxyEdge = -1, mxzEdge = -1, myzEdge = -1;
+            int minusXYZEdge = -1, minusXYEdge = -1, minusXZEdge = -1, minusYZEdge = -1;
             try
             {
                 xyzEdge = lattice->edgeIndex(vertexIndex, "xyz", 1);
@@ -284,28 +283,28 @@ vstr RhombicCode::findSweepEdges(const int vertexIndex, const std::string &direc
             }
             try
             {
-                mxyzEdge = lattice->edgeIndex(vertexIndex, "xyz", -1);
+                minusXYZEdge = lattice->edgeIndex(vertexIndex, "xyz", -1);
             }
             catch (const std::invalid_argument &e)
             {
             }
             try
             {
-                mxyEdge = lattice->edgeIndex(vertexIndex, "xy", -1);
+                minusXYEdge = lattice->edgeIndex(vertexIndex, "xy", -1);
             }
             catch (const std::invalid_argument &e)
             {
             }
             try
             {
-                mxzEdge = lattice->edgeIndex(vertexIndex, "xz", -1);
+                minusXZEdge = lattice->edgeIndex(vertexIndex, "xz", -1);
             }
             catch (const std::invalid_argument &e)
             {
             }
             try
             {
-                myzEdge = lattice->edgeIndex(vertexIndex, "yz", -1);
+                minusYZEdge = lattice->edgeIndex(vertexIndex, "yz", -1);
             }
             catch (const std::invalid_argument &e)
             {
@@ -327,19 +326,19 @@ vstr RhombicCode::findSweepEdges(const int vertexIndex, const std::string &direc
             {
                 sweepEdges.push_back("xz");
             }
-            else if (myzEdge == edge)
+            else if (minusYZEdge == edge)
             {
                 sweepEdges.push_back("-yz");
             }
-            else if (mxzEdge == edge)
+            else if (minusXZEdge == edge)
             {
                 sweepEdges.push_back("-xz");
             }
-            else if (mxyEdge == edge)
+            else if (minusXYEdge == edge)
             {
                 sweepEdges.push_back("-xy");
             }
-            else if (mxyzEdge == edge)
+            else if (minusXYZEdge == edge)
             {
                 sweepEdges.push_back("-xyz");
             }
@@ -355,9 +354,9 @@ vstr RhombicCode::findSweepEdges(const int vertexIndex, const std::string &direc
 void RhombicCode::sweepFullVertex(const int vertexIndex, vstr &sweepEdges, const std::string &sweepDirection, const vstr &upEdgeDirections)
 {
     // std::cout << "Sweep of coordinate = " << lattice->indexToCoordinate(vertexIndex) << " ... ";
-    std::string edge0 = upEdgeDirections[0];
-    std::string edge1 = upEdgeDirections[1];
-    std::string edge2 = upEdgeDirections[2];
+    auto &edge0 = upEdgeDirections[0];
+    auto &edge1 = upEdgeDirections[1];
+    auto &edge2 = upEdgeDirections[2];
     cartesian4 coordinate = lattice->indexToCoordinate(vertexIndex);
     auto sweepDirectionIndex = std::distance(sweepEdges.begin(), std::find(sweepEdges.begin(), sweepEdges.end(), sweepDirection));
     if (sweepEdges.size() == 4)
@@ -525,9 +524,9 @@ void RhombicCode::sweepFullVertex(const int vertexIndex, vstr &sweepEdges, const
 void RhombicCode::sweepHalfVertex(const int vertexIndex, vstr &sweepEdges, const std::string &sweepDirection, const vstr &upEdgeDirections)
 {
     // std::cout << "Sweep of coordinate = " << lattice->indexToCoordinate(vertexIndex) << " ... ";
-    std::string edge0 = upEdgeDirections[0];
-    std::string edge1 = upEdgeDirections[1];
-    std::string edge2 = upEdgeDirections[2];
+    auto &edge0 = upEdgeDirections[0];
+    auto &edge1 = upEdgeDirections[1];
+    auto &edge2 = upEdgeDirections[2];
     if (sweepEdges.size() == 3)
     {
         // int delIndex = distInt0To2(mt);
@@ -586,7 +585,6 @@ void RhombicCode::sweepHalfVertex(const int vertexIndex, vstr &sweepEdges, const
 void RhombicCode::sweepHalfVertexBoundary(const int vertexIndex, vstr &sweepEdges, const std::string &sweepDirection, const vstr &upEdgeDirections)
 {
     // Minimal option
-
     cartesian4 coordinate = lattice->indexToCoordinate(vertexIndex);
     if (sweepEdges.size() == 1)
     {

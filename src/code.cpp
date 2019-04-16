@@ -80,9 +80,9 @@ std::set<int> &Code::getError()
 bool Code::checkExtremalVertex(const int vertexIndex, const std::string &direction)
 {
     auto &upEdgesMap = lattice->getUpEdgesMap();
-    vint upEdges = upEdgesMap[direction][vertexIndex];
+    auto &upEdges = upEdgesMap[direction][vertexIndex];
     auto &vertexToEdges = lattice->getVertexToEdges();
-    vint edges = vertexToEdges[vertexIndex];
+    auto &edges = vertexToEdges[vertexIndex];
     bool edgeInSyndrome = false;
     for (const int edgeIndex : edges)
     {
@@ -256,7 +256,7 @@ void Code::calculateSyndrome()
     auto &faceToEdges = lattice->getFaceToEdges();
     for (const int errorIndex : error)
     {
-        vint edges = faceToEdges[errorIndex];
+        auto &edges = faceToEdges[errorIndex];
         for (const int edgeIndex : edges)
         {
             if (boundaries)

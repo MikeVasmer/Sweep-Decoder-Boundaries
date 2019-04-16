@@ -2,8 +2,8 @@
 #define DECODER_H
 
 #include <string>
-#include "rhombicToricLattice.h"
 #include "rhombicCode.h"
+#include "cubicCode.h"
 #include <algorithm>
 #include <cmath>
 #include "pcg_random.hpp"
@@ -53,11 +53,21 @@ std::vector<bool> runBoundaries(const int l, const int rounds,
                                 const double p, const double q,
                                 const int sweepLimit,
                                 const std::string sweepSchedule,
-                                const int timeout)
+                                const int timeout,
+                                const std::string latticeType)
 {
     std::vector<bool> success = {false, false};
-    RhombicCode code = RhombicCode(l, p, q, true);
-    std::vector<int8_t> &syndrome = code.getSyndrome();
+    std::unique_ptr<Code> code;
+    if (latticeType == "rhombic_boundaries")
+    {
+        code = std::make_unique<RhombicCode>(l, p, q, true);
+    }
+    else if (latticeType == "cubic_boundaries")
+    {
+        code = std::make_unique<CubicCode>(l, p, q, true);
+    }
+    // RhombicCode code = RhombicCode(l, p, q, true);
+    std::vector<int8_t> &syndrome = code->getSyndrome();
     vstr sweepDirections = {"xyz", "xy", "xz", "yz", "-xyz", "-xy", "-xz", "-yz"};
     bool randomSchedule = false;
     int sweepIndex = 0;
@@ -109,21 +119,21 @@ std::vector<bool> runBoundaries(const int l, const int rounds,
             }
             sweepCount = 0;
         }
-        code.generateDataError();
-        code.calculateSyndrome();
+        code->generateDataError();
+        code->calculateSyndrome();
         if (q > 0)
         {
             // std::cerr << "Generating measurement error." << std::endl;
-            code.generateMeasError();
+            code->generateMeasError();
         }
-        code.sweep(sweepDirections[sweepIndex], true);
+        code->sweep(sweepDirections[sweepIndex], true);
         // std::cerr << "direction=" << sweepDirections[sweepIndex] << std::endl;
         // std::cerr << "sweepIndex=" << sweepIndex << std::endl;
         // std::cerr << "sweepCount=" << sweepCount << std::endl;
         ++sweepCount;
     }
-    code.generateDataError(); // Data errors = measurement errors at readout
-    code.calculateSyndrome();
+    code->generateDataError(); // Data errors = measurement errors at readout
+    code->calculateSyndrome();
     // code.printUnsatisfiedStabilisers();
     for (int r = 0; r < timeout; ++r)
     {
@@ -139,12 +149,12 @@ std::vector<bool> runBoundaries(const int l, const int rounds,
             }
             sweepCount = 0;
         }
-        code.sweep(sweepDirections[sweepIndex], true);
-        code.calculateSyndrome();
+        code->sweep(sweepDirections[sweepIndex], true);
+        code->calculateSyndrome();
         if (std::all_of(syndrome.begin(), syndrome.end(), [](int i) { return i == 0; }))
         {
             // std::cout << "Clean Syndrome" << std::endl;
-            success = {code.checkCorrection(), true};
+            success = {code->checkCorrection(), true};
             break;
         }
         // std::cerr << "r=" << r << std::endl;

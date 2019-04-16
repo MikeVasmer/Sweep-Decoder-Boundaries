@@ -14,6 +14,8 @@ class CubicCode : public Code
     vstr findSweepEdges(const int vertexIndex, const std::string &direction);
     void buildLogicals();
 
+    void cellularAutomatonStep(const int vertexIndex, vstr &sweepEdges, const std::string &sweepDirection, const vstr &upEdgeDirections);
+
 };
 
 #endif

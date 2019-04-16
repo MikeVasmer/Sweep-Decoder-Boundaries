@@ -5,6 +5,8 @@ import ast
 import json
 import time
 
+def snake_case_to_CamelCase(word):
+    return ''.join(x.capitalize() or '_' for x in word.split('_'))
 
 def generate_data(lattice_type, l, p, q, sweep_direction, sweep_limit, sweep_schedule, timeout, cycles, trials, job_number):
     cwd = os.getcwd()
@@ -18,7 +20,7 @@ def generate_data(lattice_type, l, p, q, sweep_direction, sweep_limit, sweep_sch
     start_time = time.time()
     for _ in range(trials):
         result = subprocess.run(
-            ['./RhombicSweep', str(l), str(p), str(q), sweep_direction, str(cycles), lattice_type, str(sweep_limit), sweep_schedule, str(timeout)], stdout=subprocess.PIPE, check=True, cwd=build_directory)
+            ['./SweepDecoder', str(l), str(p), str(q), sweep_direction, str(cycles), lattice_type, str(sweep_limit), sweep_schedule, str(timeout)], stdout=subprocess.PIPE, check=True, cwd=build_directory)
         # print(result.stdout.decode('utf-8'))
         result_list = ast.literal_eval(result.stdout.decode('utf-8'))
         # print(result_list)
@@ -39,15 +41,21 @@ def generate_data(lattice_type, l, p, q, sweep_direction, sweep_limit, sweep_sch
     data['Timeout'] = timeout
     data['Successes'] = successes
     data['Clear syndromes'] = clear_syndromes
+    
     if lattice_type == 'rhombic_toric':
         data['Sweep direction'] = sweep_direction
-        json_file = "L={}_N={}_p={:0.4f}_q={:0.4f}_trials={}_job={}.json".format(
-            l, cycles, p, q, trials, job_number)
-    elif lattice_type == "rhombic_boundaries":
+        # lattice_type = lattice_type.replace('_', '')
+        lattice_type = snake_case_to_CamelCase(lattice_type)
+        json_file = "L={}_N={}_p={:0.4f}_q={:0.4f}_direction={}_trials={}_lattice={}_job={}.json".format(
+            l, cycles, p, q, sweep_direction, trials, lattice_type, job_number)
+    elif lattice_type == "rhombic_boundaries" or lattice_type == "cubic_boundaries":
         data['Sweep limit'] = sweep_limit
         data['Sweep schedule'] = sweep_schedule
-        json_file = "L={}_N={}_p={:0.4f}_q={:0.4f}_timeout={}_trials={}_job={}.json".format(
-            l, cycles, p, q, timeout, trials, job_number)
+        # lattice_type = lattice_type.replace('_', '')
+        lattice_type = snake_case_to_CamelCase(lattice_type)
+        sweep_schedule = snake_case_to_CamelCase(sweep_schedule)
+        json_file = "L={}_N={}_p={:0.4f}_q={:0.4f}_schedule={}_sweepLimit={}_timeout={}_lattice={}_trials={}_job={}.json".format(
+            l, cycles, p, q, sweep_schedule, sweep_limit, timeout, lattice_type, trials, job_number)
 
     with open(json_file, 'w') as output:
         json.dump(data, output)
@@ -59,30 +67,29 @@ def generate_data(lattice_type, l, p, q, sweep_direction, sweep_limit, sweep_sch
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(
-        description="Sweep rule decoder for 3D toric codes.",
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument("lattice_type", type=str,
-                        default="rhombic toric", help="the lattice type [rhombic_boundaries|rhombic_toric]")
+        description="Sweep rule decoder for 3D surface codes.")
+    parser.add_argument("lattice_type", type=str, default="rhombic_toric", help="lattice type",
+                        choices=['cubic_boundaries', 'rhombic_boundaries', 'rhombic_toric'])
     parser.add_argument("l", type=int,
-                        help="the length of the l by l by l lattice")
+                        help="length of l by l by l lattice")
     parser.add_argument("p", type=float,
-                        help="the data qubit error probability")
+                        help="data qubit error probability")
     parser.add_argument("q", type=float,
-                        help="the measurement error probability")
+                        help="measurement error probability")
     parser.add_argument("cycles", type=int,
-                        help="the number of error correction cycles")
+                        help="number of error correction cycles")
     parser.add_argument("trials", type=int,
-                        help="the number of trials")
-    parser.add_argument("--sweep_limit", default='l/2',
-                        help="the number of sweeps per direction in the active phase")
-    parser.add_argument("--sweep_schedule", type=str, default='alternating',
-                        help="the sweep direction schedule [alternating|rotating|random]")
-    parser.add_argument("--timeout", default='8*l^2',
-                        help="the max number of sweeps before timeout in the readout phase")
+                        help="number of trials")
+    parser.add_argument("--sweep_limit", type=int,
+                        help="number of sweeps per direction in active phase (default: l/2)")
+    parser.add_argument("--sweep_schedule", type=str, default='random', choices=[
+                        'rotating_XY', 'alternating_XY', 'rotating_XZ', 'alternating_XZ', 'rotating_YZ', 'alternating_YZ', 'random'], help="sweep direction schedule (default: random)")
+    parser.add_argument("--timeout", type=int,
+                        help="max number of sweeps before timeout in readout phase (default: 128*l)")
     parser.add_argument("--sweep_direction", type=str, default='xyz',
-                        help="the sweep direction")
+                        help="sweep direction (default: xyz)")
     parser.add_argument("--job", type=int, default=-1,
-                        help="the job number")
+                        help="job number (default: -1)")
 
     args = parser.parse_args()
     lattice_type = args.lattice_type
@@ -92,16 +99,14 @@ if __name__ == "__main__":
     cycles = args.cycles
     trials = args.trials
     sweep_limit = args.sweep_limit
-    if sweep_limit == 'l/2':
+    if sweep_limit == None:
         sweep_limit = l // 2
     sweep_schedule = args.sweep_schedule
     timeout = args.timeout
-    if timeout == '8*l^2':
-        timeout = 8 * l * l
+    if timeout == None:
+        timeout = 128 * l
     sweep_direction = args.sweep_direction
     job_number = args.job
-
-    # print(timeout, sweep_direction, sweep_schedule, sweep_limit, job_number)
 
     generate_data(lattice_type, l, p, q, sweep_direction, sweep_limit,
                   sweep_schedule, timeout, cycles, trials, job_number)

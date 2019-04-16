@@ -71,13 +71,219 @@ void CubicCode::buildSweepIndices()
 
 void CubicCode::sweep(const std::string &direction, bool greedy)
 {
-    // ToDo
+    clearFlipBits();
+    vstr edgeDirections;
+    if (direction == "xyz")
+    {
+        edgeDirections = {"x", "y", "z"};
+    }
+    else if (direction == "xy")
+    {
+        edgeDirections = {"x", "y", "-z"};
+    }
+    else if (direction == "xz")
+    {
+        edgeDirections = {"x", "-y", "z"};
+    }
+    else if (direction == "yz")
+    {
+        edgeDirections = {"-x", "y", "z"};
+    }
+    else if (direction == "-xyz")
+    {
+        edgeDirections = {"-x", "-y", "-z"};
+    }
+    else if (direction == "-xy")
+    {
+        edgeDirections = {"-x", "-y", "z"};
+    }
+    else if (direction == "-xz")
+    {
+        edgeDirections = {"-x", "y", "-z"};
+    }
+    else if (direction == "-yz")
+    {
+        edgeDirections = {"x", "-y", "-z"};
+    }
+    else
+    {
+        throw std::invalid_argument("Invalid sweep direction.");
+    }
+    for (auto const vertexIndex : sweepIndices)
+    {
+        if (!greedy)
+        {
+            if (!checkExtremalVertex(vertexIndex, direction))
+            {
+                continue;
+            }
+        }
+        vstr sweepEdges = findSweepEdges(vertexIndex, direction);
+        if (sweepEdges.size() > 3)
+        {
+            throw std::length_error("More than three up-edges found for a cubic lattice vertex.");
+        }
+        if (sweepEdges.size() < 2)
+        {
+            continue;
+        }
+        cellularAutomatonStep(vertexIndex, sweepEdges, direction, edgeDirections);
+    }
+    for (int i = 0; i < flipBits.size(); ++i)
+    {
+        if (flipBits[i])
+        {
+            auto it = error.find(i);
+            if (it != error.end())
+            {
+                error.erase(it);
+            }
+            else
+            {
+                error.insert(i);
+            }
+        }
+    }
+}
+
+void CubicCode::cellularAutomatonStep(const int vertexIndex, vstr &sweepEdges, const std::string &sweepDirections, const vstr &upEdgeDirections)
+{
+    auto &edge0 = upEdgeDirections[0];
+    auto &edge1 = upEdgeDirections[1];
+    auto &edge2 = upEdgeDirections[2];
+    if (sweepEdges.size() == 3)
+    {
+        int delIndex = distInt0To2(pcg);
+        sweepEdges.erase(sweepEdges.begin() + delIndex);
+    }
+    if ((sweepEdges[0] == edge0 && sweepEdges[1] == edge2) ||
+        (sweepEdges[0] == edge2 && sweepEdges[1] == edge0))
+    {
+        vint vertices;
+        try
+        {
+            vertices = faceVertices(vertexIndex, {edge0, edge2, edge2});
+            localFlip(vertices);
+        }
+        catch (const std::invalid_argument &e)
+        {
+        }
+    }
+    else if ((sweepEdges[0] == edge0 && sweepEdges[1] == edge1) ||
+             (sweepEdges[0] == edge1 && sweepEdges[1] == edge0))
+    {
+        vint vertices;
+        try
+        {
+            vertices = faceVertices(vertexIndex, {edge0, edge1, edge1});
+            localFlip(vertices);
+        }
+        catch (const std::invalid_argument &e)
+        {
+        }
+    }
+    else if ((sweepEdges[0] == edge1 && sweepEdges[1] == edge2) ||
+             (sweepEdges[0] == edge2 && sweepEdges[1] == edge1))
+    {
+        vint vertices;
+        try
+        {
+            vertices = faceVertices(vertexIndex, {edge2, edge1, edge1});
+            localFlip(vertices);
+        }
+        catch (const std::invalid_argument &e)
+        {
+        }
+    }
+    else
+    {
+        throw std::invalid_argument("Invalid up-edges.");
+    }
 }
 
 vstr CubicCode::findSweepEdges(const int vertexIndex, const std::string &direction)
 {
-    // ToDo
-    return {"-1"};
+    vstr sweepEdges;
+    auto &upEdges = upEdgesMap[direction][vertexIndex];
+    for (const int edge : upEdges)
+    {
+        if (syndrome[edge] == 1)
+        {
+            int xEdge = -1, yEdge = -1, zEdge = -1;
+            int minusXEdge = -1, minusYEdge = -1, minusZEdge = -1;
+            try
+            {
+                xEdge = lattice->edgeIndex(vertexIndex, "x", 1);
+            }
+            catch (const std::invalid_argument &e)
+            {
+            }
+            try
+            {
+                yEdge = lattice->edgeIndex(vertexIndex, "y", 1);
+            }
+            catch (const std::invalid_argument &e)
+            {
+            }
+            try
+            {
+                zEdge = lattice->edgeIndex(vertexIndex, "z", 1);
+            }
+            catch (const std::invalid_argument &e)
+            {
+            }
+            try
+            {
+                minusXEdge = lattice->edgeIndex(vertexIndex, "x", -1);
+            }
+            catch (const std::invalid_argument &e)
+            {
+            }
+            try
+            {
+                minusYEdge = lattice->edgeIndex(vertexIndex, "y", -1);
+            }
+            catch (const std::invalid_argument &e)
+            {
+            }
+            try
+            {
+                minusZEdge = lattice->edgeIndex(vertexIndex, "z", -1);
+            }
+            catch (const std::invalid_argument &e)
+            {
+            }
+            if (xEdge == edge)
+            {
+                sweepEdges.push_back("x");
+            }
+            else if (yEdge == edge)
+            {
+                sweepEdges.push_back("y");
+            }
+            else if (zEdge == edge)
+            {
+                sweepEdges.push_back("z");
+            }
+            else if (minusXEdge == edge)
+            {
+                sweepEdges.push_back("-x");
+            }
+            else if (minusYEdge == edge)
+            {
+                sweepEdges.push_back("-y");
+            }
+            else if (minusZEdge == edge)
+            {
+                sweepEdges.push_back("-z");
+            }
+            else
+            {
+                throw std::invalid_argument("Edge index does not correspond to a valid edge.");
+            }
+        }
+    }
+    return sweepEdges;
 }
 
 void CubicCode::buildLogicals()

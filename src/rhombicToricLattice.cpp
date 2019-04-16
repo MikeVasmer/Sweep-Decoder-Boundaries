@@ -10,7 +10,7 @@ RhombicToricLattice::RhombicToricLattice(const int length) : Lattice(length)
 {
     if (length % 2 != 0)
     {
-        throw std::invalid_argument("Rhombic toric lattices can only have even L.");
+        throw std::invalid_argument("Lattice length l must be even for rhombic toric lattices.");
     }
     faceToVertices.reserve(3 * l * l * l);
     faceToEdges.reserve(3 * l * l * l);
