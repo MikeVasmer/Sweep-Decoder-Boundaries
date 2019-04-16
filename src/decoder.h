@@ -9,7 +9,10 @@
 #include "pcg_random.hpp"
 
 pcg_extras::seed_seq_from<std::random_device> seed;
-pcg32 pcg(seed);
+pcg32 rnEngine(seed);
+
+// std::mt19937 rnEngine(time(0)); // Valgrind doesn't like pcg
+
 std::uniform_int_distribution<int> distInt0To7(0, 7);
 
 std::vector<bool> runToric(const int l, const int rounds,
@@ -99,7 +102,7 @@ std::vector<bool> runBoundaries(const int l, const int rounds,
     else if (sweepSchedule == "random")
     {
         randomSchedule = true;
-        sweepIndex = distInt0To7(pcg);
+        sweepIndex = distInt0To7(rnEngine);
     }
     else 
     {
@@ -111,7 +114,7 @@ std::vector<bool> runBoundaries(const int l, const int rounds,
         {
             if (randomSchedule)
             {
-                sweepIndex = distInt0To7(pcg);
+                sweepIndex = distInt0To7(rnEngine);
             }
             else
             {
@@ -141,7 +144,7 @@ std::vector<bool> runBoundaries(const int l, const int rounds,
         {
             if (randomSchedule)
             {
-                sweepIndex = distInt0To7(pcg);
+                sweepIndex = distInt0To7(rnEngine);
             }
             else
             {

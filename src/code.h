@@ -30,10 +30,11 @@ protected:
   vint logicalZ3;
 
   // pcg-random
-  // Make a random number engine
-  pcg32 pcg;
-  // pcg32 pcg(0); // Manual seed
-  // Create distribution
+  pcg32 rnEngine;
+
+  // Use standard mersenne twister (Valgrind doesn't like pcg)
+  // std::mt19937 rnEngine;
+
   std::uniform_real_distribution<double> distDouble0To1;
   std::uniform_int_distribution<int> distInt0To2;
   std::uniform_int_distribution<int> distInt0To1;

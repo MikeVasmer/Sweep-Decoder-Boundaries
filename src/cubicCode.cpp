@@ -153,7 +153,7 @@ void CubicCode::cellularAutomatonStep(const int vertexIndex, vstr &sweepEdges, c
     auto &edge2 = upEdgeDirections[2];
     if (sweepEdges.size() == 3)
     {
-        int delIndex = distInt0To2(pcg);
+        int delIndex = distInt0To2(rnEngine);
         sweepEdges.erase(sweepEdges.begin() + delIndex);
     }
     if ((sweepEdges[0] == edge0 && sweepEdges[1] == edge2) ||

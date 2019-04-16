@@ -3,7 +3,6 @@
 #include "rhombicToricLattice.h"
 #include "rhombicLattice.h"
 #include <string>
-#include "pcg_random.hpp"
 #include <random>
 #include <algorithm>
 #include <set>
@@ -395,7 +394,7 @@ void RhombicCode::sweepFullVertex(const int vertexIndex, vstr &sweepEdges, const
         if (sweepEdges.size() == 2)
         {
             // int delIndex = distInt0To1(mt);
-            int delIndex = distInt0To1(pcg);
+            int delIndex = distInt0To1(rnEngine);
             sweepEdges.erase(sweepEdges.begin() + delIndex);
         }
         if (sweepEdges[0] == edge0)
@@ -444,7 +443,7 @@ void RhombicCode::sweepFullVertex(const int vertexIndex, vstr &sweepEdges, const
         if (sweepEdges.size() == 3)
         {
             // int delIndex = distInt0To2(mt);
-            int delIndex = distInt0To2(pcg);
+            int delIndex = distInt0To2(rnEngine);
             sweepEdges.erase(sweepEdges.begin() + delIndex);
         }
         if ((sweepEdges[0] == edge0 && sweepEdges[1] == edge2) ||
@@ -530,7 +529,7 @@ void RhombicCode::sweepHalfVertex(const int vertexIndex, vstr &sweepEdges, const
     if (sweepEdges.size() == 3)
     {
         // int delIndex = distInt0To2(mt);
-        int delIndex = distInt0To2(pcg);
+        int delIndex = distInt0To2(rnEngine);
         sweepEdges.erase(sweepEdges.begin() + delIndex);
     }
     if ((sweepEdges[0] == edge0 && sweepEdges[1] == edge2) ||

@@ -21,7 +21,11 @@ Code::Code(const int ll, const double dataP, const double measP, bool boundaries
         throw std::invalid_argument("Measurement error probability must be between zero and one (inclusive).");
     }
     pcg_extras::seed_seq_from<std::random_device> seedSource;
-    pcg = pcg32(seedSource);
+    rnEngine = pcg32(seedSource);
+    // rnEngine = pcg32(0); // Manual seed
+
+    // std::mt19937 rnEngine(time(0)); // Valgrind 
+
     distDouble0To1 = std::uniform_real_distribution<double>(0, nextafter(1, 2));
     distInt0To2 = std::uniform_int_distribution<int>(0, 2);
     distInt0To1 = std::uniform_int_distribution<int>(0, 1);
@@ -33,7 +37,7 @@ void Code::generateDataError()
     for (int i = 0; i < numberOfFaces; ++i)
     {
         // if (distDouble0To1(mt) <= p)
-        if (distDouble0To1(pcg) <= p)
+        if (distDouble0To1(rnEngine) <= p)
         {
             auto it = error.find(i);
             if (it == error.end())
@@ -284,8 +288,7 @@ void Code::generateMeasError()
                 continue;
             }
         }
-        // if (distDouble0To1(mt) <= q)
-        if (distDouble0To1(pcg) <= q)
+        if (distDouble0To1(rnEngine) <= q)
         {
             syndrome[i] = (syndrome[i] + 1) % 2;
         }

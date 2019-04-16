@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
 {
     if (argc < 9)
     {
-        std::cout << "Fewer than six arguments" << std::endl;
+        std::cout << "Fewer than nine arguments" << std::endl;
         for (int i = 0; i < argc; ++i)
         {
             std::cout << "Argument " << i << " = " << argv[i] << std::endl;
@@ -28,12 +28,6 @@ int main(int argc, char *argv[])
     int timeout = std::atoi(argv[9]);
 
     std::vector<bool> succ;
-
-    // std::cout << "l = " << l << std::endl
-    //           << "rounds = " << rounds << std::endl
-    //           << "p = " << p << std::endl
-    //           << "q = " << q << std::endl
-    //           << "sweep dir = " << sweepDir << std::endl;
 
     auto start = std::chrono::high_resolution_clock::now();
     if (latticeType == "rhombic_toric")
@@ -55,21 +49,6 @@ int main(int argc, char *argv[])
               << succ[1] << ", " // Clean syndrome
               << elapsed.count() // "s" <<
               << std::endl;
-
-    // Profiling
-
-    // int l = 28;
-    // int rounds = 64;
-    // double p = 0.1;
-    // double q = 0.1;
-    // std::string dir = "xyz";
-    // auto start = std::chrono::high_resolution_clock::now();
-    // auto succ = runToric(l, rounds, p, q, dir);
-    // auto finish = std::chrono::high_resolution_clock::now();
-    // std::cout << "Success: " << succ.at(0) << std::endl;
-    // std::cout << "Clean syndrome: " << succ.at(1) << std::endl;
-    // std::chrono::duration<double> elapsed = finish - start;
-    // std::cout << "Elapsed time: " << elapsed.count() << " s\n";
 
     return 0;
 }
