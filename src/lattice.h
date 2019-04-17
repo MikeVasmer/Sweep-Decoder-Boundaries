@@ -58,6 +58,8 @@ protected:
   void addFace(const int vertexIndex, const int faceIndex, const vstr &directions, const vint &signs);
 
 public:
+  virtual ~Lattice() = default;
+
   cartesian4 indexToCoordinate(const int vertexIndex);
   int coordinateToIndex(const cartesian4 &coordinate);
   int findFace(vint &vertices);
