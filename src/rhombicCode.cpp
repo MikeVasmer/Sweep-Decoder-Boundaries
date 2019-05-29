@@ -685,6 +685,78 @@ void RhombicCode::sweepHalfVertexBoundary(const int vertexIndex, vstr &sweepEdge
     }
 }
 
+// void RhombicCode::sweepHalfVertexBoundary(const int vertexIndex, vstr &sweepEdges, const std::string &sweepDirection, const vstr &upEdgeDirections)
+// {
+//     // Minimal option, but flips face if any of other three sweep directions come up (except edge in syndrome)
+//     cartesian4 coordinate = lattice->indexToCoordinate(vertexIndex);
+//     if (sweepEdges.size() == 1)
+//     {
+//         vint vertices;
+//         int coordinateSumParity = (coordinate.x + coordinate.y + coordinate.z) % 2;
+//         if (coordinate.y == 0 && coordinate.z == 1)
+//         {
+//             // std::cerr << "y=0, z=1 half vertex" << std::endl;
+//             // if (sweepEdges[0] == "xy" && coordinateSumParity == latticeParity)
+//             if (sweepEdges[0] == "xy")
+//             {
+//                 vertices = faceVertices(vertexIndex, {"xy", "-xyz", "-xyz"});
+//                 localFlip(vertices);
+//             }
+//             else if (sweepEdges[0] == "-xz")
+//             {
+//                 vertices = faceVertices(vertexIndex, {"-xz", "-yz", "-yz"});
+//                 localFlip(vertices);
+//             }
+//         }
+//         else if (coordinate.y == 0 && coordinate.z == l - 2)
+//         {
+//             // std::cerr << "y=0, z=l-2 half vertex" << std::endl;
+//             if (sweepEdges[0] == "yz")
+//             {
+//                 vertices = faceVertices(vertexIndex, {"yz", "xz", "xz"});
+//                 localFlip(vertices);
+//             }
+//             else if (sweepEdges[0] == "xyz")
+//             {
+//                 vertices = faceVertices(vertexIndex, {"xyz", "-xy", "-xy"});
+//                 localFlip(vertices);
+//             }
+//         }
+//         else if (coordinate.y == l - 2 && coordinate.z == 1)
+//         {
+//             // std::cerr << "y=l-2, z=1 half vertex" << std::endl;
+//             if (sweepEdges[0] == "-xyz")
+//             {
+//                 vertices = faceVertices(vertexIndex, {"-xyz", "xy", "xy"});
+//                 localFlip(vertices);
+//             }
+//             else if (sweepEdges[0] == "-yz")
+//             {
+//                 vertices = faceVertices(vertexIndex, {"-xz", "-yz", "-yz"});
+//                 localFlip(vertices);
+//             }
+//         }
+//         else if (coordinate.y == l - 2 && coordinate.z == l - 2)
+//         {
+//             // std::cerr << "y=z=l-2 half vertex" << std::endl;
+//             if (sweepEdges[0] == "xz")
+//             {
+//                 vertices = faceVertices(vertexIndex, {"xz", "yz", "yz"});
+//                 localFlip(vertices);
+//             }
+//             else if (sweepEdges[0] == "-xy")
+//             {
+//                 vertices = faceVertices(vertexIndex, {"xyz", "-xy", "-xy"});
+//                 localFlip(vertices);
+//             }
+//         }
+//     }
+//     else
+//     {
+//         sweepHalfVertex(vertexIndex, sweepEdges, sweepDirection, upEdgeDirections);
+//     }
+// }
+
 void RhombicCode::sweepFullVertexBoundary(const int vertexIndex, vstr &sweepEdges, const std::string &sweepDirection, const vstr &upEdgeDirections)
 {
     // Minimal option
