@@ -200,9 +200,9 @@ TEST(sweep, runs_without_errors)
     for (auto l : ls)
     {
         double p = 0.1;
-        vstr sweepDirections = {"xyz", "xz", "-xy", "yz", "xy", "-yz", "-xyz", "-xz"};
-        for (auto &sweepDirection : sweepDirections)
-        {
+                vstr sweepDirections = {"xyz", "xz", "-xy", "yz", "xy", "-yz", "-xyz", "-xz"};
+        for (auto &sweepDirection
+            : sweepDirections) {
             RhombicCode code = RhombicCode(l, p, p, true);
             for (int i = 0; i < l; ++i)
             {
@@ -222,14 +222,13 @@ TEST(sweep, corrects_single_qubit_errors)
     {
         double p = 0.1;
         vstr sweepDirections = {"xyz", "xy", "yz", "xz", "-xyz", "-xy", "-yz", "-xz"};
-        // vstr sweepDirections = {"xyz", "-xyz", "xy", "-xy", "yz", "-yz", "xz", "-xz"};
+        // vstr sweepDirections = {"-xyz"};
         int numberOfFaces = 3 * pow(l - 1, 3) - 4 * pow(l - 1, 2) + 2 * (l - 1);
         RhombicCode code = RhombicCode(l, p, p, true);
         auto &syndrome = code.getSyndrome();
         auto &lattice = code.getLattice();
         auto &faceToVertices = lattice.getFaceToVertices();
         // auto &faceToEdges = lattice.getFaceToEdges();
-        int repeats = 1;
         for (int i = 0; i < numberOfFaces; ++i)
         // for (int i = 33; i < 34; ++i)
         {
@@ -241,7 +240,7 @@ TEST(sweep, corrects_single_qubit_errors)
             // code.printUnsatisfiedStabilisers();
             for (auto &sweepDirection : sweepDirections)
             {
-                for (int r = 0; r < repeats; ++r)
+                for (int j = 0; j < 1; ++j)
                 {
                     code.sweep(sweepDirection, true);
                     code.calculateSyndrome();
@@ -267,7 +266,6 @@ TEST(sweep, corrects_two_qubit_errors)
     vint ls = {4};
     double p = 0.1;
     vstr sweepDirections = {"xyz", "xy", "yz", "xz", "-xyz", "-xy", "-yz", "-xz"};
-    // vstr sweepDirections = {"xyz", "xy", "-xz", "yz", "xz", "-yz", "-xyz", "-xy"};
     for (auto const l : ls)
     {
         RhombicCode code = RhombicCode(l, p, p, true);
@@ -275,7 +273,7 @@ TEST(sweep, corrects_two_qubit_errors)
         int numberOfFaces = 3 * pow(l - 1, 3) - 4 * pow(l - 1, 2) + 2 * (l - 1);
         auto &lattice = code.getLattice();
         auto &faceToVertices = lattice.getFaceToVertices();
-        int repeats = 1;
+        int repeats = 2;
         int sweepsPerDirection = l;
         for (int i = 0; i < numberOfFaces; ++i)
         {
@@ -301,285 +299,19 @@ TEST(sweep, corrects_two_qubit_errors)
                 for (int k = 0; k < syndrome.size(); ++k)
                 {
                     EXPECT_EQ(syndrome[k], 0);
-                    if (syndrome[k] == 1)
-                    {
-                        std::cout << "Syndrome index = " << k << std::endl;
-                        std::cout << "i = " << i << ", "
-                                  << "error vertices = " << lattice.indexToCoordinate(f2vi[0]) << " " << lattice.indexToCoordinate(f2vi[1]) << " " << lattice.indexToCoordinate(f2vi[2]) << " " << lattice.indexToCoordinate(f2vi[3]) << std::endl;
-                        auto &f2vj = faceToVertices[j];
-                        std::cout << "j = " << j << ", "
-                                  << "error vertices = " << lattice.indexToCoordinate(f2vj[0]) << " " << lattice.indexToCoordinate(f2vj[1]) << " " << lattice.indexToCoordinate(f2vj[2]) << " " << lattice.indexToCoordinate(f2vj[3]) << std::endl;
-                        std::cerr << "Error:" << std::endl;
-                        code.printError();
-                        std::cerr << "Unsatisfied stabilizers:" << std::endl;
-                        code.printUnsatisfiedStabilisers();
-                    }
+                    // if (syndrome[k] == 1)
+                    // {
+                    //     std::cout << "Syndrome index = " << k << std::endl;
+                    //     std::cout << "i = " << i << ", " << "error vertices = " << lattice.indexToCoordinate(f2vi[0]) << " " << lattice.indexToCoordinate(f2vi[1]) << " " << lattice.indexToCoordinate(f2vi[2]) << " " << lattice.indexToCoordinate(f2vi[3]) << std::endl;
+                    //     auto &f2vj = faceToVertices[j];
+                    //     std::cout << "j = " << j << ", " << "error vertices = " << lattice.indexToCoordinate(f2vj[0]) << " " << lattice.indexToCoordinate(f2vj[1]) << " " << lattice.indexToCoordinate(f2vj[2]) << " " << lattice.indexToCoordinate(f2vj[3]) << std::endl;
+                    //     std::cerr << "Error:" << std::endl;
+                    //     code.printError();
+                    //     std::cerr << "Unsatisfied stabilizers:" << std::endl;
+                    //     code.printUnsatisfiedStabilisers();
+                    // }
                 }
             }
-        }
-    }
-}
-
-TEST(sweep, specific_error)
-{
-    RhombicCode code = RhombicCode(4, 0.1, 0.1, true);
-    code.setError({1, 23});
-    auto &error = code.getError();
-    code.calculateSyndrome();
-    // code.printError();
-
-    std::vector<std::set<int>> expectedErrors = {{1, 7, 23}, {1, 7, 23, 31, 43}, {1, 7, 23, 31, 43}, {1, 7, 23, 31, 43}};
-    for (int i = 0; i < 4; ++i)
-    {
-        code.sweep("xyz", true);
-        code.calculateSyndrome();
-        // code.printError();
-        EXPECT_EQ(error, expectedErrors[i]);
-    }
-
-    expectedErrors = {{1, 7, 23, 31, 43}, {1, 7, 23, 31, 43}, {1, 7, 23, 31, 43}, {1, 7, 23, 31, 43}};
-    for (int i = 0; i < 4; ++i)
-    {
-        code.sweep("xy", true);
-        code.calculateSyndrome();
-        // code.printError();
-        EXPECT_EQ(error, expectedErrors[i]);
-    }
-
-    expectedErrors = {{1, 7, 23, 31, 37, 43}, {1, 7, 23, 31, 37, 43}, {1, 7, 23, 31, 37, 43}, {1, 7, 23, 31, 37, 43}};
-    for (int i = 0; i < 4; ++i)
-    {
-        code.sweep("yz", true);
-        code.calculateSyndrome();
-        // code.printError();
-        EXPECT_EQ(error, expectedErrors[i]);
-    }
-
-    expectedErrors = {{1, 7, 23, 31, 37, 43}, {1, 7, 23, 31, 37, 43}, {1, 7, 23, 31, 37, 43}, {1, 7, 23, 31, 37, 43}};
-    for (int i = 0; i < 4; ++i)
-    {
-        code.sweep("xz", true);
-        code.calculateSyndrome();
-        // code.printError();
-        EXPECT_EQ(error, expectedErrors[i]);
-    }
-
-    expectedErrors = {{1, 7, 23, 37, 43}, {1, 23, 37, 43}, {23, 37, 43}, {23, 37, 43}};
-    for (int i = 0; i < 4; ++i)
-    {
-        code.sweep("-xyz", true);
-        code.calculateSyndrome();
-        // code.printError();
-        EXPECT_EQ(error, expectedErrors[i]);
-    }
-
-    expectedErrors = {{23, 37}, {23}, {23}, {23}};
-    for (int i = 0; i < 4; ++i)
-    {
-        code.sweep("-xy", true);
-        code.calculateSyndrome();
-        // code.printError();
-        EXPECT_EQ(error, expectedErrors[i]);
-    }
-
-    expectedErrors = {{}};
-    for (int i = 0; i < 1; ++i)
-    {
-        code.sweep("-yz", true);
-        code.calculateSyndrome();
-        // code.printError();
-        EXPECT_EQ(error, expectedErrors[i]);
-    }
-}
-
-TEST(sweepBoundary, all_one_edge_faces_swept_correctly)
-{
-    RhombicCode code = RhombicCode(4, 0.1, 0.1, true);
-    auto &syndrome = code.getSyndrome();
-    code.printError();
-    vstr allDirections = {"xyz", "xy", "yz", "xz", "-xyz", "-xy", "-yz", "-xz"};
-
-    vstr directions = {"-xy", "-xyz", "-xz", "-yz"};
-    for (auto &dir : allDirections)
-    {
-        code.setError({1});
-        code.calculateSyndrome();
-        code.sweep(dir, true);
-        code.calculateSyndrome();
-        int sum = 0;
-        for (int j = 0; j < syndrome.size(); ++j)
-        {
-            sum = (sum + syndrome[j]);
-        }
-        auto it = std::find(directions.begin(), directions.end(), dir);
-        if (it == directions.end())
-        {
-            EXPECT_TRUE(sum > 0);
-        }
-        else
-        {
-            EXPECT_EQ(sum, 0);
-        }
-    }
-
-    directions = {"-yz", "xz", "xy", "-xyz"};
-    for (auto &dir : allDirections)
-    {
-        code.setError({4});
-        code.calculateSyndrome();
-        code.sweep(dir, true);
-        code.calculateSyndrome();
-        int sum = 0;
-        for (int j = 0; j < syndrome.size(); ++j)
-        {
-            sum = (sum + syndrome[j]);
-        }
-        auto it = std::find(directions.begin(), directions.end(), dir);
-        if (it == directions.end())
-        {
-            EXPECT_TRUE(sum > 0);
-        }
-        else
-        {
-            EXPECT_EQ(sum, 0);
-        }
-    }
-
-    directions = {"xy", "xyz", "-xz", "-yz"};
-    for (auto &dir : allDirections)
-    {
-        code.setError({8});
-        code.calculateSyndrome();
-        code.sweep(dir, true);
-        code.calculateSyndrome();
-        int sum = 0;
-        for (int j = 0; j < syndrome.size(); ++j)
-        {
-            sum = (sum + syndrome[j]);
-        }
-        auto it = std::find(directions.begin(), directions.end(), dir);
-        if (it == directions.end())
-        {
-            EXPECT_TRUE(sum > 0);
-        }
-        else
-        {
-            EXPECT_EQ(sum, 0);
-        }
-    }
-
-    directions = {"-xz", "yz", "-xyz", "xy"};
-    for (auto &dir : allDirections)
-    {
-        code.setError({14});
-        code.calculateSyndrome();
-        code.sweep(dir, true);
-        code.calculateSyndrome();
-        int sum = 0;
-        for (int j = 0; j < syndrome.size(); ++j)
-        {
-            sum = (sum + syndrome[j]);
-        }
-        auto it = std::find(directions.begin(), directions.end(), dir);
-        if (it == directions.end())
-        {
-            EXPECT_TRUE(sum > 0);
-        }
-        else
-        {
-            EXPECT_EQ(sum, 0);
-        }
-    }
-
-    directions = {"-xyz", "-xy", "yz", "xz"};
-    for (auto &dir : allDirections)
-    {
-        code.setError({36});
-        code.calculateSyndrome();
-        code.sweep(dir, true);
-        code.calculateSyndrome();
-        int sum = 0;
-        for (int j = 0; j < syndrome.size(); ++j)
-        {
-            sum = (sum + syndrome[j]);
-        }
-        auto it = std::find(directions.begin(), directions.end(), dir);
-        if (it == directions.end())
-        {
-            EXPECT_TRUE(sum > 0);
-        }
-        else
-        {
-            EXPECT_EQ(sum, 0);
-        }
-    }
-
-    directions = {"-yz", "xz", "-xy", "xyz"};
-    for (auto &dir : allDirections)
-    {
-        code.setError({40});
-        code.calculateSyndrome();
-        code.sweep(dir, true);
-        code.calculateSyndrome();
-        int sum = 0;
-        for (int j = 0; j < syndrome.size(); ++j)
-        {
-            sum = (sum + syndrome[j]);
-        }
-        auto it = std::find(directions.begin(), directions.end(), dir);
-        if (it == directions.end())
-        {
-            EXPECT_TRUE(sum > 0);
-        }
-        else
-        {
-            EXPECT_EQ(sum, 0);
-        }
-    }
-
-    directions = {"xyz", "xy", "yz", "xz"};
-    for (auto &dir : allDirections)
-    {
-        code.setError({44});
-        code.calculateSyndrome();
-        code.sweep(dir, true);
-        code.calculateSyndrome();
-        int sum = 0;
-        for (int j = 0; j < syndrome.size(); ++j)
-        {
-            sum = (sum + syndrome[j]);
-        }
-        auto it = std::find(directions.begin(), directions.end(), dir);
-        if (it == directions.end())
-        {
-            EXPECT_TRUE(sum > 0);
-        }
-        else
-        {
-            EXPECT_EQ(sum, 0);
-        }
-    }
-
-    directions = {"yz", "-xz", "-xy", "xyz"};
-    for (auto &dir : allDirections)
-    {
-        code.setError({50});
-        code.calculateSyndrome();
-        code.sweep(dir, true);
-        code.calculateSyndrome();
-        int sum = 0;
-        for (int j = 0; j < syndrome.size(); ++j)
-        {
-            sum = (sum + syndrome[j]);
-        }
-        auto it = std::find(directions.begin(), directions.end(), dir);
-        if (it == directions.end())
-        {
-            EXPECT_TRUE(sum > 0);
-        }
-        else
-        {
-            EXPECT_EQ(sum, 0);
         }
     }
 }
@@ -604,6 +336,7 @@ TEST(sweep, all_directions_sweep_correctly)
         {
             EXPECT_EQ(syndrome[j], 0);
         }
+        
     }
 
     vstr sweepDirections = {"xyz", "xy", "yz", "xz", "-xyz", "-xy", "-yz", "-xz"};
