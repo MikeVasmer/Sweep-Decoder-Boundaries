@@ -591,13 +591,13 @@ void RhombicCode::sweepHalfVertex(const int vertexIndex, vstr &sweepEdges, const
 
 void RhombicCode::sweepHalfVertexBoundary(const int vertexIndex, vstr &sweepEdges, const std::string &sweepDirection, const vstr &upEdgeDirections)
 {
-    // Minimal option, only sweep one edge faces 
+    // Only sweep one edge faces 
     cartesian4 coordinate = lattice->indexToCoordinate(vertexIndex);
     bool sweepComplete = false;
     if (sweepEdges.size() == 1)
     {
         vint vertices;
-        if (coordinate.y == 0 && coordinate.z == 1 && (coordinate.x == 0 || coordinate.x == l - 2))
+        if (coordinate.y == 0 && coordinate.x == l - 2)
         {
             if (sweepEdges[0] == "xy")
             {
@@ -606,41 +606,42 @@ void RhombicCode::sweepHalfVertexBoundary(const int vertexIndex, vstr &sweepEdge
                     vertices = faceVertices(vertexIndex, {"xy", "-xyz", "-xyz"});
                     localFlip(vertices);
                 }
+                sweepComplete = true;
             }
-            sweepComplete = true;
-            // else if (sweepEdges[0] == "-xz")
-            // {
-            //     if (sweepDirection == "xy" || sweepDirection == "-xyz")
-            //     {
-            //         vertices = faceVertices(vertexIndex, {"-xz", "-yz", "-yz"});
-            //         localFlip(vertices);
-            //     }
-            // }
-        }
-        else if (coordinate.y == 0 && coordinate.z == l - 2 && (coordinate.x == 0 || coordinate.x == l - 2))
-        {
-            // std::cerr << "y=0, z=l-2 half vertex" << std::endl;
-            if (sweepEdges[0] == "xyz")
+            else if (sweepEdges[0] == "xyz")
             {
                 if (sweepDirection == "xz" || sweepDirection == "yz")
                 {
                     vertices = faceVertices(vertexIndex, {"xyz", "-xy", "-xy"});
                     localFlip(vertices);
                 }
+                sweepComplete = true;
             }
-            sweepComplete = true;
-            // else if (sweepEdges[0] == "yz")
-            // {
-            //     if (sweepDirection == "-xy" || sweepDirection == "xyz")
-            //     {
-            //         vertices = faceVertices(vertexIndex, {"yz", "xz", "xz"});
-            //         localFlip(vertices);
-            //     }
-            // }
         }
-        else if (coordinate.y == l - 2 && coordinate.z == 1 && (coordinate.x == 0 || coordinate.x == l - 2))
+        else if (coordinate.y == 0 && coordinate.x == 0)
         {
-            // std::cerr << "y=l-2, z=1 half vertex" << std::endl;
+            if (sweepEdges[0] == "-xz")
+            {
+                if (sweepDirection == "xy" || sweepDirection == "-xyz")
+                {
+                    vertices = faceVertices(vertexIndex, {"-xz", "-yz", "-yz"});
+                    localFlip(vertices);
+                }
+                sweepComplete = true;
+
+            }
+            else if (sweepEdges[0] == "yz")
+            {
+                if (sweepDirection == "-xy" || sweepDirection == "xyz")
+                {
+                    vertices = faceVertices(vertexIndex, {"yz", "xz", "xz"});
+                    localFlip(vertices);
+                }
+                sweepComplete = true;
+            }
+        }
+        else if (coordinate.y == l - 2 && coordinate.x == 0)
+        {
             if (sweepEdges[0] == "-xyz")
             {
                 if (sweepDirection == "-xz" || sweepDirection == "-yz")
@@ -648,37 +649,38 @@ void RhombicCode::sweepHalfVertexBoundary(const int vertexIndex, vstr &sweepEdge
                     vertices = faceVertices(vertexIndex, {"-xyz", "xy", "xy"});
                     localFlip(vertices);
                 }
+                sweepComplete = true;
             }
-            sweepComplete = true;
-            // else if (sweepEdges[0] == "-yz")
-            // {
-            //     if (sweepDirection == "xy" || sweepDirection == "-xyz")
-            //     {
-            //         vertices = faceVertices(vertexIndex, {"-xz", "-yz", "-yz"});
-            //         localFlip(vertices);
-            //     }
-            // }
-        }
-        else if (coordinate.y == l - 2 && coordinate.z == l - 2 && (coordinate.x == 0 || coordinate.x == l - 2))
-        {
-            // std::cerr << "y=z=l-2 half vertex" << std::endl;
-            if (sweepEdges[0] == "-xy")
+            else if (sweepEdges[0] == "-xy")
             {
                 if (sweepDirection == "xz" || sweepDirection == "yz")
                 {
                     vertices = faceVertices(vertexIndex, {"xyz", "-xy", "-xy"});
                     localFlip(vertices);
                 }
+                sweepComplete = true;
             }
-            sweepComplete = true;
-            // else if (sweepEdges[0] == "xz")
-            // {
-            //     if (sweepDirection == "-xy" || sweepDirection == "xyz")
-            //     {
-            //         vertices = faceVertices(vertexIndex, {"xz", "yz", "yz"});
-            //         localFlip(vertices);
-            //     }
-            // }
+        }
+        else if (coordinate.y == l - 2 && coordinate.x == l - 2)
+        {
+            if (sweepEdges[0] == "-yz")
+            {
+                if (sweepDirection == "xy" || sweepDirection == "-xyz")
+                {
+                    vertices = faceVertices(vertexIndex, {"-xz", "-yz", "-yz"});
+                    localFlip(vertices);
+                }
+                sweepComplete = true;
+            }
+            else if (sweepEdges[0] == "xz")
+            {
+                if (sweepDirection == "-xy" || sweepDirection == "xyz")
+                {
+                    vertices = faceVertices(vertexIndex, {"xz", "yz", "yz"});
+                    localFlip(vertices);
+                }
+                sweepComplete = true;
+            }
         }
     }
     if (!sweepComplete)
@@ -713,7 +715,7 @@ void RhombicCode::sweepHalfVertexBulkBoundary(const int vertexIndex, vstr &sweep
                     }
                     catch (const std::invalid_argument &e)
                     {
-                        // std::cerr << "WARNING: " << e.what() << std::endl;
+                        std::cerr << "WARNING: " << e.what() << std::endl;
                     }
                 }
                 else if (sweepDirection == "-yz")
@@ -727,7 +729,7 @@ void RhombicCode::sweepHalfVertexBulkBoundary(const int vertexIndex, vstr &sweep
                     }
                     catch (const std::invalid_argument &e)
                     {
-                        // std::cerr << "WARNING: " << e.what() << std::endl;
+                        std::cerr << "WARNING: " << e.what() << std::endl;
                     }
                 }
             }
@@ -747,7 +749,7 @@ void RhombicCode::sweepHalfVertexBulkBoundary(const int vertexIndex, vstr &sweep
                     }
                     catch (const std::invalid_argument &e)
                     {
-                        // std::cerr << "WARNING: " << e.what() << std::endl;
+                        std::cerr << "WARNING: " << e.what() << std::endl;
                     }
                 }
                 else if (sweepDirection == "-xy")
@@ -761,7 +763,7 @@ void RhombicCode::sweepHalfVertexBulkBoundary(const int vertexIndex, vstr &sweep
                     }
                     catch (const std::invalid_argument &e)
                     {
-                        // std::cerr << "WARNING: " << e.what() << std::endl;
+                        std::cerr << "WARNING: " << e.what() << std::endl;
                     }
                 }
             }
@@ -781,7 +783,7 @@ void RhombicCode::sweepHalfVertexBulkBoundary(const int vertexIndex, vstr &sweep
                     }
                     catch (const std::invalid_argument &e)
                     {
-                        // std::cerr << "WARNING: " << e.what() << std::endl;
+                        std::cerr << "WARNING: " << e.what() << std::endl;
                     }
                 }
                 else if (sweepDirection == "-xyz")
@@ -795,7 +797,7 @@ void RhombicCode::sweepHalfVertexBulkBoundary(const int vertexIndex, vstr &sweep
                     }
                     catch (const std::invalid_argument &e)
                     {
-                        // std::cerr << "WARNING: " << e.what() << std::endl;
+                        std::cerr << "WARNING: " << e.what() << std::endl;
                     }
                 }
             }
@@ -815,7 +817,7 @@ void RhombicCode::sweepHalfVertexBulkBoundary(const int vertexIndex, vstr &sweep
                     }
                     catch (const std::invalid_argument &e)
                     {
-                        // std::cerr << "WARNING: " << e.what() << std::endl;
+                        std::cerr << "WARNING: " << e.what() << std::endl;
                     }
                 }
                 else if (sweepDirection == "xz")
@@ -829,7 +831,7 @@ void RhombicCode::sweepHalfVertexBulkBoundary(const int vertexIndex, vstr &sweep
                     }
                     catch (const std::invalid_argument &e)
                     {
-                        // std::cerr << "WARNING: " << e.what() << std::endl;
+                        std::cerr << "WARNING: " << e.what() << std::endl;
                     }
                 }
             }
@@ -852,7 +854,7 @@ void RhombicCode::sweepHalfVertexBulkBoundary(const int vertexIndex, vstr &sweep
                     }
                     catch (const std::invalid_argument &e)
                     {
-                        // std::cerr << "WARNING: " << e.what() << std::endl;
+                        std::cerr << "WARNING: " << e.what() << std::endl;
                     }
                 }
                 else if (sweepDirection == "-xz")
@@ -866,7 +868,7 @@ void RhombicCode::sweepHalfVertexBulkBoundary(const int vertexIndex, vstr &sweep
                     }
                     catch (const std::invalid_argument &e)
                     {
-                        // std::cerr << "WARNING: " << e.what() << std::endl;
+                        std::cerr << "WARNING: " << e.what() << std::endl;
                     }
                 }
             }
@@ -886,7 +888,7 @@ void RhombicCode::sweepHalfVertexBulkBoundary(const int vertexIndex, vstr &sweep
                     }
                     catch (const std::invalid_argument &e)
                     {
-                        // std::cerr << "WARNING: " << e.what() << std::endl;
+                        std::cerr << "WARNING: " << e.what() << std::endl;
                     }
                 }
                 else if (sweepDirection == "xyz")
@@ -900,7 +902,7 @@ void RhombicCode::sweepHalfVertexBulkBoundary(const int vertexIndex, vstr &sweep
                     }
                     catch (const std::invalid_argument &e)
                     {
-                        // std::cerr << "WARNING: " << e.what() << std::endl;
+                        std::cerr << "WARNING: " << e.what() << std::endl;
                     }
                 }
             }
@@ -920,7 +922,7 @@ void RhombicCode::sweepHalfVertexBulkBoundary(const int vertexIndex, vstr &sweep
                     }
                     catch (const std::invalid_argument &e)
                     {
-                        // std::cerr << "WARNING: " << e.what() << std::endl;
+                        std::cerr << "WARNING: " << e.what() << std::endl;
                     }
                 }
                 else if (sweepDirection == "xy")
@@ -934,7 +936,7 @@ void RhombicCode::sweepHalfVertexBulkBoundary(const int vertexIndex, vstr &sweep
                     }
                     catch (const std::invalid_argument &e)
                     {
-                        // std::cerr << "WARNING: " << e.what() << std::endl;
+                        std::cerr << "WARNING: " << e.what() << std::endl;
                     }
                 }
             }
@@ -954,7 +956,7 @@ void RhombicCode::sweepHalfVertexBulkBoundary(const int vertexIndex, vstr &sweep
                     }
                     catch (const std::invalid_argument &e)
                     {
-                        // std::cerr << "WARNING: " << e.what() << std::endl;
+                        std::cerr << "WARNING: " << e.what() << std::endl;
                     }
                 }
                 else if (sweepDirection == "yz")
@@ -968,7 +970,7 @@ void RhombicCode::sweepHalfVertexBulkBoundary(const int vertexIndex, vstr &sweep
                     }
                     catch (const std::invalid_argument &e)
                     {
-                        // std::cerr << "WARNING: " << e.what() << std::endl;
+                        std::cerr << "WARNING: " << e.what() << std::endl;
                     }
                 }
             }
@@ -979,96 +981,6 @@ void RhombicCode::sweepHalfVertexBulkBoundary(const int vertexIndex, vstr &sweep
         sweepHalfVertex(vertexIndex, sweepEdges, sweepDirection, upEdgeDirections);
     }
 }
-
-// void RhombicCode::sweepFullVertexBoundary(const int vertexIndex, vstr &sweepEdges, const std::string &sweepDirection, const vstr &upEdgeDirections)
-// {
-//     // Minimal option, only sweep one edge faces
-//     cartesian4 coordinate = lattice->indexToCoordinate(vertexIndex);
-//     if (sweepEdges.size() == 1)
-//     {
-//         vint vertices;
-//         if (coordinate.y == 1 && coordinate.z == 1)
-//         {
-//             if (sweepEdges[0] == "xz")
-//             {
-//                 if (sweepDirection == "-yz" || sweepDirection == "xz")
-//                 {
-//                     vertices = faceVertices(vertexIndex, {"xz", "-yz", "-yz"});
-//                     localFlip(vertices);
-//                 }
-//             }
-//             else if (sweepEdges[0] == "-xy")
-//             {
-//                 if (sweepDirection == "-xy" || sweepDirection == "-xyz")
-//                 {
-//                     vertices = faceVertices(vertexIndex, {"-xyz", "-xy", "-xy"});
-//                     localFlip(vertices);
-//                 }
-//             }
-//         }
-//         else if (coordinate.y == 1 && coordinate.z == l - 1)
-//         {
-//             if (sweepEdges[0] == "-yz")
-//             {
-//                 if (sweepDirection == "-yz" || sweepDirection == "xz")
-//                 {
-//                     vertices = faceVertices(vertexIndex, {"xz", "-yz", "-yz"});
-//                     localFlip(vertices);
-//                 }
-//             }
-//             else if (sweepEdges[0] == "-xyz")
-//             {
-//                 if (sweepDirection == "-xy" || sweepDirection == "-xyz")
-//                 {
-//                     vertices = faceVertices(vertexIndex, {"-xyz", "-xy", "-xy"});
-//                     localFlip(vertices);
-//                 }
-//             }
-//         }
-//         else if (coordinate.y == l - 2 && coordinate.z == 1)
-//         {
-//             if (sweepEdges[0] == "yz")
-//             {
-//                 if (sweepDirection == "-xz" || sweepDirection == "yz")
-//                 {
-//                     vertices = faceVertices(vertexIndex, {"-xz", "yz", "yz"});
-//                     localFlip(vertices);
-//                 }
-//             }
-//             else if (sweepEdges[0] == "xyz")
-//             {
-//                 if (sweepDirection == "xy" || sweepDirection == "xyz")
-//                 {
-//                     vertices = faceVertices(vertexIndex, {"xyz", "xy", "xy"});
-//                     localFlip(vertices);
-//                 }
-//             }
-//         }
-//         else if (coordinate.y == l - 2 && coordinate.z == l - 1)
-//         {
-//             if (sweepEdges[0] == "-xz")
-//             {
-//                 if (sweepDirection == "-xz" || sweepDirection == "yz")
-//                 {
-//                     vertices = faceVertices(vertexIndex, {"-xz", "yz", "yz"});
-//                     localFlip(vertices);
-//                 }
-//             }
-//             else if (sweepEdges[0] == "xy")
-//             {
-//                 if (sweepDirection == "xy" || sweepDirection == "xyz")
-//                 {
-//                     vertices = faceVertices(vertexIndex, {"xyz", "xy", "xy"});
-//                     localFlip(vertices);
-//                 }
-//             }
-//         }
-//     }
-//     else
-//     {
-//         sweepFullVertex(vertexIndex, sweepEdges, sweepDirection, upEdgeDirections);
-//     }
-// }
 
 void RhombicCode::sweepFullVertexBoundary(const int vertexIndex, vstr &sweepEdges, const std::string &sweepDirection, const vstr &upEdgeDirections)
 {

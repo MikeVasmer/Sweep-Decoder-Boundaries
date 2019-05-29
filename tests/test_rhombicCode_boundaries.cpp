@@ -320,7 +320,7 @@ TEST(sweep, corrects_two_qubit_errors)
     }
 }
 
-TEST(sweepBoundary, all_one_edge_faces_swept_correctly)
+TEST(sweepBoundary, one_edge_faces_swept_correctly)
 {
     RhombicCode code = RhombicCode(4, 0.1, 0.1, true);
     auto &syndrome = code.getSyndrome();
@@ -350,30 +350,6 @@ TEST(sweepBoundary, all_one_edge_faces_swept_correctly)
         }
     }
 
-    // Bulk of the boundary rule means there is 1/2 chance for -xyz succeeding 
-    // directions = {"-yz", "xz", "xy"};
-    // for (auto &dir : allDirections)
-    // {
-    //     code.setError({4});
-    //     code.calculateSyndrome();
-    //     code.sweep(dir, true);
-    //     code.calculateSyndrome();
-    //     int sum = 0;
-    //     for (int j = 0; j < syndrome.size(); ++j)
-    //     {
-    //         sum = (sum + syndrome[j]);
-    //     }
-    //     auto it = std::find(directions.begin(), directions.end(), dir);
-    //     if (it == directions.end())
-    //     {
-    //         EXPECT_TRUE(sum > 0);
-    //     }
-    //     else
-    //     {
-    //         EXPECT_EQ(sum, 0);
-    //     }
-    // }
-
     directions = {"xy", "xyz", "-xz", "-yz"};
     for (auto &dir : allDirections)
     {
@@ -396,77 +372,6 @@ TEST(sweepBoundary, all_one_edge_faces_swept_correctly)
             EXPECT_EQ(sum, 0);
         }
     }
-
-    // Bulk of the boundary rule means there is 1/2 chance for +xy succeeding 
-    // directions = {"-xz", "yz", "-xyz"};
-    // for (auto &dir : allDirections)
-    // {
-    //     code.setError({14});
-    //     code.calculateSyndrome();
-    //     code.sweep(dir, true);
-    //     code.calculateSyndrome();
-    //     int sum = 0;
-    //     for (int j = 0; j < syndrome.size(); ++j)
-    //     {
-    //         sum = (sum + syndrome[j]);
-    //     }
-    //     auto it = std::find(directions.begin(), directions.end(), dir);
-    //     if (it == directions.end())
-    //     {
-    //         EXPECT_TRUE(sum > 0);
-    //     }
-    //     else
-    //     {
-    //         EXPECT_EQ(sum, 0);
-    //     }
-    // }
-
-    directions = {"-xyz", "-xy", "yz", "xz"};
-    for (auto &dir : allDirections)
-    {
-        code.setError({36});
-        code.calculateSyndrome();
-        code.sweep(dir, true);
-        code.calculateSyndrome();
-        int sum = 0;
-        for (int j = 0; j < syndrome.size(); ++j)
-        {
-            sum = (sum + syndrome[j]);
-        }
-        auto it = std::find(directions.begin(), directions.end(), dir);
-        if (it == directions.end())
-        {
-            EXPECT_TRUE(sum > 0);
-        }
-        else
-        {
-            EXPECT_EQ(sum, 0);
-        }
-    }
-
-    // Bulk of the boundary rule means there is 1/2 chance for -xy succeeding 
-    // directions = {"-yz", "xz", "xyz"};
-    // for (auto &dir : allDirections)
-    // {
-    //     code.setError({40});
-    //     code.calculateSyndrome();
-    //     code.sweep(dir, true);
-    //     code.calculateSyndrome();
-    //     int sum = 0;
-    //     for (int j = 0; j < syndrome.size(); ++j)
-    //     {
-    //         sum = (sum + syndrome[j]);
-    //     }
-    //     auto it = std::find(directions.begin(), directions.end(), dir);
-    //     if (it == directions.end())
-    //     {
-    //         EXPECT_TRUE(sum > 0);
-    //     }
-    //     else
-    //     {
-    //         EXPECT_EQ(sum, 0);
-    //     }
-    // }
 
     directions = {"xyz", "xy", "yz", "xz"};
     for (auto &dir : allDirections)
@@ -491,29 +396,31 @@ TEST(sweepBoundary, all_one_edge_faces_swept_correctly)
         }
     }
 
-    // Bulk of the boundary rule means there is 1/2 chance for +xyz succeeding 
-    // directions = {"yz", "-xz", "-xy"};
-    // for (auto &dir : allDirections)
-    // {
-    //     code.setError({50});
-    //     code.calculateSyndrome();
-    //     code.sweep(dir, true);
-    //     code.calculateSyndrome();
-    //     int sum = 0;
-    //     for (int j = 0; j < syndrome.size(); ++j)
-    //     {
-    //         sum = (sum + syndrome[j]);
-    //     }
-    //     auto it = std::find(directions.begin(), directions.end(), dir);
-    //     if (it == directions.end())
-    //     {
-    //         EXPECT_TRUE(sum > 0);
-    //     }
-    //     else
-    //     {
-    //         EXPECT_EQ(sum, 0);
-    //     }
-    // }
+    directions = {"yz", "-xz", "xy", "-xyz", "-xy", "xyz"};
+    for (auto &dir : allDirections)
+    {
+        code.setError({33});
+        code.calculateSyndrome();
+        code.sweep(dir, true);
+        code.calculateSyndrome();
+        int sum = 0;
+        for (int j = 0; j < syndrome.size(); ++j)
+        {
+            sum = (sum + syndrome[j]);
+        }
+        auto it = std::find(directions.begin(), directions.end(), dir);
+        if (it == directions.end())
+        {
+            EXPECT_TRUE(sum > 0);
+        }
+        else
+        {
+            EXPECT_EQ(sum, 0);
+        }
+    }
+
+    // code.setError({30, 31, 32, 33, 34, 35, 36, 37, 38, 39});
+    // code.printError();
 }
 
 TEST(sweepBoundary, removes_specific_error)
