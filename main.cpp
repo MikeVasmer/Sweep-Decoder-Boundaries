@@ -4,12 +4,13 @@
 #include "decoder.h"
 #include <chrono>
 #include <string>
+#include <sstream>
 
 int main(int argc, char *argv[])
 {
-    if (argc < 9)
+    if (argc < 10)
     {
-        std::cout << "Fewer than nine arguments" << std::endl;
+        std::cout << "Fewer than ten arguments" << std::endl;
         for (int i = 0; i < argc; ++i)
         {
             std::cout << "Argument " << i << " = " << argv[i] << std::endl;
@@ -26,17 +27,23 @@ int main(int argc, char *argv[])
     int sweepLimit = std::atoi(argv[7]);
     std::string sweepSchedule(argv[8]);
     int timeout = std::atoi(argv[9]);
-
+    bool greedy;
+    std::stringstream ss(argv[10]);
+    if (!(ss >> std::boolalpha >> greedy))
+    {
+        std::cerr << "Incorrect argument provided (boolean)." << std::endl;
+        return 1;
+    }
     std::vector<bool> succ;
 
     auto start = std::chrono::high_resolution_clock::now();
     if (latticeType == "rhombic_toric")
     {
-        succ = runToric(l, rounds, p, q, sweepDir, timeout);
+        succ = runToric(l, rounds, p, q, sweepDir, timeout, greedy);
     }
     else if (latticeType == "rhombic_boundaries" || latticeType == "cubic_boundaries")
     {
-        succ = runBoundaries(l, rounds, p, q, sweepLimit, sweepSchedule, timeout, latticeType);
+        succ = runBoundaries(l, rounds, p, q, sweepLimit, sweepSchedule, timeout, latticeType, greedy);
     }
     else
     {
