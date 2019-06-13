@@ -5,10 +5,12 @@ import ast
 import json
 import time
 
+
 def snake_case_to_CamelCase(word):
     return ''.join(x.capitalize() or '_' for x in word.split('_'))
 
-def generate_data(lattice_type, l, p, q, sweep_direction, sweep_limit, sweep_schedule, timeout, cycles, trials, job_number):
+
+def generate_data(lattice_type, l, p, q, sweep_direction, sweep_limit, sweep_schedule, timeout, cycles, trials, job_number, greedy):
     cwd = os.getcwd()
     build_directory = '{0}/{1}'.format(cwd, 'build')
 
@@ -20,7 +22,7 @@ def generate_data(lattice_type, l, p, q, sweep_direction, sweep_limit, sweep_sch
     start_time = time.time()
     for _ in range(trials):
         result = subprocess.run(
-            ['./SweepDecoder', str(l), str(p), str(q), sweep_direction, str(cycles), lattice_type, str(sweep_limit), sweep_schedule, str(timeout)], stdout=subprocess.PIPE, check=True, cwd=build_directory)
+            ['./SweepDecoder', str(l), str(p), str(q), sweep_direction, str(cycles), lattice_type, str(sweep_limit), sweep_schedule, str(timeout), str(greedy).lower()], stdout=subprocess.PIPE, check=True, cwd=build_directory)
         # print(result.stdout.decode('utf-8'))
         result_list = ast.literal_eval(result.stdout.decode('utf-8'))
         # print(result_list)
@@ -41,7 +43,8 @@ def generate_data(lattice_type, l, p, q, sweep_direction, sweep_limit, sweep_sch
     data['Timeout'] = timeout
     data['Successes'] = successes
     data['Clear syndromes'] = clear_syndromes
-    
+    data['Greedy'] = greedy
+
     if lattice_type == 'rhombic_toric':
         data['Sweep direction'] = sweep_direction
         # lattice_type = lattice_type.replace('_', '')
@@ -88,6 +91,8 @@ if __name__ == "__main__":
                         help="max number of sweeps before timeout in readout phase (default: 128*l)")
     parser.add_argument("--sweep_direction", type=str, default='xyz',
                         help="sweep direction (default: xyz)")
+    parser.add_argument("--greedy", type=bool, default=True,
+                        help="whether to use the greedy sweep rule (default : True)")
     parser.add_argument("--job", type=int, default=-1,
                         help="job number (default: -1)")
 
@@ -100,13 +105,14 @@ if __name__ == "__main__":
     trials = args.trials
     sweep_limit = args.sweep_limit
     if sweep_limit == None:
-        sweep_limit = l // 2
+        sweep_limit = int(round(pow(l, 0.5)))
     sweep_schedule = args.sweep_schedule
     timeout = args.timeout
     if timeout == None:
-        timeout = 128 * l
+        timeout = 32 * l
     sweep_direction = args.sweep_direction
     job_number = args.job
+    greedy = args.greedy
 
     generate_data(lattice_type, l, p, q, sweep_direction, sweep_limit,
-                  sweep_schedule, timeout, cycles, trials, job_number)
+                  sweep_schedule, timeout, cycles, trials, job_number, greedy)

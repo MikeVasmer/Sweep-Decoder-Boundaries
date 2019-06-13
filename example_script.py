@@ -10,12 +10,13 @@ sweep_direction = 'xyz'
 lattice_type = 'rhombic_boundaries'
 sweep_schedules = ['alternating_XZ', 'alternating_XY', 'alternating_YZ', 'rotating_XZ', 'rotating_XY', 'rotating_YZ', 'random']
 job_number = 1
+greedy = True;
 
 
 for sweep_schedule in sweep_schedules:
     for l in l_list:
-        timeouts = [144 * l]
-        sweep_limit = l // 2
+        timeouts = [32 * l]
+        sweep_limit = (int) (round(pow(l, 0.5)))
         for timeout in timeouts:
         # timeout = 8 * l * l
             for r in rounds_list:
@@ -23,7 +24,7 @@ for sweep_schedule in sweep_schedules:
                     # q = p
                     start_time = time.time()
                     data_generator.generate_data(
-                        lattice_type, l, p, q, sweep_direction, sweep_limit, sweep_schedule, timeout, r, trials, job_number)
+                        lattice_type, l, p, q, sweep_direction, sweep_limit, sweep_schedule, timeout, r, trials, job_number, greedy)
                     finish_time = round(time.time() - start_time, 2)
                     print('l={} p={} rounds={} trials={} timeout={} job done in {} s'.format(
                         l, p, r, trials, timeout, finish_time))

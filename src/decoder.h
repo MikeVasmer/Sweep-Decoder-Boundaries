@@ -17,8 +17,8 @@ std::uniform_int_distribution<int> distInt0To7(0, 7);
 
 std::vector<bool> runToric(const int l, const int rounds,
                            const double p, const double q,
-                           const std::string &sweepDirection, 
-                           const int timeout)
+                           const std::string &sweepDirection,
+                           const int timeout, bool greedy)
 {
     std::vector<bool> success = {false, false};
     RhombicCode code = RhombicCode(l, p, q, false);
@@ -31,7 +31,7 @@ std::vector<bool> runToric(const int l, const int rounds,
         {
             code.generateMeasError();
         }
-        code.sweep(sweepDirection, true);
+        code.sweep(sweepDirection, greedy);
     }
     code.generateDataError(); // Data errors = measurement errors at readout
     code.calculateSyndrome();
@@ -40,7 +40,7 @@ std::vector<bool> runToric(const int l, const int rounds,
     // for (int r = 0; r < l * l; ++r)
     // for (int r = 0; r < 12 * l; ++r)
     {
-        code.sweep(sweepDirection, true);
+        code.sweep(sweepDirection, greedy);
         code.calculateSyndrome();
         if (std::all_of(syndrome.begin(), syndrome.end(), [](int i) { return i == 0; }))
         {
@@ -57,7 +57,7 @@ std::vector<bool> runBoundaries(const int l, const int rounds,
                                 const int sweepLimit,
                                 const std::string sweepSchedule,
                                 const int timeout,
-                                const std::string latticeType)
+                                const std::string latticeType, bool greedy)
 {
     std::vector<bool> success = {false, false};
     std::unique_ptr<Code> code;
@@ -104,7 +104,7 @@ std::vector<bool> runBoundaries(const int l, const int rounds,
         randomSchedule = true;
         sweepIndex = distInt0To7(rnEngine);
     }
-    else 
+    else
     {
         throw std::invalid_argument("Invalid sweep schedule.");
     }
@@ -129,7 +129,7 @@ std::vector<bool> runBoundaries(const int l, const int rounds,
             // std::cerr << "Generating measurement error." << std::endl;
             code->generateMeasError();
         }
-        code->sweep(sweepDirections[sweepIndex], true);
+        code->sweep(sweepDirections[sweepIndex], greedy);
         // std::cerr << "direction=" << sweepDirections[sweepIndex] << std::endl;
         // std::cerr << "sweepIndex=" << sweepIndex << std::endl;
         // std::cerr << "sweepCount=" << sweepCount << std::endl;
@@ -152,7 +152,7 @@ std::vector<bool> runBoundaries(const int l, const int rounds,
             }
             sweepCount = 0;
         }
-        code->sweep(sweepDirections[sweepIndex], true);
+        code->sweep(sweepDirections[sweepIndex], greedy);
         code->calculateSyndrome();
         if (std::all_of(syndrome.begin(), syndrome.end(), [](int i) { return i == 0; }))
         {
