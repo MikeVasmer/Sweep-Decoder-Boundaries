@@ -198,7 +198,8 @@ void RhombicCode::sweep(const std::string &direction, bool greedy)
             continue;
         }
         cartesian4 coordinate = lattice->indexToCoordinate(vertexIndex);
-        if (sweepEdges.size() == 1 && (!boundaries || coordinate.w == 0))
+        // if (sweepEdges.size() == 1 && (!boundaries || coordinate.w == 0))
+        if (sweepEdges.size() == 1 && !boundaries)
         {
             continue;
         }
@@ -206,7 +207,14 @@ void RhombicCode::sweep(const std::string &direction, bool greedy)
         {
             if ((coordinate.x + coordinate.y + coordinate.z) % 2 == latticeParity)
             {
-                sweepFullVertex(vertexIndex, sweepEdges, direction, edgeDirections);
+                if (boundaries)
+                {
+                    sweepFullVertexBoundary(vertexIndex, sweepEdges, direction, edgeDirections);
+                }
+                else
+                {
+                    sweepFullVertex(vertexIndex, sweepEdges, direction, edgeDirections);
+                }
             }
             else
             {
@@ -588,7 +596,7 @@ void RhombicCode::sweepHalfVertexBoundary(const int vertexIndex, vstr &sweepEdge
     if (sweepEdges.size() == 1)
     {
         vint vertices;
-        int coordinateSumParity = (coordinate.x + coordinate.y + coordinate.z) % 2;
+        // int coordinateSumParity = (coordinate.x + coordinate.y + coordinate.z) % 2;
         if (coordinate.y == 0 && coordinate.z == 1)
         {
             // std::cerr << "y=0, z=1 half vertex" << std::endl;
@@ -674,6 +682,168 @@ void RhombicCode::sweepHalfVertexBoundary(const int vertexIndex, vstr &sweepEdge
     else
     {
         sweepHalfVertex(vertexIndex, sweepEdges, sweepDirection, upEdgeDirections);
+    }
+}
+
+// void RhombicCode::sweepHalfVertexBoundary(const int vertexIndex, vstr &sweepEdges, const std::string &sweepDirection, const vstr &upEdgeDirections)
+// {
+//     // Minimal option, but flips face if any of other three sweep directions come up (except edge in syndrome)
+//     cartesian4 coordinate = lattice->indexToCoordinate(vertexIndex);
+//     if (sweepEdges.size() == 1)
+//     {
+//         vint vertices;
+//         int coordinateSumParity = (coordinate.x + coordinate.y + coordinate.z) % 2;
+//         if (coordinate.y == 0 && coordinate.z == 1)
+//         {
+//             // std::cerr << "y=0, z=1 half vertex" << std::endl;
+//             // if (sweepEdges[0] == "xy" && coordinateSumParity == latticeParity)
+//             if (sweepEdges[0] == "xy")
+//             {
+//                 vertices = faceVertices(vertexIndex, {"xy", "-xyz", "-xyz"});
+//                 localFlip(vertices);
+//             }
+//             else if (sweepEdges[0] == "-xz")
+//             {
+//                 vertices = faceVertices(vertexIndex, {"-xz", "-yz", "-yz"});
+//                 localFlip(vertices);
+//             }
+//         }
+//         else if (coordinate.y == 0 && coordinate.z == l - 2)
+//         {
+//             // std::cerr << "y=0, z=l-2 half vertex" << std::endl;
+//             if (sweepEdges[0] == "yz")
+//             {
+//                 vertices = faceVertices(vertexIndex, {"yz", "xz", "xz"});
+//                 localFlip(vertices);
+//             }
+//             else if (sweepEdges[0] == "xyz")
+//             {
+//                 vertices = faceVertices(vertexIndex, {"xyz", "-xy", "-xy"});
+//                 localFlip(vertices);
+//             }
+//         }
+//         else if (coordinate.y == l - 2 && coordinate.z == 1)
+//         {
+//             // std::cerr << "y=l-2, z=1 half vertex" << std::endl;
+//             if (sweepEdges[0] == "-xyz")
+//             {
+//                 vertices = faceVertices(vertexIndex, {"-xyz", "xy", "xy"});
+//                 localFlip(vertices);
+//             }
+//             else if (sweepEdges[0] == "-yz")
+//             {
+//                 vertices = faceVertices(vertexIndex, {"-xz", "-yz", "-yz"});
+//                 localFlip(vertices);
+//             }
+//         }
+//         else if (coordinate.y == l - 2 && coordinate.z == l - 2)
+//         {
+//             // std::cerr << "y=z=l-2 half vertex" << std::endl;
+//             if (sweepEdges[0] == "xz")
+//             {
+//                 vertices = faceVertices(vertexIndex, {"xz", "yz", "yz"});
+//                 localFlip(vertices);
+//             }
+//             else if (sweepEdges[0] == "-xy")
+//             {
+//                 vertices = faceVertices(vertexIndex, {"xyz", "-xy", "-xy"});
+//                 localFlip(vertices);
+//             }
+//         }
+//     }
+//     else
+//     {
+//         sweepHalfVertex(vertexIndex, sweepEdges, sweepDirection, upEdgeDirections);
+//     }
+// }
+
+void RhombicCode::sweepFullVertexBoundary(const int vertexIndex, vstr &sweepEdges, const std::string &sweepDirection, const vstr &upEdgeDirections)
+{
+    // Minimal option
+    cartesian4 coordinate = lattice->indexToCoordinate(vertexIndex);
+    if (sweepEdges.size() == 1)
+    {
+        vint vertices;
+        if (coordinate.y == 1 && coordinate.z == 1)
+        {
+            if (sweepEdges[0] == "xz")
+            {
+                if (sweepDirection == "-yz" || sweepDirection == "xz")
+                {
+                    vertices = faceVertices(vertexIndex, {"xz", "-yz", "-yz"});
+                    localFlip(vertices);
+                }
+            }
+            else if (sweepEdges[0] == "-xy")
+            {
+                if (sweepDirection == "-xy" || sweepDirection == "-xyz")
+                {
+                    vertices = faceVertices(vertexIndex, {"-xyz", "-xy", "-xy"});
+                    localFlip(vertices);
+                }
+            }
+        }
+        else if (coordinate.y == 1 && coordinate.z == l - 1)
+        {
+            if (sweepEdges[0] == "-yz")
+            {
+                if (sweepDirection == "-yz" || sweepDirection == "xz")
+                {
+                    vertices = faceVertices(vertexIndex, {"xz", "-yz", "-yz"});
+                    localFlip(vertices);
+                }
+            }
+            else if (sweepEdges[0] == "-xyz")
+            {
+                if (sweepDirection == "-xy" || sweepDirection == "-xyz")
+                {
+                    vertices = faceVertices(vertexIndex, {"-xyz", "-xy", "-xy"});
+                    localFlip(vertices);
+                }
+            }
+        }
+        else if (coordinate.y == l - 2 && coordinate.z == 1)
+        {
+            if (sweepEdges[0] == "yz")
+            {
+                if (sweepDirection == "-xz" || sweepDirection == "yz")
+                {
+                    vertices = faceVertices(vertexIndex, {"-xz", "yz", "yz"});
+                    localFlip(vertices);
+                }
+            }
+            else if (sweepEdges[0] == "xyz")
+            {
+                if (sweepDirection == "xy" || sweepDirection == "xyz")
+                {
+                    vertices = faceVertices(vertexIndex, {"xyz", "xy", "xy"});
+                    localFlip(vertices);
+                }
+            }
+        }
+        else if (coordinate.y == l - 2 && coordinate.z == l - 1)
+        {
+            if (sweepEdges[0] == "-xz")
+            {
+                if (sweepDirection == "-xz" || sweepDirection == "yz")
+                {
+                    vertices = faceVertices(vertexIndex, {"-xz", "yz", "yz"});
+                    localFlip(vertices);
+                }
+            }
+            else if (sweepEdges[0] == "xy")
+            {
+                if (sweepDirection == "xy" || sweepDirection == "xyz")
+                {
+                    vertices = faceVertices(vertexIndex, {"xyz", "xy", "xy"});
+                    localFlip(vertices);
+                }
+            }
+        }
+    }
+    else
+    {
+        sweepFullVertex(vertexIndex, sweepEdges, sweepDirection, upEdgeDirections);
     }
 }
 
