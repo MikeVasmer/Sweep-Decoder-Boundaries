@@ -91,8 +91,8 @@ if __name__ == "__main__":
                         help="max number of sweeps before timeout in readout phase (default: 128*l)")
     parser.add_argument("--sweep_direction", type=str, default='xyz',
                         help="sweep direction (default: xyz)")
-    parser.add_argument("--greedy", type=bool, default=True,
-                        help="whether to use the greedy sweep rule (default : True)")
+    parser.add_argument("--greedy", action='store_true',
+                        help="use the greedy sweep rule (default : True)")
     parser.add_argument("--job", type=int, default=-1,
                         help="job number (default: -1)")
 
