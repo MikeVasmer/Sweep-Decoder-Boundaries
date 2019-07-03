@@ -45,13 +45,14 @@ def generate_data(lattice_type, l, p, q, sweep_direction, sweep_limit, sweep_sch
     data['Clear syndromes'] = clear_syndromes
     data['Greedy'] = greedy
 
-    if lattice_type == 'rhombic_toric':
-        data['Sweep direction'] = sweep_direction
-        # lattice_type = lattice_type.replace('_', '')
-        lattice_type = snake_case_to_CamelCase(lattice_type)
-        json_file = "L={}_N={}_p={:0.4f}_q={:0.4f}_direction={}_trials={}_lattice={}_job={}.json".format(
-            l, cycles, p, q, sweep_direction, trials, lattice_type, job_number)
-    elif lattice_type == "rhombic_boundaries" or lattice_type == "cubic_boundaries":
+    # if lattice_type == 'rhombic_toric':
+    #     data['Sweep direction'] = sweep_direction
+    #     # lattice_type = lattice_type.replace('_', '')
+    #     lattice_type = snake_case_to_CamelCase(lattice_type)
+    #     json_file = "L={}_N={}_p={:0.4f}_q={:0.4f}_direction={}_trials={}_lattice={}_job={}.json".format(
+    #         l, cycles, p, q, sweep_direction, trials, lattice_type, job_number)
+    # elif lattice_type == "rhombic_boundaries" or lattice_type == "cubic_boundaries":
+    if lattice_type == "rhombic_boundaries" or lattice_type == "cubic_boundaries" or lattice_type == "rhombic_toric":
         data['Sweep limit'] = sweep_limit
         data['Sweep schedule'] = sweep_schedule
         # lattice_type = lattice_type.replace('_', '')
@@ -84,11 +85,11 @@ if __name__ == "__main__":
     parser.add_argument("trials", type=int,
                         help="number of trials")
     parser.add_argument("--sweep_limit", type=int,
-                        help="number of sweeps per direction in active phase (default: l/2)")
+                        help="number of sweeps per direction in active phase (default: sqrt(l))")
     parser.add_argument("--sweep_schedule", type=str, default='random', choices=[
                         'rotating_XY', 'alternating_XY', 'rotating_XZ', 'alternating_XZ', 'rotating_YZ', 'alternating_YZ', 'random'], help="sweep direction schedule (default: random)")
     parser.add_argument("--timeout", type=int,
-                        help="max number of sweeps before timeout in readout phase (default: 128*l)")
+                        help="max number of sweeps before timeout in readout phase (default: 32*l)")
     parser.add_argument("--sweep_direction", type=str, default='xyz',
                         help="sweep direction (default: xyz)")
     parser.add_argument("--greedy", action='store_true',

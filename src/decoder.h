@@ -37,8 +37,6 @@ std::vector<bool> runToric(const int l, const int rounds,
     code.calculateSyndrome();
     // code.printUnsatisfiedStabilisers();
     for (int r = 0; r < timeout; ++r)
-    // for (int r = 0; r < l * l; ++r)
-    // for (int r = 0; r < 12 * l; ++r)
     {
         code.sweep(sweepDirection, greedy);
         code.calculateSyndrome();
@@ -69,9 +67,13 @@ std::vector<bool> runBoundaries(const int l, const int rounds,
     {
         code = std::make_unique<CubicCode>(l, p, q, true);
     }
-    // RhombicCode code = RhombicCode(l, p, q, true);
+    else if (latticeType == "rhombic_toric")
+    {
+        code = std::make_unique<RhombicCode>(l, p, q, false);
+    }
     std::vector<int8_t> &syndrome = code->getSyndrome();
-    vstr sweepDirections = {"xyz", "xy", "xz", "yz", "-xyz", "-xy", "-xz", "-yz"};
+    // vstr sweepDirections = {"xyz", "xy", "xz", "yz", "-xyz", "-xy", "-xz", "-yz"};
+    vstr sweepDirections = {};
     bool randomSchedule = false;
     int sweepIndex = 0;
     int sweepCount = 0;

@@ -37,11 +37,12 @@ int main(int argc, char *argv[])
     std::vector<bool> succ;
 
     auto start = std::chrono::high_resolution_clock::now();
-    if (latticeType == "rhombic_toric")
-    {
-        succ = runToric(l, rounds, p, q, sweepDir, timeout, greedy);
-    }
-    else if (latticeType == "rhombic_boundaries" || latticeType == "cubic_boundaries")
+    // if (latticeType == "rhombic_toric")
+    // {
+    //     succ = runToric(l, rounds, p, q, sweepDir, timeout, greedy);
+    // }
+    // else if (latticeType == "rhombic_boundaries" || latticeType == "cubic_boundaries")
+    if (latticeType == "rhombic_boundaries" || latticeType == "cubic_boundaries" || latticeType == "rhombic_toric")
     {
         succ = runBoundaries(l, rounds, p, q, sweepLimit, sweepSchedule, timeout, latticeType, greedy);
     }
