@@ -70,7 +70,7 @@ TEST(generateDataError, handles_error_probability_one)
     int l = 4;
     double p = 1;
     RhombicCode code = RhombicCode(l, p, p, false);
-    code.generateDataError();
+    code.generateDataError(false);
     EXPECT_EQ(code.getError().size(), 3 * l * l * l);
 }
 
@@ -79,7 +79,7 @@ TEST(generateDataError, handles_error_probability_zero)
     int l = 6;
     double p = 0;
     RhombicCode code = RhombicCode(l, p, p, false);
-    code.generateDataError();
+    code.generateDataError(false);
     EXPECT_EQ(code.getError().size(), 0);
 }
 

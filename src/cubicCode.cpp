@@ -26,6 +26,8 @@ CubicCode::CubicCode(const int l, const double p, const double q, bool boundarie
     lattice->createUpEdgesMap();
     lattice->createVertexToEdges();
     upEdgesMap = lattice->getUpEdgesMap();
+    faceToEdges = lattice->getFaceToEdges(); 
+    vertexToEdges = lattice->getVertexToEdges();
     buildLogicals();
 }
 

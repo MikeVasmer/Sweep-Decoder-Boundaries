@@ -21,6 +21,8 @@ protected:
   std::unique_ptr<Lattice> lattice;
   std::vector<int> sweepIndices;
   std::map<std::string, vvint> upEdgesMap;
+  vvint faceToEdges;
+  vvint vertexToEdges;
   std::set<int> error;
   const double p; // data error probability
   const double q; // measurement error probability
@@ -42,7 +44,7 @@ protected:
 public:
   Code(const int latticeLength, const double dataErrorProbability, const double measErrorProbability, bool boundaries);
 
-  void generateDataError();
+  void generateDataError(bool correlated);
   bool checkExtremalVertex(const int vertexIndex, const std::string &direction);
   void localFlip(vint &vertices);
   vint faceVertices(const int vertexIndex, vstr directions);

@@ -29,24 +29,82 @@ Code::Code(const int ll, const double dataP, const double measP, bool boundaries
     distDouble0To1 = std::uniform_real_distribution<double>(0, nextafter(1, 2));
     distInt0To2 = std::uniform_int_distribution<int>(0, 2);
     distInt0To1 = std::uniform_int_distribution<int>(0, 1);
+
 }
 
-void Code::generateDataError()
+void Code::generateDataError(bool correlated)
 {
     // error.clear();
-    for (int i = 0; i < numberOfFaces; ++i)
+    if (!correlated)
     {
-        // if (distDouble0To1(mt) <= p)
-        if (distDouble0To1(rnEngine) <= p)
+        for (int i = 0; i < numberOfFaces; ++i)
         {
-            auto it = error.find(i);
-            if (it == error.end())
+            // if (distDouble0To1(mt) <= p)
+            if (distDouble0To1(rnEngine) <= p)
             {
-                error.insert(i);
+                auto it = error.find(i);
+                if (it == error.end())
+                {
+                    error.insert(i);
+                }
+                else
+                {
+                    error.erase(it);
+                }
             }
-            else
+        }
+    }
+    else
+    {
+        vstr twoQubitErrors = {"ix", "xi", "xx"};
+        
+        for (int i = 0; i < numberOfFaces; ++i)
+        {
+            for (int j = i + 1; j < numberOfFaces; ++j)
             {
-                error.erase(it);
+                bool nearestNeighbours = false;
+                for (auto &ei : faceToEdges[i])
+                {
+                    for (auto &ej : faceToEdges[j])
+                    {
+                        if (ei == ej)
+                        {
+                            // std::cout << "edge of face " << i << ": " << ei << ", edge of face " << j << ": " << ej << std::endl;
+                            nearestNeighbours = true;
+                            break;
+                        }
+                    }
+                }
+                if (nearestNeighbours && distDouble0To1(rnEngine) <= p)
+                {
+                    std::shuffle(twoQubitErrors.begin(), twoQubitErrors.end(), rnEngine);
+                    if (twoQubitErrors[0].at(0) == 'x')
+                    {
+                        // std::cerr << "X on q_i" << std::endl;
+                        auto it = error.find(i);
+                        if (it == error.end())
+                        {
+                            error.insert(i);
+                        }
+                        else
+                        {
+                            error.erase(it);
+                        }
+                    }
+                    if (twoQubitErrors[0].at(1) == 'x')
+                    {
+                        // std::cerr << "X on q_j" << std::endl;
+                        auto it = error.find(j);
+                        if (it == error.end())
+                        {
+                            error.insert(j);
+                        }
+                        else
+                        {
+                            error.erase(it);
+                        }
+                    }
+                }
             }
         }
     }
@@ -83,9 +141,7 @@ std::set<int> &Code::getError()
 
 bool Code::checkExtremalVertex(const int vertexIndex, const std::string &direction)
 {
-    auto &upEdgesMap = lattice->getUpEdgesMap();
     auto &upEdges = upEdgesMap[direction][vertexIndex];
-    auto &vertexToEdges = lattice->getVertexToEdges();
     auto &edges = vertexToEdges[vertexIndex];
     bool edgeInSyndrome = false;
     for (const int edgeIndex : edges)
@@ -257,7 +313,6 @@ bool Code::checkCorrection()
 void Code::calculateSyndrome()
 {
     clearSyndrome();
-    auto &faceToEdges = lattice->getFaceToEdges();
     for (const int errorIndex : error)
     {
         auto &edges = faceToEdges[errorIndex];

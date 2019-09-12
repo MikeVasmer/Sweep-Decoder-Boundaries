@@ -30,6 +30,8 @@ RhombicCode::RhombicCode(const int l, const double p, const double q, bool bound
     lattice->createUpEdgesMap();
     lattice->createVertexToEdges();
     upEdgesMap = lattice->getUpEdgesMap();
+    faceToEdges = lattice->getFaceToEdges(); 
+    vertexToEdges = lattice->getVertexToEdges();
     buildLogicals();
 }
 

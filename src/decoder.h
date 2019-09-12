@@ -15,47 +15,50 @@ pcg32 rnEngine(seed);
 
 std::uniform_int_distribution<int> distInt0To7(0, 7);
 
-std::vector<bool> runToric(const int l, const int rounds,
-                           const double p, const double q,
-                           const std::string &sweepDirection,
-                           const int timeout, bool greedy)
-{
-    std::vector<bool> success = {false, false};
-    RhombicCode code = RhombicCode(l, p, q, false);
-    std::vector<int8_t> &syndrome = code.getSyndrome();
-    for (int r = 0; r < rounds; ++r)
-    {
-        code.generateDataError();
-        code.calculateSyndrome();
-        if (q > 0)
-        {
-            code.generateMeasError();
-        }
-        code.sweep(sweepDirection, greedy);
-    }
-    code.generateDataError(); // Data errors = measurement errors at readout
-    code.calculateSyndrome();
-    // code.printUnsatisfiedStabilisers();
-    for (int r = 0; r < timeout; ++r)
-    {
-        code.sweep(sweepDirection, greedy);
-        code.calculateSyndrome();
-        if (std::all_of(syndrome.begin(), syndrome.end(), [](int i) { return i == 0; }))
-        {
-            // std::cout << "Clean Syndrome" << std::endl;
-            success = {code.checkCorrection(), true};
-            break;
-        }
-    }
-    return success;
-}
+// std::vector<bool> runToric(const int l, const int rounds,
+//                            const double p, const double q,
+//                            const std::string &sweepDirection,
+//                            const int timeout, bool greedy,
+//                            bool correlatedErrors)
+// {
+//     std::vector<bool> success = {false, false};
+//     RhombicCode code = RhombicCode(l, p, q, false);
+//     std::vector<int8_t> &syndrome = code.getSyndrome();
+//     for (int r = 0; r < rounds; ++r)
+//     {
+//         code.generateDataError(correlatedErrors);
+//         code.calculateSyndrome();
+//         if (q > 0)
+//         {
+//             code.generateMeasError();
+//         }
+//         code.sweep(sweepDirection, greedy);
+//     }
+//     code.generateDataError(correlatedErrors); // Data errors = measurement errors at readout
+//     code.calculateSyndrome();
+//     // code.printUnsatisfiedStabilisers();
+//     for (int r = 0; r < timeout; ++r)
+//     {
+//         code.sweep(sweepDirection, greedy);
+//         code.calculateSyndrome();
+//         if (std::all_of(syndrome.begin(), syndrome.end(), [](int i) { return i == 0; }))
+//         {
+//             // std::cout << "Clean Syndrome" << std::endl;
+//             success = {code.checkCorrection(), true};
+//             break;
+//         }
+//     }
+//     return success;
+// }
 
-std::vector<bool> runBoundaries(const int l, const int rounds,
+std::vector<bool> oneRun(const int l, const int rounds,
                                 const double p, const double q,
                                 const int sweepLimit,
                                 const std::string sweepSchedule,
                                 const int timeout,
-                                const std::string latticeType, bool greedy)
+                                const std::string latticeType,
+                                bool greedy,
+                                bool correlatedErrors)
 {
     std::vector<bool> success = {false, false};
     std::unique_ptr<Code> code;
@@ -72,8 +75,7 @@ std::vector<bool> runBoundaries(const int l, const int rounds,
         code = std::make_unique<RhombicCode>(l, p, q, false);
     }
     std::vector<int8_t> &syndrome = code->getSyndrome();
-    // vstr sweepDirections = {"xyz", "xy", "xz", "yz", "-xyz", "-xy", "-xz", "-yz"};
-    vstr sweepDirections = {};
+    vstr sweepDirections = {"xyz", "xy", "xz", "yz", "-xyz", "-xy", "-xz", "-yz"}; // Used by random schedule
     bool randomSchedule = false;
     int sweepIndex = 0;
     int sweepCount = 0;
@@ -106,10 +108,16 @@ std::vector<bool> runBoundaries(const int l, const int rounds,
         randomSchedule = true;
         sweepIndex = distInt0To7(rnEngine);
     }
+    else if (sweepSchedule == "const")
+    {
+        sweepDirections = {"-xyz"};
+    }
     else
     {
         throw std::invalid_argument("Invalid sweep schedule.");
     }
+    int numberOfDirections = sweepDirections.size();
+    // std::cerr << "No. of sweep dirs: " << numberOfDirections << std::endl;
     for (int r = 0; r < rounds; ++r)
     {
         if (sweepCount == sweepLimit)
@@ -120,11 +128,11 @@ std::vector<bool> runBoundaries(const int l, const int rounds,
             }
             else
             {
-                sweepIndex = (sweepIndex + 1) % 8;
+                sweepIndex = (sweepIndex + 1) % numberOfDirections;
             }
             sweepCount = 0;
         }
-        code->generateDataError();
+        code->generateDataError(correlatedErrors);
         code->calculateSyndrome();
         if (q > 0)
         {
@@ -137,7 +145,7 @@ std::vector<bool> runBoundaries(const int l, const int rounds,
         // std::cerr << "sweepCount=" << sweepCount << std::endl;
         ++sweepCount;
     }
-    code->generateDataError(); // Data errors = measurement errors at readout
+    code->generateDataError(correlatedErrors); // Data errors = measurement errors at readout
     code->calculateSyndrome();
     // code.printUnsatisfiedStabilisers();
     for (int r = 0; r < timeout; ++r)
@@ -150,7 +158,7 @@ std::vector<bool> runBoundaries(const int l, const int rounds,
             }
             else
             {
-                sweepIndex = (sweepIndex + 1) % 8;
+                sweepIndex = (sweepIndex + 1) % numberOfDirections;
             }
             sweepCount = 0;
         }

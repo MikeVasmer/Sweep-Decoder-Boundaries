@@ -102,7 +102,7 @@ TEST(calculateSyndrome, no_invalid_syndromes_data_errors)
         auto &syndrome = code.getSyndrome();
         for (int j = 0; j < 5; ++j)
         {
-            code.generateDataError();
+            code.generateDataError(false);
             code.calculateSyndrome();
             for (int i = 0; i < syndrome.size(); ++i)
             {
@@ -151,7 +151,7 @@ TEST(calculateSyndrome, no_invalid_syndromes_both_errors)
         auto &syndrome = code.getSyndrome();
         for (int j = 0; j < 5; ++j)
         {
-            code.generateDataError();
+            code.generateDataError(false);
             code.calculateSyndrome();
             code.generateMeasError();
             for (int i = 0; i < syndrome.size(); ++i)
@@ -206,7 +206,7 @@ TEST(sweep, runs_without_errors)
             RhombicCode code = RhombicCode(l, p, p, true);
             for (int i = 0; i < l; ++i)
             {
-                code.generateDataError();
+                code.generateDataError(false);
                 code.calculateSyndrome();
                 code.generateMeasError();
                 EXPECT_NO_THROW(code.sweep(sweepDirection, true));
@@ -469,5 +469,14 @@ TEST(buildSweepIndices, correct_number_of_indices)
         vint &sweepIndices = code.getSweepIndices();
         int expectedSize = ((l - 1) * (l - 1) * (l - 2) + ((l * (l - 2) * (l - 1)) / 2));
         EXPECT_EQ(sweepIndices.size(), expectedSize);
+    }
+}
+
+TEST(generateErrors, correlated_error_model_runs)
+{
+    RhombicCode code = RhombicCode(4, 0.1, 0.1, true);
+    for (int i = 0; i < 100; ++i)
+    {
+        EXPECT_NO_THROW(code.generateDataError(true));
     }
 }

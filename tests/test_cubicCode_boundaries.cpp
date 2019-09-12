@@ -80,7 +80,7 @@ TEST(calculateSyndrome, no_invalid_syndromes_data_errors)
         auto &syndrome = code.getSyndrome();
         for (int j = 0; j < 5; ++j)
         {
-            code.generateDataError();
+            code.generateDataError(false);
             code.calculateSyndrome();
             for (int i = 0; i < syndrome.size(); ++i)
             {
@@ -129,7 +129,7 @@ TEST(calculateSyndrome, no_invalid_syndromes_both_errors)
         auto &syndrome = code.getSyndrome();
         for (int j = 0; j < 5; ++j)
         {
-            code.generateDataError();
+            code.generateDataError(false);
             code.calculateSyndrome();
             code.generateMeasError();
             for (int i = 0; i < syndrome.size(); ++i)
@@ -283,7 +283,7 @@ TEST(sweep, runs_without_errors)
             CubicCode code = CubicCode(l, p, p, true);
             for (int i = 0; i < l; ++i)
             {
-                code.generateDataError();
+                code.generateDataError(false);
                 code.calculateSyndrome();
                 code.generateMeasError();
                 EXPECT_NO_THROW(code.sweep(sweepDirection, true));
