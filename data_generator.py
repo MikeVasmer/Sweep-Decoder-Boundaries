@@ -96,8 +96,8 @@ if __name__ == "__main__":
     # help="sweep direction (default: xyz)")
     parser.add_argument("--greedy", action='store_true',
                         help="use the greedy sweep rule (default : False)")
-    parser.add_argument("--correlatedErrors", action='store_true',
-                        help='use a nearest-neighbour correlated error model (default : uncorrelated error model)')
+    parser.add_argument("--correlated_errors", action='store_true',
+                        help='use a nearest-neighbour correlated error model (default : False)')
     parser.add_argument("--sweep_rate", type=int, default=1,
                         help="the number of sweeps per stabilizer measurement (default : 1)")
     parser.add_argument("--job", type=int, default=-1,
@@ -120,7 +120,7 @@ if __name__ == "__main__":
     # sweep_direction = args.sweep_direction
     job_number = args.job
     greedy = args.greedy
-    correlated = args.correlatedErrors
+    correlated = args.correlated_errors
     sweep_rate = args.sweep_rate
 
     generate_data(lattice_type, l, p, q, sweep_limit, sweep_schedule,
