@@ -27,6 +27,7 @@ protected:
   const double p; // data error probability
   const double q; // measurement error probability
   bool boundaries;
+  const int sweepRate; // number of sweeps per stabilizer measurement 
   vint logicalZ1;
   vint logicalZ2;
   vint logicalZ3;
@@ -42,7 +43,7 @@ protected:
   std::uniform_int_distribution<int> distInt0To1;
 
 public:
-  Code(const int latticeLength, const double dataErrorProbability, const double measErrorProbability, bool boundaries);
+  Code(const int latticeLength, const double dataErrorProbability, const double measErrorProbability, bool boundaries, const int sweepRate);
 
   void generateDataError(bool correlated);
   bool checkExtremalVertex(const int vertexIndex, const std::string &direction);

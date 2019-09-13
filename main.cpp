@@ -8,9 +8,9 @@
 
 int main(int argc, char *argv[])
 {
-    if (argc < 10)
+    if (argc < 11)
     {
-        std::cout << "Fewer than ten arguments" << std::endl;
+        std::cout << "Fewer than eleven arguments" << std::endl;
         for (int i = 0; i < argc; ++i)
         {
             std::cout << "Argument " << i << " = " << argv[i] << std::endl;
@@ -42,6 +42,7 @@ int main(int argc, char *argv[])
         return 1;
     }
     std::vector<bool> succ;
+    int sweepRate = std::atoi(argv[11]);
 
     auto start = std::chrono::high_resolution_clock::now();
     // if (latticeType == "rhombic_toric")
@@ -52,7 +53,7 @@ int main(int argc, char *argv[])
     if (latticeType == "rhombic_boundaries" || latticeType == "cubic_boundaries" || latticeType == "rhombic_toric")
     {
         // succ = runBoundaries(l, rounds, p, q, sweepLimit, sweepSchedule, timeout, latticeType, greedy, correlatedErrors);
-        succ = oneRun(l, rounds, p, q, sweepLimit, sweepSchedule, timeout, latticeType, greedy, correlatedErrors);
+        succ = oneRun(l, rounds, p, q, sweepLimit, sweepSchedule, timeout, latticeType, greedy, correlatedErrors, sweepRate);
     }
     else
     {

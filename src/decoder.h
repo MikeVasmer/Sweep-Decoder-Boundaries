@@ -58,21 +58,22 @@ std::vector<bool> oneRun(const int l, const int rounds,
                                 const int timeout,
                                 const std::string latticeType,
                                 bool greedy,
-                                bool correlatedErrors)
+                                bool correlatedErrors, 
+                                const int sweepRate)
 {
     std::vector<bool> success = {false, false};
     std::unique_ptr<Code> code;
     if (latticeType == "rhombic_boundaries")
     {
-        code = std::make_unique<RhombicCode>(l, p, q, true);
+        code = std::make_unique<RhombicCode>(l, p, q, true, sweepRate);
     }
     else if (latticeType == "cubic_boundaries")
     {
-        code = std::make_unique<CubicCode>(l, p, q, true);
+        code = std::make_unique<CubicCode>(l, p, q, true, sweepRate);
     }
     else if (latticeType == "rhombic_toric")
     {
-        code = std::make_unique<RhombicCode>(l, p, q, false);
+        code = std::make_unique<RhombicCode>(l, p, q, false, sweepRate);
     }
     std::vector<int8_t> &syndrome = code->getSyndrome();
     vstr sweepDirections = {"xyz", "xy", "xz", "yz", "-xyz", "-xy", "-xz", "-yz"}; // Used by random schedule
@@ -139,7 +140,10 @@ std::vector<bool> oneRun(const int l, const int rounds,
             // std::cerr << "Generating measurement error." << std::endl;
             code->generateMeasError();
         }
-        code->sweep(sweepDirections[sweepIndex], greedy);
+        for (int i = 0; i < sweepRate; ++i)
+        {
+            code->sweep(sweepDirections[sweepIndex], greedy);
+        }
         // std::cerr << "direction=" << sweepDirections[sweepIndex] << std::endl;
         // std::cerr << "sweepIndex=" << sweepIndex << std::endl;
         // std::cerr << "sweepCount=" << sweepCount << std::endl;

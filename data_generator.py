@@ -10,7 +10,7 @@ def snake_case_to_CamelCase(word):
     return ''.join(x.capitalize() or '_' for x in word.split('_'))
 
 
-def generate_data(lattice_type, l, p, q, sweep_limit, sweep_schedule, timeout, cycles, trials, job_number, greedy, correlated):
+def generate_data(lattice_type, l, p, q, sweep_limit, sweep_schedule, timeout, cycles, trials, job_number, greedy, correlated, sweep_rate):
     cwd = os.getcwd()
     build_directory = '{0}/{1}'.format(cwd, 'build')
 
@@ -22,7 +22,7 @@ def generate_data(lattice_type, l, p, q, sweep_limit, sweep_schedule, timeout, c
     start_time = time.time()
     for _ in range(trials):
         result = subprocess.run(
-            ['./SweepDecoder', str(l), str(p), str(q), str(cycles), lattice_type, str(sweep_limit), sweep_schedule, str(timeout), str(greedy).lower(), str(correlated).lower()], stdout=subprocess.PIPE, check=True, cwd=build_directory)
+            ['./SweepDecoder', str(l), str(p), str(q), str(cycles), lattice_type, str(sweep_limit), sweep_schedule, str(timeout), str(greedy).lower(), str(correlated).lower(), str(sweep_rate)], stdout=subprocess.PIPE, check=True, cwd=build_directory)
         # print(result.stdout.decode('utf-8'))
         result_list = ast.literal_eval(result.stdout.decode('utf-8'))
         # print(result_list)
@@ -45,6 +45,7 @@ def generate_data(lattice_type, l, p, q, sweep_limit, sweep_schedule, timeout, c
     data['Clear syndromes'] = clear_syndromes
     data['Greedy'] = greedy
     data['Correlated errors'] = correlated
+    data['Sweep rate'] = sweep_rate
 
     # if lattice_type == 'rhombic_toric':
     #     data['Sweep direction'] = sweep_direction
@@ -59,8 +60,8 @@ def generate_data(lattice_type, l, p, q, sweep_limit, sweep_schedule, timeout, c
         # lattice_type = lattice_type.replace('_', '')
         lattice_type = snake_case_to_CamelCase(lattice_type)
         sweep_schedule = snake_case_to_CamelCase(sweep_schedule)
-        json_file = "L={}_N={}_p={:0.4f}_q={:0.4f}_schedule={}_sweepLimit={}_timeout={}_lattice={}_correlated={}_trials={}_job={}.json".format(
-            l, cycles, p, q, sweep_schedule, sweep_limit, timeout, lattice_type, correlated, trials, job_number)
+        json_file = "L={}_N={}_p={:0.4f}_q={:0.4f}_schedule={}_sweepLimit={}_timeout={}_lattice={}_correlated={}_rate={}_trials={}_job={}.json".format(
+            l, cycles, p, q, sweep_schedule, sweep_limit, timeout, lattice_type, correlated, sweep_rate, trials, job_number)
 
     with open(json_file, 'w') as output:
         json.dump(data, output)
@@ -97,6 +98,8 @@ if __name__ == "__main__":
                         help="use the greedy sweep rule (default : False)")
     parser.add_argument("--correlatedErrors", action='store_true',
                         help='use a nearest-neighbour correlated error model (default : uncorrelated error model)')
+    parser.add_argument("--sweep_rate", type=int, default=1,
+                        help="the number of sweeps per stabilizer measurement (default : 1)")
     parser.add_argument("--job", type=int, default=-1,
                         help="job number (default: -1)")
 
@@ -118,6 +121,7 @@ if __name__ == "__main__":
     job_number = args.job
     greedy = args.greedy
     correlated = args.correlatedErrors
+    sweep_rate = args.sweep_rate
 
     generate_data(lattice_type, l, p, q, sweep_limit, sweep_schedule,
-                  timeout, cycles, trials, job_number, greedy, correlated)
+                  timeout, cycles, trials, job_number, greedy, correlated, sweep_rate)

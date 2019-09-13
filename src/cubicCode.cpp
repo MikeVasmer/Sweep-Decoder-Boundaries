@@ -5,7 +5,7 @@
 #include <string>
 #include <algorithm>
 
-CubicCode::CubicCode(const int l, const double p, const double q, bool boundaries) : Code(l, p, q, boundaries)
+CubicCode::CubicCode(const int l, const double p, const double q, bool boundaries, const int sweepRate) : Code(l, p, q, boundaries, sweepRate)
 {
     if (boundaries)
     {
@@ -143,6 +143,22 @@ void CubicCode::sweep(const std::string &direction, bool greedy)
             else
             {
                 error.insert(i);
+            }
+            if (sweepRate > 1)
+            {
+                for (const int edge : faceToEdges[i])
+                {
+                    // std::cerr << edge << std::endl;
+                    if (boundaries)
+                    {
+                        auto it2 = syndromeIndices.find(edge);
+                        if (it2 == syndromeIndices.end())
+                        {
+                            continue;
+                        }
+                    }
+                    syndrome[edge] = (syndrome[edge] + 1) % 2;
+                }
             }
         }
     }

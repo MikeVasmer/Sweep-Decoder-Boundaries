@@ -10,7 +10,7 @@ TEST(Code, excepts_invalid_probabilities)
     std::vector<std::pair<double, double>> errorProbabilities = {{2, 0.1}, {-2, 0.2}, {0.5, 3}, {0.8, -1}};
     for (const auto &errorPair : errorProbabilities)
     {
-        EXPECT_THROW(RhombicCode code(l, errorPair.first, errorPair.second, false), std::invalid_argument);
+        EXPECT_THROW(RhombicCode code(l, errorPair.first, errorPair.second, false, 1), std::invalid_argument);
     }
 }
 
@@ -19,7 +19,7 @@ TEST(RhombicCode, syndrome_correct_size)
     std::vector<int> latticeLengths = {4, 6, 8, 10};
     for (const int l : latticeLengths)
     {
-        RhombicCode code(l, 0.1, 0.1, false);
+        RhombicCode code(l, 0.1, 0.1, false, 1);
         auto syndrome = code.getSyndrome();
         EXPECT_EQ(syndrome.size(), 2 * 7 * l * l * l);
     }
@@ -30,7 +30,7 @@ TEST(calculateSyndrome, correctly_calculates_error)
     int latticeLength = 6;
     double p = 0.1;
     double q = p;
-    RhombicCode code = RhombicCode(latticeLength, p, q, false);
+    RhombicCode code = RhombicCode(latticeLength, p, q, false, 1);
     std::set<int> error = {0, 1};
     code.setError(error);
     code.calculateSyndrome();
@@ -55,7 +55,7 @@ TEST(calculateSyndrome, correctly_calculates_stabilizer_error)
 
     double p = 0.1;
     double q = p;
-    RhombicCode code = RhombicCode(latticeLength, p, q, false);
+    RhombicCode code = RhombicCode(latticeLength, p, q, false, 1);
     code.setError({0, 2, 3, 19, 20, 22, 23, 29, 63, 64, 156, 157});
     code.calculateSyndrome();
     auto syndrome = code.getSyndrome();
@@ -69,7 +69,7 @@ TEST(generateDataError, handles_error_probability_one)
 {
     int l = 4;
     double p = 1;
-    RhombicCode code = RhombicCode(l, p, p, false);
+    RhombicCode code = RhombicCode(l, p, p, false, 1);
     code.generateDataError(false);
     EXPECT_EQ(code.getError().size(), 3 * l * l * l);
 }
@@ -78,7 +78,7 @@ TEST(generateDataError, handles_error_probability_zero)
 {
     int l = 6;
     double p = 0;
-    RhombicCode code = RhombicCode(l, p, p, false);
+    RhombicCode code = RhombicCode(l, p, p, false, 1);
     code.generateDataError(false);
     EXPECT_EQ(code.getError().size(), 0);
 }
@@ -87,7 +87,7 @@ TEST(generateMeasError, handles_error_probability_one)
 {
     int l = 6;
     double p = 1;
-    RhombicCode code = RhombicCode(l, p, p, false);
+    RhombicCode code = RhombicCode(l, p, p, false, 1);
     code.generateMeasError();
     auto syndrome = code.getSyndrome();
     for (const int value : syndrome)
@@ -100,7 +100,7 @@ TEST(generateMeasError, handles_error_probability_zero)
 {
     int l = 4;
     double p = 0;
-    RhombicCode code = RhombicCode(l, p, p, false);
+    RhombicCode code = RhombicCode(l, p, p, false, 1);
     code.generateMeasError();
     auto syndrome = code.getSyndrome();
     for (const int value : syndrome)
@@ -113,7 +113,7 @@ TEST(checkExtremalVertex, correct_extremal_vertices_one_error)
 {
     int l = 4;
     double p = 0.1;
-    RhombicCode code = RhombicCode(l, p, p, false);
+    RhombicCode code = RhombicCode(l, p, p, false, 1);
     code.setError({0});
     code.calculateSyndrome();
     EXPECT_TRUE(code.checkExtremalVertex(0, "xyz"));
@@ -169,7 +169,7 @@ TEST(checkExtremalVertex, correct_extremal_vertices_two_errors)
 {
     int l = 6;
     double p = 0.1;
-    RhombicCode code = RhombicCode(l, p, p, false);
+    RhombicCode code = RhombicCode(l, p, p, false, 1);
     code.setError({0, 1});
     code.calculateSyndrome();
     EXPECT_TRUE(code.checkExtremalVertex(0, "xyz"));
@@ -241,7 +241,7 @@ TEST(localFlip, flips_correctly_one_and_twice)
 {
     int l = 8;
     double p = 0.1;
-    RhombicCode code = RhombicCode(l, p, p, false);
+    RhombicCode code = RhombicCode(l, p, p, false, 1);
     vint vs = {0, 72, 512, 519};
     code.localFlip(vs);
     std::vector<int8_t> &flipBits = code.getFlipBits();
@@ -257,7 +257,7 @@ TEST(findSweepEdges, correct_edges_one_error)
 {
     int l = 4;
     double p = 0.1;
-    RhombicCode code = RhombicCode(l, p, p, false);
+    RhombicCode code = RhombicCode(l, p, p, false, 1);
     code.setError({120});
     code.calculateSyndrome();
 
@@ -361,7 +361,7 @@ TEST(faceVertices, handles_valid_input)
 {
     int l = 6;
     double p = 0.1;
-    RhombicCode code = RhombicCode(l, p, p, false);
+    RhombicCode code = RhombicCode(l, p, p, false, 1);
 
     // Full vertex
     vint expectedVertices = {86, 93, 266, 302};
@@ -388,7 +388,7 @@ TEST(faceVertices, excepts_too_many_directions)
 {
     int l = 6;
     double p = 0.1;
-    RhombicCode code = RhombicCode(l, p, p, false);
+    RhombicCode code = RhombicCode(l, p, p, false, 1);
     EXPECT_THROW(code.faceVertices(0, {"xyz", "-xy", "xy", "xz"}), std::invalid_argument);
 }
 
@@ -396,7 +396,7 @@ TEST(faceVertices, excepts_invalid_signs)
 {
     int l = 6;
     double p = 0.1;
-    RhombicCode code = RhombicCode(l, p, p, false);
+    RhombicCode code = RhombicCode(l, p, p, false, 1);
     EXPECT_THROW(code.faceVertices(0, {"xyz", "-xy", "xy"}), std::invalid_argument);
     EXPECT_THROW(code.faceVertices(0, {"xyz", "xy", "-xy"}), std::invalid_argument);
 }
@@ -405,7 +405,7 @@ TEST(faceVertices, excepts_invalid_directions)
 {
     int l = 6;
     double p = 0.1;
-    RhombicCode code = RhombicCode(l, p, p, false);
+    RhombicCode code = RhombicCode(l, p, p, false, 1);
     EXPECT_THROW(code.faceVertices(0, {"xyz", "xy", "xz"}), std::invalid_argument);
     EXPECT_THROW(code.faceVertices(0, {"xyz", "-xy", "xy"}), std::invalid_argument);
 }
@@ -414,7 +414,7 @@ TEST(sweepFullVertex, handles_qubits_errors_xy)
 {
     int l = 4;
     double p = 0.1;
-    RhombicCode code = RhombicCode(l, p, p, false);
+    RhombicCode code = RhombicCode(l, p, p, false, 1);
 
     // One error
     // xy -xz face of vertex 27
@@ -552,7 +552,7 @@ TEST(sweepFullVertex, handles_measurement_errors_xy)
 {
     int l = 4;
     double p = 0.1;
-    RhombicCode code = RhombicCode(l, p, p, false);
+    RhombicCode code = RhombicCode(l, p, p, false, 1);
 
     // 3 sweep edges around vertex
     // xy, xyz, -yz edges of vertex 27
@@ -651,7 +651,7 @@ TEST(sweepHalfVertex, handles_qubit_errors_xy)
 {
     int l = 6;
     double p = 0.1;
-    RhombicCode code = RhombicCode(l, p, p, false);
+    RhombicCode code = RhombicCode(l, p, p, false, 1);
 
     // One error
     // xyx -xz face of vertex 283
@@ -769,7 +769,7 @@ TEST(sweepHalfVertex, handles_measurement_errors_xy)
 {
     int l = 6;
     double p = 0.1;
-    RhombicCode code = RhombicCode(l, p, p, false);
+    RhombicCode code = RhombicCode(l, p, p, false, 1);
 
     // Three sweep edges at vertex 283
     // xyz, -yz and -xz edges
@@ -801,7 +801,7 @@ TEST(sweepFullVertex, handles_qubit_errors_minus_xy)
 {
     int l = 4;
     double p = 0.1;
-    RhombicCode code = RhombicCode(l, p, p, false);
+    RhombicCode code = RhombicCode(l, p, p, false, 1);
 
     // One error
     // -xyz -xy face of vertex 0
@@ -939,7 +939,7 @@ TEST(sweepFullVertex, handles_measurement_errors_minus_xy)
 {
     int l = 4;
     double p = 0.1;
-    RhombicCode code = RhombicCode(l, p, p, false);
+    RhombicCode code = RhombicCode(l, p, p, false, 1);
 
     // 3 sweep edges around vertex
     // -xy, xz, -xyz edges of vertex 0
@@ -1031,7 +1031,7 @@ TEST(sweepFullVertex, handles_qubit_errors_xz)
 {
     int l = 4;
     double p = 0.1;
-    RhombicCode code = RhombicCode(l, p, p, false);
+    RhombicCode code = RhombicCode(l, p, p, false, 1);
 
     // Two errors
     // xy -yz and xy xyz faces of vertex 27
@@ -1169,7 +1169,7 @@ TEST(sweepFullVertex, handles_measurement_errors_xz)
 {
     int l = 4;
     double p = 0.1;
-    RhombicCode code = RhombicCode(l, p, p, false);
+    RhombicCode code = RhombicCode(l, p, p, false, 1);
 
     // 3 sweep edges around vertex
     // xz, xyz, -yz edges of vertex 27
@@ -1261,7 +1261,7 @@ TEST(sweepFullVertex, handles_qubit_errors_minus_xz)
 {
     int l = 4;
     double p = 0.1;
-    RhombicCode code = RhombicCode(l, p, p, false);
+    RhombicCode code = RhombicCode(l, p, p, false, 1);
 
     // One error
     // xy -xz face of vertex 27
@@ -1399,7 +1399,7 @@ TEST(sweepFullVertex, handles_measurement_errors_minus_xz)
 {
     int l = 4;
     double p = 0.1;
-    RhombicCode code = RhombicCode(l, p, p, false);
+    RhombicCode code = RhombicCode(l, p, p, false, 1);
 
     // 3 sweep edges around vertex
     // -xz, -xyz, yz edges of vertex 27
@@ -1491,7 +1491,7 @@ TEST(sweepFullVertex, handles_qubit_errors_yz)
 {
     int l = 4;
     double p = 0.1;
-    RhombicCode code = RhombicCode(l, p, p, false);
+    RhombicCode code = RhombicCode(l, p, p, false, 1);
 
     // Two errors
     // xy -xz and xy xyz faces of vertex 27
@@ -1629,7 +1629,7 @@ TEST(sweepFullVertex, handles_measurement_errors_yz)
 {
     int l = 4;
     double p = 0.1;
-    RhombicCode code = RhombicCode(l, p, p, false);
+    RhombicCode code = RhombicCode(l, p, p, false, 1);
 
     // 3 sweep edges around vertex
     // -xz, xyz, yz edges of vertex 27
@@ -1721,7 +1721,7 @@ TEST(sweepFullVertex, handles_qubit_errors_minus_yz)
 {
     int l = 4;
     double p = 0.1;
-    RhombicCode code = RhombicCode(l, p, p, false);
+    RhombicCode code = RhombicCode(l, p, p, false, 1);
 
     // One error
     // xy -yz face of vertex 27
@@ -1859,7 +1859,7 @@ TEST(sweepFullVertex, handles_measurement_errors_minus_yz)
 {
     int l = 4;
     double p = 0.1;
-    RhombicCode code = RhombicCode(l, p, p, false);
+    RhombicCode code = RhombicCode(l, p, p, false, 1);
 
     // 3 sweep edges around vertex
     // xz, -xyz, -yz edges of vertex 27
@@ -1951,7 +1951,7 @@ TEST(sweepFullVertex, handles_qubit_errors_xyz)
 {
     int l = 4;
     double p = 0.1;
-    RhombicCode code = RhombicCode(l, p, p, false);
+    RhombicCode code = RhombicCode(l, p, p, false, 1);
 
     // One Error
     // xy xyz face of vertex 27
@@ -2088,7 +2088,7 @@ TEST(sweepFullVertex, handles_measurement_errors_xyz)
 {
     int l = 4;
     double p = 0.1;
-    RhombicCode code = RhombicCode(l, p, p, false);
+    RhombicCode code = RhombicCode(l, p, p, false, 1);
 
     // 3 sweep edges around vertex
     // xyz, yz and xz edges of vertex 27
@@ -2180,7 +2180,7 @@ TEST(sweepFullVertex, handles_qubit_errors_minus_xyz)
 {
     int l = 4;
     double p = 0.1;
-    RhombicCode code = RhombicCode(l, p, p, false);
+    RhombicCode code = RhombicCode(l, p, p, false, 1);
 
     // Two Errors
     // xy -yz and xy -xz faces of vertex 27
@@ -2319,7 +2319,7 @@ TEST(sweepFullVertex, handles_measurement_errors_minus_xyz)
 {
     int l = 4;
     double p = 0.1;
-    RhombicCode code = RhombicCode(l, p, p, false);
+    RhombicCode code = RhombicCode(l, p, p, false, 1);
 
     // 3 sweep edges around vertex
     // -xyz, -yz and -xz edges of vertex 27
@@ -2411,7 +2411,7 @@ TEST(sweepHalfVertex, handles_qubit_errors_minus_xy)
 {
     int l = 6;
     double p = 0.1;
-    RhombicCode code = RhombicCode(l, p, p, false);
+    RhombicCode code = RhombicCode(l, p, p, false, 1);
 
     // One error
     // xz yz face of vertex 309
@@ -2529,7 +2529,7 @@ TEST(sweepHalfVertex, handles_qubit_errors_xz)
 {
     int l = 6;
     double p = 0.1;
-    RhombicCode code = RhombicCode(l, p, p, false);
+    RhombicCode code = RhombicCode(l, p, p, false, 1);
 
     // One error
     // xyx -yz face of vertex 283
@@ -2647,7 +2647,7 @@ TEST(sweepHalfVertex, handles_qubit_errors_minus_xz)
 {
     int l = 6;
     double p = 0.1;
-    RhombicCode code = RhombicCode(l, p, p, false);
+    RhombicCode code = RhombicCode(l, p, p, false, 1);
 
     // One error
     // xy yz face of vertex 309
@@ -2765,7 +2765,7 @@ TEST(sweepHalfVertex, handles_qubit_errors_yz)
 {
     int l = 6;
     double p = 0.1;
-    RhombicCode code = RhombicCode(l, p, p, false);
+    RhombicCode code = RhombicCode(l, p, p, false, 1);
 
     // One error
     // xyx -xz face of vertex 283
@@ -2883,7 +2883,7 @@ TEST(sweepHalfVertex, handles_qubit_errors_minus_yz)
 {
     int l = 6;
     double p = 0.1;
-    RhombicCode code = RhombicCode(l, p, p, false);
+    RhombicCode code = RhombicCode(l, p, p, false, 1);
 
     // One error
     // xy xz face of vertex 309
@@ -3001,7 +3001,7 @@ TEST(sweepHalfVertex, handles_qubit_errors_xyz)
 {
     int l = 6;
     double p = 0.1;
-    RhombicCode code = RhombicCode(l, p, p, false);
+    RhombicCode code = RhombicCode(l, p, p, false, 1);
 
     // One error
     // xy xz face of vertex 309
@@ -3119,7 +3119,7 @@ TEST(sweepHalfVertex, handles_qubit_errors_minus_xyz)
 {
     int l = 6;
     double p = 0.1;
-    RhombicCode code = RhombicCode(l, p, p, false);
+    RhombicCode code = RhombicCode(l, p, p, false, 1);
 
     // One error
     // -xz -yz face of vertex 283
@@ -3237,7 +3237,7 @@ TEST(sweepHalfVertex, handles_measurement_errors_xz)
 {
     int l = 6;
     double p = 0.1;
-    RhombicCode code = RhombicCode(l, p, p, false);
+    RhombicCode code = RhombicCode(l, p, p, false, 1);
 
     // Three sweep edges at vertex 283
     // xyz, -yz and -xy edges
@@ -3267,7 +3267,7 @@ TEST(sweepHalfVertex, handles_measurement_errors_yz)
 {
     int l = 6;
     double p = 0.1;
-    RhombicCode code = RhombicCode(l, p, p, false);
+    RhombicCode code = RhombicCode(l, p, p, false, 1);
 
     // Three sweep edges at vertex 283
     // xyz, -xy and -xz edges
@@ -3297,7 +3297,7 @@ TEST(sweepHalfVertex, handles_measurement_errors_minus_xyz)
 {
     int l = 6;
     double p = 0.1;
-    RhombicCode code = RhombicCode(l, p, p, false);
+    RhombicCode code = RhombicCode(l, p, p, false, 1);
 
     // Three sweep edges at vertex 283
     // -xy, -yz and -xz edges
@@ -3327,7 +3327,7 @@ TEST(sweepHalfVertex, handles_measurement_errors_minus_xy)
 {
     int l = 6;
     double p = 0.1;
-    RhombicCode code = RhombicCode(l, p, p, false);
+    RhombicCode code = RhombicCode(l, p, p, false, 1);
 
     // Three sweep edges at vertex 309
     // -xyz, yz and xz edges
@@ -3357,7 +3357,7 @@ TEST(sweepHalfVertex, handles_measurement_errors_minus_xz)
 {
     int l = 6;
     double p = 0.1;
-    RhombicCode code = RhombicCode(l, p, p, false);
+    RhombicCode code = RhombicCode(l, p, p, false, 1);
 
     // Three sweep edges at vertex 309
     // -xyz, yz and xz edges
@@ -3387,7 +3387,7 @@ TEST(sweepHalfVertex, handles_measurement_errors_minus_yz)
 {
     int l = 6;
     double p = 0.1;
-    RhombicCode code = RhombicCode(l, p, p, false);
+    RhombicCode code = RhombicCode(l, p, p, false, 1);
 
     // Three sweep edges at vertex 309
     // -xyz, yz and xz edges
@@ -3417,7 +3417,7 @@ TEST(sweepHalfVertex, handles_measurement_errors_xyz)
 {
     int l = 6;
     double p = 0.1;
-    RhombicCode code = RhombicCode(l, p, p, false);
+    RhombicCode code = RhombicCode(l, p, p, false, 1);
 
     // Three sweep edges at vertex 309
     // -xyz, yz and xz edges
@@ -3447,7 +3447,7 @@ TEST(sweep, handles_qubit_errors_xyz)
 {
     int l = 4;
     double p = 0.1;
-    RhombicCode code = RhombicCode(l, p, p, false);
+    RhombicCode code = RhombicCode(l, p, p, false, 1);
 
     code.setError({44, 45, 151});
     code.calculateSyndrome();
@@ -3506,7 +3506,7 @@ TEST(sweep, handles_qubit_errors_minus_xyz)
 {
     int l = 4;
     double p = 0.1;
-    RhombicCode code = RhombicCode(l, p, p, false);
+    RhombicCode code = RhombicCode(l, p, p, false, 1);
 
     code.setError({44, 45, 151});
     code.calculateSyndrome();
@@ -3564,7 +3564,7 @@ TEST(sweep, handles_qubit_errors_xy)
 {
     int l = 4;
     double p = 0.1;
-    RhombicCode code = RhombicCode(l, p, p, false);
+    RhombicCode code = RhombicCode(l, p, p, false, 1);
 
     code.setError({44, 45, 151});
     code.calculateSyndrome();
@@ -3622,7 +3622,7 @@ TEST(sweep, handles_qubit_errors_minus_xy)
 {
     int l = 4;
     double p = 0.1;
-    RhombicCode code = RhombicCode(l, p, p, false);
+    RhombicCode code = RhombicCode(l, p, p, false, 1);
 
     code.setError({44, 45, 151});
     code.calculateSyndrome();
@@ -3681,7 +3681,7 @@ TEST(sweep, handles_qubit_errors_xz)
 {
     int l = 6;
     double p = 0.1;
-    RhombicCode code = RhombicCode(l, p, p, false);
+    RhombicCode code = RhombicCode(l, p, p, false, 1);
 
     code.setError({259, 478, 350});
     code.calculateSyndrome();
@@ -3739,7 +3739,7 @@ TEST(sweep, handles_qubit_errors_minus_xz)
 {
     int l = 6;
     double p = 0.1;
-    RhombicCode code = RhombicCode(l, p, p, false);
+    RhombicCode code = RhombicCode(l, p, p, false, 1);
 
     code.setError({259, 478, 350});
     code.calculateSyndrome();
@@ -3792,7 +3792,7 @@ TEST(sweep, handles_qubit_errors_yz)
 {
     int l = 6;
     double p = 0.1;
-    RhombicCode code = RhombicCode(l, p, p, false);
+    RhombicCode code = RhombicCode(l, p, p, false, 1);
 
     code.setError({259, 478, 350});
     code.calculateSyndrome();
@@ -3847,7 +3847,7 @@ TEST(sweep, handles_qubit_errors_minus_yz)
     // Same as XZ test by symmetry
     int l = 6;
     double p = 0.1;
-    RhombicCode code = RhombicCode(l, p, p, false);
+    RhombicCode code = RhombicCode(l, p, p, false, 1);
 
     code.setError({259, 478, 350});
     code.calculateSyndrome();
@@ -3905,7 +3905,7 @@ TEST(buildLogical, correct_steps_lattice_size_4)
 {
     int l = 4;
     double p = 0.1;
-    RhombicCode code = RhombicCode(l, p, p, false);
+    RhombicCode code = RhombicCode(l, p, p, false, 1);
     auto logicals = code.getLogicals();
     vint expectedZ1 = {151, 4, 145, 10};
     EXPECT_EQ(logicals.at(0), expectedZ1);
@@ -3919,7 +3919,7 @@ TEST(checkCorrection, handles_stabilizers)
 {
     int l = 4;
     double p = 0.1;
-    RhombicCode code = RhombicCode(l, p, p, false);
+    RhombicCode code = RhombicCode(l, p, p, false, 1);
 
     // No error
     EXPECT_TRUE(code.checkCorrection());
@@ -3932,7 +3932,7 @@ TEST(checkCorrection, handles_logical_x_operators)
 {
     int l = 4;
     double p = 0.1;
-    RhombicCode code = RhombicCode(l, p, p, false);
+    RhombicCode code = RhombicCode(l, p, p, false, 1);
 
     std::set<int> logicalX3 = {0, 1, 58, 87,
                                24, 25, 82, 63,
@@ -3964,4 +3964,40 @@ TEST(checkCorrection, handles_logical_x_operators)
                                181, 182, 184, 185};
     code.setError(logicalX1);
     EXPECT_FALSE(code.checkCorrection());
+}
+
+TEST(sweep, multiple_sweeps_per_syndrome)
+{
+    // No test for rhombic boundaries because there is some randomness in the definition of the rule on the boundaries
+    int l = 4;
+    double p = 0.1;
+    int testRate = 2;
+    RhombicCode highRateCode = RhombicCode(l, p, p, false, testRate);
+    RhombicCode lowRateCode = RhombicCode(l, p, p, false, 1);
+    std::vector<std::set<int>> testErrors = {{22}, {1}, {17}, {41, 42, 43}, {50, 27, 47, 11, 1}, {20, 10}, {11, 15, 6, 2, 22, 45, 40, 21, 0, 3, 33, 5}};
+    for (auto &error : testErrors)
+    {
+        highRateCode.setError(error);
+        lowRateCode.setError(error);
+        highRateCode.calculateSyndrome();
+        lowRateCode.calculateSyndrome();
+
+        for (int i = 0; i < testRate; ++i)
+        {
+            highRateCode.sweep("xz", false);
+        }
+        auto highRateSyndrome = highRateCode.getSyndrome();
+
+        for (int i = 0; i < testRate; ++i)
+        {
+            lowRateCode.sweep("xz", false);
+            lowRateCode.calculateSyndrome();
+        }
+        auto lowRateSyndrome = lowRateCode.getSyndrome();
+
+        auto &finalErrorLowRate = lowRateCode.getError();
+        auto &finalErrorHighRate = highRateCode.getError();
+        EXPECT_EQ(finalErrorLowRate, finalErrorHighRate);
+        EXPECT_EQ(lowRateSyndrome, highRateSyndrome);
+    }
 }

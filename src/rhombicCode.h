@@ -10,7 +10,7 @@ private:
   int latticeParity;
 
 public:
-  RhombicCode(const int latticeLength, const double dataErrorProbability, const double measErrorProbability, bool boundaries);
+  RhombicCode(const int latticeLength, const double dataErrorProbability, const double measErrorProbability, bool boundaries, const int sweepRate);
 
   void buildSyndromeIndices();
   void buildSweepIndices();

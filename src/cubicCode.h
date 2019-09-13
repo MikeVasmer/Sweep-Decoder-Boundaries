@@ -6,7 +6,7 @@
 class CubicCode : public Code
 {
   public:
-    CubicCode(const int latticeLength, const double dataErrorProbability, const double measErrorProbability, bool boundaries);
+    CubicCode(const int latticeLength, const double dataErrorProbability, const double measErrorProbability, bool boundaries, const int sweepRate);
 
     void buildSyndromeIndices();
     void buildSweepIndices();

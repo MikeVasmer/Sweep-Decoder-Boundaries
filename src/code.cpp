@@ -7,10 +7,11 @@
 #include <algorithm>
 #include <set>
 
-Code::Code(const int ll, const double dataP, const double measP, bool boundaries) : l(ll),
+Code::Code(const int ll, const double dataP, const double measP, bool boundaries, const int sweepRate) : l(ll),
                                                                    p(dataP),
                                                                    q(measP),
-                                                                   boundaries(boundaries)
+                                                                   boundaries(boundaries),
+                                                                   sweepRate(sweepRate)
 {
     if (dataP < 0 || dataP > 1)
     {
