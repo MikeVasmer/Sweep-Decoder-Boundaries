@@ -121,34 +121,41 @@ std::vector<bool> oneRun(const int l, const int rounds,
     // std::cerr << "No. of sweep dirs: " << numberOfDirections << std::endl;
     for (int r = 0; r < rounds; ++r)
     {
-        if (sweepCount == sweepLimit)
+        for (int i = 0; i < sweepRate; ++i)
         {
-            if (randomSchedule)
+            if (sweepCount == sweepLimit)
             {
-                sweepIndex = distInt0To7(rnEngine);
+                if (randomSchedule)
+                {
+                    sweepIndex = distInt0To7(rnEngine);
+                }
+                else
+                {
+                    sweepIndex = (sweepIndex + 1) % numberOfDirections;
+                }
+                sweepCount = 0;
+            }
+            code->generateDataError(correlatedErrors);
+            code->calculateSyndrome();
+            if (q > 0)
+            {
+                // std::cerr << "Generating measurement error." << std::endl;
+                code->generateMeasError();
+            }
+            if (i < sweepRate - 1)
+            {
+                code->sweep(sweepDirections[sweepIndex], greedy, true);
+
             }
             else
             {
-                sweepIndex = (sweepIndex + 1) % numberOfDirections;
+                code->sweep(sweepDirections[sweepIndex], greedy, false);
             }
-            sweepCount = 0;
+            // std::cerr << "direction=" << sweepDirections[sweepIndex] << std::endl;
+            // std::cerr << "sweepIndex=" << sweepIndex << std::endl;
+            // std::cerr << "sweepCount=" << sweepCount << std::endl;
+            ++sweepCount;
         }
-        code->generateDataError(correlatedErrors);
-        code->calculateSyndrome();
-        if (q > 0)
-        {
-            // std::cerr << "Generating measurement error." << std::endl;
-            code->generateMeasError();
-        }
-        for (int i = 0; i < sweepRate - 1; ++i)
-        {
-            code->sweep(sweepDirections[sweepIndex], greedy, true);
-        }
-        code->sweep(sweepDirections[sweepIndex], greedy, false);
-        // std::cerr << "direction=" << sweepDirections[sweepIndex] << std::endl;
-        // std::cerr << "sweepIndex=" << sweepIndex << std::endl;
-        // std::cerr << "sweepCount=" << sweepCount << std::endl;
-        ++sweepCount;
     }
     code->generateDataError(correlatedErrors); // Data errors = measurement errors at readout
     code->calculateSyndrome();
