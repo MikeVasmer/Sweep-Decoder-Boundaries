@@ -75,7 +75,7 @@ public:
   // Virtual methods
   virtual void buildSyndromeIndices() = 0;
   virtual void buildSweepIndices() = 0;
-  virtual void sweep(const std::string &direction, bool greedy) = 0;
+  virtual void sweep(const std::string &direction, bool greedy, bool virtualSweep) = 0;
   virtual vstr findSweepEdges(const int vertexIndex, const std::string &direction) = 0;
   virtual void buildLogicals() = 0;
 

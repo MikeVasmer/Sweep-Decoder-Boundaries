@@ -3454,7 +3454,7 @@ TEST(sweep, handles_qubit_errors_xyz)
     auto &syndrome = code.getSyndrome();
     auto &flipBits = code.getFlipBits();
     auto &error = code.getError();
-    code.sweep("xyz", true);
+    code.sweep("xyz", true, false);
     code.calculateSyndrome();
     for (int i = 0; i < flipBits.size(); ++i)
     {
@@ -3481,7 +3481,7 @@ TEST(sweep, handles_qubit_errors_xyz)
             EXPECT_EQ(syndrome[i], 0);
         }
     }
-    code.sweep("xyz", true);
+    code.sweep("xyz", true, false);
     code.calculateSyndrome();
     for (int i = 0; i < flipBits.size(); ++i)
     {
@@ -3513,7 +3513,7 @@ TEST(sweep, handles_qubit_errors_minus_xyz)
     auto &syndrome = code.getSyndrome();
     auto &flipBits = code.getFlipBits();
     auto &error = code.getError();
-    code.sweep("-xyz", true);
+    code.sweep("-xyz", true, false);
     code.calculateSyndrome();
     for (int i = 0; i < flipBits.size(); ++i)
     {
@@ -3540,7 +3540,7 @@ TEST(sweep, handles_qubit_errors_minus_xyz)
             EXPECT_EQ(syndrome[i], 0);
         }
     }
-    code.sweep("-xyz", true);
+    code.sweep("-xyz", true, false);
     code.calculateSyndrome();
     for (int i = 0; i < flipBits.size(); ++i)
     {
@@ -3571,7 +3571,7 @@ TEST(sweep, handles_qubit_errors_xy)
     auto &syndrome = code.getSyndrome();
     auto &flipBits = code.getFlipBits();
     auto &error = code.getError();
-    code.sweep("xy", true);
+    code.sweep("xy", true, false);
     code.calculateSyndrome();
     for (int i = 0; i < flipBits.size(); ++i)
     {
@@ -3598,7 +3598,7 @@ TEST(sweep, handles_qubit_errors_xy)
             EXPECT_EQ(syndrome[i], 0);
         }
     }
-    code.sweep("xy", true);
+    code.sweep("xy", true, false);
     code.calculateSyndrome();
     for (int i = 0; i < flipBits.size(); ++i)
     {
@@ -3629,7 +3629,7 @@ TEST(sweep, handles_qubit_errors_minus_xy)
     auto &syndrome = code.getSyndrome();
     auto &flipBits = code.getFlipBits();
     auto &error = code.getError();
-    code.sweep("-xy", true);
+    code.sweep("-xy", true, false);
     code.calculateSyndrome();
     for (int i = 0; i < flipBits.size(); ++i)
     {
@@ -3656,7 +3656,7 @@ TEST(sweep, handles_qubit_errors_minus_xy)
             EXPECT_EQ(syndrome[i], 0);
         }
     }
-    code.sweep("-xy", true);
+    code.sweep("-xy", true, false);
     code.calculateSyndrome();
     for (int i = 0; i < flipBits.size(); ++i)
     {
@@ -3688,7 +3688,7 @@ TEST(sweep, handles_qubit_errors_xz)
     auto &syndrome = code.getSyndrome();
     auto &flipBits = code.getFlipBits();
     auto &error = code.getError();
-    code.sweep("xz", true);
+    code.sweep("xz", true, false);
     code.calculateSyndrome();
     for (int i = 0; i < flipBits.size(); ++i)
     {
@@ -3715,7 +3715,7 @@ TEST(sweep, handles_qubit_errors_xz)
             EXPECT_EQ(syndrome[i], 0);
         }
     }
-    code.sweep("xz", true);
+    code.sweep("xz", true, false);
     code.calculateSyndrome();
     for (int i = 0; i < flipBits.size(); ++i)
     {
@@ -3746,7 +3746,7 @@ TEST(sweep, handles_qubit_errors_minus_xz)
     auto &syndrome = code.getSyndrome();
     auto &flipBits = code.getFlipBits();
     auto &error = code.getError();
-    code.sweep("-xz", true);
+    code.sweep("-xz", true, false);
     code.calculateSyndrome();
     for (int i = 0; i < flipBits.size(); ++i)
     {
@@ -3778,9 +3778,9 @@ TEST(sweep, handles_qubit_errors_minus_xz)
     }
     // Sweeping gets too complex to work out on paper past this point
     // After three sweeps (total) the configuration is mapped to a stabiliser
-    code.sweep("-xz", true);
+    code.sweep("-xz", true, false);
     code.calculateSyndrome();
-    code.sweep("-xz", true);
+    code.sweep("-xz", true, false);
     code.calculateSyndrome();
     for (int i = 0; i < syndrome.size(); ++i)
     {
@@ -3799,7 +3799,7 @@ TEST(sweep, handles_qubit_errors_yz)
     auto &syndrome = code.getSyndrome();
     auto &flipBits = code.getFlipBits();
     auto &error = code.getError();
-    code.sweep("yz", true);
+    code.sweep("yz", true, false);
     code.calculateSyndrome();
     for (int i = 0; i < flipBits.size(); ++i)
     {
@@ -3832,9 +3832,9 @@ TEST(sweep, handles_qubit_errors_yz)
     // Sweeping gets too complex to work out on paper past this point
     // After three sweeps (total) the configuration is mapped to a stabiliser
     // Guessed this by symmetry with above test!
-    code.sweep("yz", true);
+    code.sweep("yz", true, false);
     code.calculateSyndrome();
-    code.sweep("yz", true);
+    code.sweep("yz", true, false);
     code.calculateSyndrome();
     for (int i = 0; i < syndrome.size(); ++i)
     {
@@ -3854,7 +3854,7 @@ TEST(sweep, handles_qubit_errors_minus_yz)
     auto &syndrome = code.getSyndrome();
     auto &flipBits = code.getFlipBits();
     auto &error = code.getError();
-    code.sweep("-yz", true);
+    code.sweep("-yz", true, false);
     code.calculateSyndrome();
     for (int i = 0; i < flipBits.size(); ++i)
     {
@@ -3881,7 +3881,7 @@ TEST(sweep, handles_qubit_errors_minus_yz)
             EXPECT_EQ(syndrome[i], 0);
         }
     }
-    code.sweep("-yz", true);
+    code.sweep("-yz", true, false);
     code.calculateSyndrome();
     for (int i = 0; i < flipBits.size(); ++i)
     {
@@ -3984,13 +3984,13 @@ TEST(sweep, multiple_sweeps_per_syndrome)
 
         for (int i = 0; i < testRate; ++i)
         {
-            highRateCode.sweep("xz", false);
+            highRateCode.sweep("xz", false, false);
         }
         auto highRateSyndrome = highRateCode.getSyndrome();
 
         for (int i = 0; i < testRate; ++i)
         {
-            lowRateCode.sweep("xz", false);
+            lowRateCode.sweep("xz", false, false);
             lowRateCode.calculateSyndrome();
         }
         auto lowRateSyndrome = lowRateCode.getSyndrome();

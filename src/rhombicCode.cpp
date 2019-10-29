@@ -130,9 +130,12 @@ void RhombicCode::buildSweepIndices()
     }
 }
 
-void RhombicCode::sweep(const std::string &direction, bool greedy)
+void RhombicCode::sweep(const std::string &direction, bool greedy, bool virtualSweep)
 {
-    clearFlipBits();
+    if (!virtualSweep)
+    {
+        clearFlipBits();
+    }
     vstr edgeDirections;
     if (direction == "xyz")
     {
@@ -235,33 +238,36 @@ void RhombicCode::sweep(const std::string &direction, bool greedy)
             }
         }
     }
-    for (int i = 0; i < flipBits.size(); ++i)
+    if (!virtualSweep)
     {
-        if (flipBits[i])
+        for (int i = 0; i < flipBits.size(); ++i)
         {
-            auto it = error.find(i);
-            if (it != error.end())
+            if (flipBits[i])
             {
-                error.erase(it);
-            }
-            else
-            {
-                error.insert(i);
-            }
-            if (sweepRate > 1)
-            {
-                for (const int edge : faceToEdges[i])
+                auto it = error.find(i);
+                if (it != error.end())
                 {
-                    // std::cerr << edge << std::endl;
-                    if (boundaries)
+                    error.erase(it);
+                }
+                else
+                {
+                    error.insert(i);
+                }
+                if (sweepRate > 1)
+                {
+                    for (const int edge : faceToEdges[i])
                     {
-                        auto it2 = syndromeIndices.find(edge);
-                        if (it2 == syndromeIndices.end())
+                        // std::cerr << edge << std::endl;
+                        if (boundaries)
                         {
-                            continue;
+                            auto it2 = syndromeIndices.find(edge);
+                            if (it2 == syndromeIndices.end())
+                            {
+                                continue;
+                            }
                         }
+                        syndrome[edge] = (syndrome[edge] + 1) % 2;
                     }
-                    syndrome[edge] = (syndrome[edge] + 1) % 2;
                 }
             }
         }

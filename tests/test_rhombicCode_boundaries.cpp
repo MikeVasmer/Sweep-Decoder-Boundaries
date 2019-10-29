@@ -209,7 +209,7 @@ TEST(sweep, runs_without_errors)
                 code.generateDataError(false);
                 code.calculateSyndrome();
                 code.generateMeasError();
-                EXPECT_NO_THROW(code.sweep(sweepDirection, true));
+                EXPECT_NO_THROW(code.sweep(sweepDirection, true, false));
             }
         }
     }
@@ -243,7 +243,7 @@ TEST(sweep, corrects_single_qubit_errors)
             {
                 for (int r = 0; r < repeats; ++r)
                 {
-                    code.sweep(sweepDirection, true);
+                    code.sweep(sweepDirection, true, false);
                     code.calculateSyndrome();
                     // std::cout << "Final syndrome: " << std::endl;
                     // code.printUnsatisfiedStabilisers();
@@ -293,7 +293,7 @@ TEST(sweep, corrects_two_qubit_errors)
                     {
                         for (int s = 0; s < sweepsPerDirection; ++s)
                         {
-                            code.sweep(sweepDirection, true);
+                            code.sweep(sweepDirection, true, false);
                             code.calculateSyndrome();
                         }
                     }
@@ -332,7 +332,7 @@ TEST(sweepBoundary, one_edge_faces_swept_correctly)
     {
         code.setError({1});
         code.calculateSyndrome();
-        code.sweep(dir, true);
+        code.sweep(dir, true, false);
         code.calculateSyndrome();
         int sum = 0;
         for (int j = 0; j < syndrome.size(); ++j)
@@ -355,7 +355,7 @@ TEST(sweepBoundary, one_edge_faces_swept_correctly)
     {
         code.setError({8});
         code.calculateSyndrome();
-        code.sweep(dir, true);
+        code.sweep(dir, true, false);
         code.calculateSyndrome();
         int sum = 0;
         for (int j = 0; j < syndrome.size(); ++j)
@@ -378,7 +378,7 @@ TEST(sweepBoundary, one_edge_faces_swept_correctly)
     {
         code.setError({44});
         code.calculateSyndrome();
-        code.sweep(dir, true);
+        code.sweep(dir, true, false);
         code.calculateSyndrome();
         int sum = 0;
         for (int j = 0; j < syndrome.size(); ++j)
@@ -401,7 +401,7 @@ TEST(sweepBoundary, one_edge_faces_swept_correctly)
     {
         code.setError({33});
         code.calculateSyndrome();
-        code.sweep(dir, true);
+        code.sweep(dir, true, false);
         code.calculateSyndrome();
         int sum = 0;
         for (int j = 0; j < syndrome.size(); ++j)
@@ -434,7 +434,7 @@ TEST(sweepBoundary, removes_specific_error)
     {
         for (int i = 0; i < 6; ++i)
         {
-            code.sweep(dir, true);
+            code.sweep(dir, true, false);
             code.calculateSyndrome();
         }
     }

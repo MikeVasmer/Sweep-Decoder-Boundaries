@@ -140,10 +140,11 @@ std::vector<bool> oneRun(const int l, const int rounds,
             // std::cerr << "Generating measurement error." << std::endl;
             code->generateMeasError();
         }
-        for (int i = 0; i < sweepRate; ++i)
+        for (int i = 0; i < sweepRate - 1; ++i)
         {
-            code->sweep(sweepDirections[sweepIndex], greedy);
+            code->sweep(sweepDirections[sweepIndex], greedy, true);
         }
+        code->sweep(sweepDirections[sweepIndex], greedy, false);
         // std::cerr << "direction=" << sweepDirections[sweepIndex] << std::endl;
         // std::cerr << "sweepIndex=" << sweepIndex << std::endl;
         // std::cerr << "sweepCount=" << sweepCount << std::endl;
@@ -166,7 +167,7 @@ std::vector<bool> oneRun(const int l, const int rounds,
             }
             sweepCount = 0;
         }
-        code->sweep(sweepDirections[sweepIndex], greedy);
+        code->sweep(sweepDirections[sweepIndex], greedy, false);
         code->calculateSyndrome();
         if (std::all_of(syndrome.begin(), syndrome.end(), [](int i) { return i == 0; }))
         {

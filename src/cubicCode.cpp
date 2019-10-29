@@ -71,7 +71,7 @@ void CubicCode::buildSweepIndices()
     }
 }
 
-void CubicCode::sweep(const std::string &direction, bool greedy)
+void CubicCode::sweep(const std::string &direction, bool greedy, bool virtualSweep)
 {
     clearFlipBits();
     vstr edgeDirections;

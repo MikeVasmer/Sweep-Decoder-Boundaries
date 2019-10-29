@@ -286,7 +286,7 @@ TEST(sweep, runs_without_errors)
                 code.generateDataError(false);
                 code.calculateSyndrome();
                 code.generateMeasError();
-                EXPECT_NO_THROW(code.sweep(sweepDirection, true));
+                EXPECT_NO_THROW(code.sweep(sweepDirection, true, false));
             }
         }
     }
@@ -312,7 +312,7 @@ TEST(sweep, corrects_single_qubit_errors)
             {
                 for (int j = 0; j < 1; ++j)
                 {
-                    code.sweep(sweepDirection, true);
+                    code.sweep(sweepDirection, true, false);
                     code.calculateSyndrome();
                 }
             }
@@ -350,7 +350,7 @@ TEST(sweep, corrects_two_qubit_errors)
                     {
                         for (int s = 0; s < sweepsPerDirection; ++s)
                         {
-                            code.sweep(sweepDirection, true);
+                            code.sweep(sweepDirection, true, false);
                             code.calculateSyndrome();
                         }
                     }
@@ -374,7 +374,7 @@ TEST(sweep, all_directions_sweep_correctly)
     {
         code.setError({0, 1});
         code.calculateSyndrome();
-        code.sweep(sweepDirections[i], true);
+        code.sweep(sweepDirections[i], true, false);
         code.calculateSyndrome();
         for (int j = 0; j < syndrome.size(); ++j)
         {
@@ -394,9 +394,9 @@ TEST(sweep, all_directions_sweep_correctly)
     {
         code.setError({0, 1});
         code.calculateSyndrome();
-        code.sweep(sweepDirections[i], true);
+        code.sweep(sweepDirections[i], true, false);
         code.calculateSyndrome();
-        code.sweep(sweepDirections[i], true);
+        code.sweep(sweepDirections[i], true, false);
         code.calculateSyndrome();
         for (int j = 0; j < syndrome.size(); ++j)
         {
@@ -433,13 +433,13 @@ TEST(sweep, multiple_sweeps_per_syndrome)
 
         for (int i = 0; i < testRate; ++i)
         {
-            highRateCode.sweep("xz", false);
+            highRateCode.sweep("xz", false, false);
         }
         for (int i = 0; i < testRate; ++i)
         {
-            lowRateCode.sweep("xz", false);
+            lowRateCode.sweep("xz", false, false);
             lowRateCode.calculateSyndrome();
-            sanityCode.sweep("xz", false);
+            sanityCode.sweep("xz", false, false);
             sanityCode.calculateSyndrome();
         }
 
