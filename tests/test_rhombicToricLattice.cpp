@@ -1,6 +1,7 @@
 #include "rhombicToricLattice.h"
 #include "gtest/gtest.h"
 #include <string>
+#include <algorithm>
 
 TEST(RhombicToricLattice, excepts_odd_L)
 {

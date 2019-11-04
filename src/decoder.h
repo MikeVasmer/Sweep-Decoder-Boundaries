@@ -75,6 +75,10 @@ std::vector<bool> oneRun(const int l, const int rounds,
     {
         code = std::make_unique<RhombicCode>(l, p, q, false, sweepRate);
     }
+    if (correlatedErrors)
+    {
+        code->buildCorrelatedIndices();
+    }
     std::vector<int8_t> &syndrome = code->getSyndrome();
     vstr sweepDirections = {"xyz", "xy", "xz", "yz", "-xyz", "-xy", "-xz", "-yz"}; // Used by random schedule
     bool randomSchedule = false;

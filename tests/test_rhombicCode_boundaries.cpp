@@ -475,6 +475,7 @@ TEST(buildSweepIndices, correct_number_of_indices)
 TEST(generateErrors, correlated_error_model_runs)
 {
     RhombicCode code = RhombicCode(4, 0.1, 0.1, true, 1);
+    code.buildCorrelatedIndices();
     for (int i = 0; i < 100; ++i)
     {
         EXPECT_NO_THROW(code.generateDataError(true));

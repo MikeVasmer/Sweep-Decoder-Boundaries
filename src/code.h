@@ -31,6 +31,7 @@ protected:
   vint logicalZ1;
   vint logicalZ2;
   vint logicalZ3;
+  vvint correlatedIndices;
 
   // pcg-random
   pcg32 rnEngine;
@@ -54,6 +55,7 @@ public:
   bool checkCorrection();
   void calculateSyndrome();
   void generateMeasError();
+  void buildCorrelatedIndices();
 
   // Test methods
   void setSyndrome(std::vector<int8_t> &syndrome);

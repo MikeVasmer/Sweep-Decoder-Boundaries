@@ -24,13 +24,33 @@ Code::Code(const int ll, const double dataP, const double measP, bool boundaries
     pcg_extras::seed_seq_from<std::random_device> seedSource;
     rnEngine = pcg32(seedSource);
     // rnEngine = pcg32(0); // Manual seed
-
     // std::mt19937 rnEngine(time(0)); // Valgrind 
 
     distDouble0To1 = std::uniform_real_distribution<double>(0, nextafter(1, 2));
     distInt0To2 = std::uniform_int_distribution<int>(0, 2);
     distInt0To1 = std::uniform_int_distribution<int>(0, 1);
+}
 
+void Code::buildCorrelatedIndices()
+{
+    // correlatedIndices = {};
+    correlatedIndices.reserve(numberOfFaces);
+    for (int i = 0; i < numberOfFaces; ++i)
+    {
+        for (int j = i + 1; j < numberOfFaces; ++j)
+        {
+            for (auto &ei : faceToEdges[i])
+            {
+                for (auto &ej : faceToEdges[j])
+                {
+                    if (ei == ej)
+                    {
+                        correlatedIndices.push_back({i, j});
+                    }
+                }
+            }
+        }
+    }
 }
 
 void Code::generateDataError(bool correlated)
@@ -58,52 +78,35 @@ void Code::generateDataError(bool correlated)
     else
     {
         vstr twoQubitErrors = {"ix", "xi", "xx"};
-        
-        for (int i = 0; i < numberOfFaces; ++i)
+        for (auto &pair : correlatedIndices)
         {
-            for (int j = i + 1; j < numberOfFaces; ++j)
+            if (distDouble0To1(rnEngine) <= p)
             {
-                bool nearestNeighbours = false;
-                for (auto &ei : faceToEdges[i])
+                std::shuffle(twoQubitErrors.begin(), twoQubitErrors.end(), rnEngine);
+                if (twoQubitErrors[0].at(0) == 'x')
                 {
-                    for (auto &ej : faceToEdges[j])
+                    // std::cerr << "X on q_i" << std::endl;
+                    auto it = error.find(pair[0]);
+                    if (it == error.end())
                     {
-                        if (ei == ej)
-                        {
-                            // std::cout << "edge of face " << i << ": " << ei << ", edge of face " << j << ": " << ej << std::endl;
-                            nearestNeighbours = true;
-                            break;
-                        }
+                        error.insert(pair[0]);
+                    }
+                    else
+                    {
+                        error.erase(it);
                     }
                 }
-                if (nearestNeighbours && distDouble0To1(rnEngine) <= p)
+                if (twoQubitErrors[0].at(1) == 'x')
                 {
-                    std::shuffle(twoQubitErrors.begin(), twoQubitErrors.end(), rnEngine);
-                    if (twoQubitErrors[0].at(0) == 'x')
+                    // std::cerr << "X on q_j" << std::endl;
+                    auto it = error.find(pair[1]);
+                    if (it == error.end())
                     {
-                        // std::cerr << "X on q_i" << std::endl;
-                        auto it = error.find(i);
-                        if (it == error.end())
-                        {
-                            error.insert(i);
-                        }
-                        else
-                        {
-                            error.erase(it);
-                        }
+                        error.insert(pair[1]);
                     }
-                    if (twoQubitErrors[0].at(1) == 'x')
+                    else
                     {
-                        // std::cerr << "X on q_j" << std::endl;
-                        auto it = error.find(j);
-                        if (it == error.end())
-                        {
-                            error.insert(j);
-                        }
-                        else
-                        {
-                            error.erase(it);
-                        }
+                        error.erase(it);
                     }
                 }
             }
