@@ -101,6 +101,7 @@ if (test)
     add_executable(testRhombicLattice tests/test_rhombicLattice.cpp)
     add_executable(testCubicLattice tests/test_cubicLattice.cpp)
     add_executable(testRhombicCodeToric tests/test_rhombicCode_toric.cpp)
+    add_executable(testCubicCodeToric tests/test_cubicCode_toric.cpp)
     add_executable(testRhombicCodeBoundaries tests/test_rhombicCode_boundaries.cpp)
     add_executable(testCubicCodeBoundaries tests/test_cubicCode_boundaries.cpp)
 
@@ -112,6 +113,7 @@ if (test)
     target_link_libraries(testRhombicCodeToric gtest gtest_main)
     target_link_libraries(testRhombicCodeBoundaries gtest gtest_main)
     target_link_libraries(testCubicCodeBoundaries gtest gtest_main)
+    target_link_libraries(testCubicCodeToric gtest gtest_main)
 
     # Link to my library
     target_link_libraries(testLattice SweepLib)
@@ -121,6 +123,7 @@ if (test)
     target_link_libraries(testRhombicCodeToric SweepLib)
     target_link_libraries(testRhombicCodeBoundaries SweepLib)
     target_link_libraries(testCubicCodeBoundaries SweepLib)
+    target_link_libraries(testCubicCodeToric SweepLib)
 
     # Enable running tests with 'make test'
     add_test(NAME testLattice COMMAND testLattice)
@@ -130,6 +133,7 @@ if (test)
     add_test(NAME testRhombicCodeToric COMMAND testRhombicCodeToric)
     add_test(NAME testRhombicCodeBoundaries COMMAND testRhombicCodeBoundaries)
     add_test(NAME testCubicCodeBoundaries COMMAND testCubicCodeBoundaries)
+    add_test(NAME testCubicCodeToric COMMAND testCubicCodeToric)
 endif()
 
 if (profile)

@@ -54,7 +54,7 @@ def generate_data(lattice_type, l, p, q, sweep_limit, sweep_schedule, timeout, c
     #     json_file = "L={}_N={}_p={:0.4f}_q={:0.4f}_direction={}_trials={}_lattice={}_job={}.json".format(
     #         l, cycles, p, q, sweep_direction, trials, lattice_type, job_number)
     # elif lattice_type == "rhombic_boundaries" or lattice_type == "cubic_boundaries":
-    if lattice_type == "rhombic_boundaries" or lattice_type == "cubic_boundaries" or lattice_type == "rhombic_toric":
+    if lattice_type == "rhombic_boundaries" or lattice_type == "cubic_boundaries" or lattice_type == "rhombic_toric" or lattice_type == "cubic_toric":
         data['Sweep limit'] = sweep_limit
         data['Sweep schedule'] = sweep_schedule
         # lattice_type = lattice_type.replace('_', '')
@@ -75,7 +75,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Sweep rule decoder for 3D surface codes.")
     parser.add_argument("lattice_type", type=str, default="rhombic_toric", help="lattice type",
-                        choices=['cubic_boundaries', 'rhombic_boundaries', 'rhombic_toric'])
+                        choices=['cubic_boundaries', 'rhombic_boundaries', 'rhombic_toric', 'cubic_toric'])
     parser.add_argument("l", type=int,
                         help="length of l by l by l lattice")
     parser.add_argument("p", type=float,

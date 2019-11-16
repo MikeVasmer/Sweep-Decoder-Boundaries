@@ -75,6 +75,10 @@ std::vector<bool> oneRun(const int l, const int rounds,
     {
         code = std::make_unique<RhombicCode>(l, p, q, false, sweepRate);
     }
+    else if (latticeType == "cubic_toric")
+    {
+        code = std::make_unique<CubicCode>(l, p, q, false, sweepRate);
+    }
     if (correlatedErrors)
     {
         code->buildCorrelatedIndices();

@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
     //     succ = runToric(l, rounds, p, q, sweepDir, timeout, greedy, correlatedErrors);
     // }
     // else if (latticeType == "rhombic_boundaries" || latticeType == "cubic_boundaries")
-    if (latticeType == "rhombic_boundaries" || latticeType == "cubic_boundaries" || latticeType == "rhombic_toric")
+    if (latticeType == "rhombic_boundaries" || latticeType == "cubic_boundaries" || latticeType == "rhombic_toric" || latticeType == "cubic_toric")
     {
         // succ = runBoundaries(l, rounds, p, q, sweepLimit, sweepSchedule, timeout, latticeType, greedy, correlatedErrors);
         succ = oneRun(l, rounds, p, q, sweepLimit, sweepSchedule, timeout, latticeType, greedy, correlatedErrors, sweepRate);
