@@ -20,7 +20,7 @@ CubicCode::CubicCode(const int l, const double p, const double q, bool boundarie
     }
     numberOfEdges = 7 * pow(l, 3);
     buildSweepIndices();
-    syndrome.assign(numberOfFaces, 0);
+    syndrome.assign(numberOfEdges, 0);
     flipBits.assign(numberOfFaces, 0);
     lattice->createFaces();
     lattice->createUpEdgesMap();
@@ -66,7 +66,7 @@ void CubicCode::buildSweepIndices()
     }
     else
     {
-        sweepIndices.assign(pow(l, 3), 0);
+        sweepIndices.reserve(pow(l, 3));
         std::iota(std::begin(sweepIndices), std::end(sweepIndices), 0);
     }
 }
@@ -164,7 +164,7 @@ void CubicCode::sweep(const std::string &direction, bool greedy)
     }
 }
 
-void CubicCode::cellularAutomatonStep(const int vertexIndex, vstr &sweepEdges, const std::string &sweepDirections, const vstr &upEdgeDirections)
+void CubicCode::cellularAutomatonStep(const int vertexIndex, vstr &sweepEdges, const std::string &sweepDirection, const vstr &upEdgeDirections)
 {
     auto &edge0 = upEdgeDirections[0];
     auto &edge1 = upEdgeDirections[1];
