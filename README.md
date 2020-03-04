@@ -1,6 +1,7 @@
 # Sweep-Decoder-Boundaries
 
-C++ implementation of the sweep rule decoder for topological quantum codes with boundaries.
+C++ implementation of the sweep decoder for topological quantum codes with boundaries.
+See https://arxiv.org/abs/1809.10145 and .
 
 ## Build instructions
 
