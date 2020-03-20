@@ -121,6 +121,10 @@ std::vector<bool> oneRun(const int l, const int rounds,
     {
         sweepDirections = {"-xyz"};
     }
+    else if (sweepSchedule == "pm_xyz")
+    {
+        sweepDirections = {"-xyz", "xyz"};
+    }
     else
     {
         throw std::invalid_argument("Invalid sweep schedule.");

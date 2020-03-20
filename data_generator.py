@@ -89,7 +89,7 @@ if __name__ == "__main__":
     parser.add_argument("--sweep_limit", type=int,
                         help="number of sweeps per direction in active phase (default: sqrt(l))")
     parser.add_argument("--sweep_schedule", type=str, default='random', choices=[
-                        'rotating_XY', 'alternating_XY', 'rotating_XZ', 'alternating_XZ', 'rotating_YZ', 'alternating_YZ', 'random', 'const'], help="sweep direction schedule (default: random)")
+                        'rotating_XY', 'alternating_XY', 'rotating_XZ', 'alternating_XZ', 'rotating_YZ', 'alternating_YZ', 'random', 'const', 'pm_xyz'], help="sweep direction schedule (default: random)")
     parser.add_argument("--timeout", type=int,
                         help="max number of sweeps before timeout in readout phase (default: 32*l)")
     # parser.add_argument("--sweep_direction", type=str, default='xyz',
