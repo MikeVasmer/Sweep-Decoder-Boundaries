@@ -121,9 +121,13 @@ std::vector<bool> oneRun(const int l, const int rounds,
     {
         sweepDirections = {"-xyz"};
     }
-    else if (sweepSchedule == "pm_xyz")
+    else if (sweepSchedule == "pm_XYZ")
     {
         sweepDirections = {"-xyz", "xyz"};
+    }
+    else if (sweepSchedule == "four_directions")
+    {
+        sweepDirections = {"xyz", "xy", "-xz", "yz"};
     }
     else
     {
