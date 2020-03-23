@@ -25,3 +25,8 @@ Use [CMake](https://cmake.org/) to build. During the build process CMake will au
 - The python script `data_generator.py` is the entry_point
 - Run `python data_generator.py --help` for information
 - See `example_script.py` for an example of a bigger run
+
+## Lattice models
+
+- Interactive models of the L=4 cubic and rhombic-dodecahedral lattices are included in the `models` directory
+- To open the files, use [vZome](https://vzome.com/home/)
