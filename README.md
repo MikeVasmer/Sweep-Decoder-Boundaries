@@ -1,7 +1,7 @@
 # Sweep-Decoder-Boundaries
 
-C++ implementation of the sweep decoder for topological quantum codes with boundaries.
-See https://arxiv.org/abs/1809.10145 and .
+C++ implementation of the sweep decoder for topological quantum codes with and without boundaries.
+See https://arxiv.org/abs/2004.07247 and https://arxiv.org/abs/1809.10145.
 
 ## Build instructions
 
@@ -28,5 +28,5 @@ Use [CMake](https://cmake.org/) to build. During the build process CMake will au
 
 ## Lattice models
 
-- Interactive models of the L=4 cubic and rhombic-dodecahedral lattices are included in the `models` directory
+- Interactive models of the L=3 cubic and rhombic-dodecahedral lattices are included in the `models` directory
 - To open the files, use [vZome](https://vzome.com/home/)
