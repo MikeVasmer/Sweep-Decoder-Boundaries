@@ -4,6 +4,7 @@ import os
 import ast
 import json
 import time
+import math
 
 
 def snake_case_to_CamelCase(word):
@@ -112,7 +113,8 @@ if __name__ == "__main__":
     trials = args.trials
     sweep_limit = args.sweep_limit
     if sweep_limit == None:
-        sweep_limit = int(round(pow(l, 0.5)))
+        # sweep_limit = int(round(pow(l, 0.5)))
+        sweep_limit = int(round(math.log(l)))
     sweep_schedule = args.sweep_schedule
     timeout = args.timeout
     if timeout == None:
