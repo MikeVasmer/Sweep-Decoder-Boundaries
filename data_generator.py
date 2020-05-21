@@ -114,7 +114,7 @@ if __name__ == "__main__":
     sweep_limit = args.sweep_limit
     if sweep_limit == None:
         # sweep_limit = int(round(pow(l, 0.5)))
-        sweep_limit = int(round(math.log(l)))
+        sweep_limit = math.ceil(math.log(l))
     sweep_schedule = args.sweep_schedule
     timeout = args.timeout
     if timeout == None:
