@@ -131,7 +131,7 @@ void CubicCode::sweep(const std::string &direction, bool greedy)
         }
         cellularAutomatonStep(vertexIndex, sweepEdges, direction, edgeDirections);
     }
-    for (int i = 0; i < flipBits.size(); ++i)
+    for (int i = 0, imax = flipBits.size(); i < imax; ++i)
     {
         if (flipBits[i])
         {

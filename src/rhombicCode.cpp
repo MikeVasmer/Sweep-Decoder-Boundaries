@@ -235,7 +235,7 @@ void RhombicCode::sweep(const std::string &direction, bool greedy)
             }
         }
     }
-    for (int i = 0; i < flipBits.size(); ++i)
+    for (int i = 0, imax = flipBits.size(); i < imax; ++i)
     {
         if (flipBits[i])
         {
@@ -382,7 +382,7 @@ void RhombicCode::sweepFullVertex(const int vertexIndex, vstr &sweepEdges, const
     auto &edge0 = upEdgeDirections[0];
     auto &edge1 = upEdgeDirections[1];
     auto &edge2 = upEdgeDirections[2];
-    cartesian4 coordinate = lattice->indexToCoordinate(vertexIndex);
+    // cartesian4 coordinate = lattice->indexToCoordinate(vertexIndex);
     auto sweepDirectionIndex = std::distance(sweepEdges.begin(), std::find(sweepEdges.begin(), sweepEdges.end(), sweepDirection));
     if (sweepEdges.size() == 4)
     {

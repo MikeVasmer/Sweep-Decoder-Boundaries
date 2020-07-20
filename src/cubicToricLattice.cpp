@@ -76,7 +76,7 @@ void CubicToricLattice::createUpEdgesMap()
         vertexToUpEdges.assign(pow(l, 3), {});
         for (int vertexIndex = 0; vertexIndex < pow(l, 3); ++vertexIndex)
         {
-            cartesian4 coordinate = indexToCoordinate(vertexIndex);
+            // cartesian4 coordinate = indexToCoordinate(vertexIndex);
             if (direction == "xyz")
             {
                 vertexToUpEdges[vertexIndex].push_back(edgeIndex(vertexIndex, "x", 1));

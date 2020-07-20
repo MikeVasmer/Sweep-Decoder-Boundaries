@@ -220,7 +220,7 @@ void Code::clearFlipBits()
 
 void Code::printUnsatisfiedStabilisers()
 {
-    for (int i = 0; i < syndrome.size(); ++i)
+    for (int i = 0, imax = syndrome.size() ; i < imax; ++i)
     {
         if (syndrome[i] == 1)
         {
@@ -337,7 +337,7 @@ void Code::calculateSyndrome()
 
 void Code::generateMeasError()
 {
-    for (int i = 0; i < syndrome.size(); ++i)
+    for (int i = 0, imax = syndrome.size() ; i < imax; ++i)
     {
         if (boundaries)
         {
