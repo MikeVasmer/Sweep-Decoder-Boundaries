@@ -11,7 +11,7 @@ TEST(buildSyndromeIndices, correct_number_of_indices)
     double p = 0.1;
     for (int l : ls)
     {
-        CubicCode code = CubicCode(l, p, p, true, 1);
+        CubicCode code(l, p, p, true, 1);
         auto &syndromeIndices = code.getSyndromeIndices();
         int expectedNumber = (2 * pow(l - 1, 2) * (l - 2)) + pow(l - 2, 3); 
         EXPECT_EQ(syndromeIndices.size(), expectedNumber);
@@ -24,7 +24,7 @@ TEST(buildSyndromeIndices, syndrome_correct_edges)
     double p = 0.1;
     for (int l : ls)
     {
-        CubicCode code = CubicCode(l, p, p, true, 1);
+        CubicCode code(l, p, p, true, 1);
         auto &syndromeIndices = code.getSyndromeIndices();
         // Check all six boundaries, four edges where rough boundaries meet, one bulk and one z = l - 1
         std::vector<cartesian4> coordinateList = {{0, 0, 0, 0}, {0, l - 1, l - 2, 0}, {l - 1, 0, l - 2}, {l - 1, l - 1, 0, 0}, {1, 0, 0, 0}, {0, 1, 0, 0}, {2, l - 1, 2, 0}, {l - 1, 2, 2, 0}, {1, 1, 0, 0}, {1, 1, l - 2, 0}, {1, 1, 1, 0}, {1, 1, l - 1, 0}};
@@ -46,7 +46,7 @@ TEST(buildSyndromeIndices, syndrome_correct_edges)
 TEST(buildSweepIndices, correct_indices_l4){
     int l = 4;
     double p = 0.1;
-    CubicCode code = CubicCode(l, p, p, true, 1);
+    CubicCode code(l, p, p, true, 1);
     vint &sweepIndices = code.getSweepIndices();
     auto &lattice = code.getLattice();
     vint expectedIndices = {5, 6, 9, 10, 21, 22, 25, 26, 37, 38, 41, 42};
@@ -62,7 +62,7 @@ TEST(buildSweepIndices, correct_number_of_indices)
     double p = 0.1;
     for (const int l : ls)
     {
-        CubicCode code = CubicCode(l, p, p, true, 1);
+        CubicCode code(l, p, p, true, 1);
         vint &sweepIndices = code.getSweepIndices();
         int expectedSize = pow(l - 2, 2) * (l - 1);
         EXPECT_EQ(sweepIndices.size(), expectedSize);
@@ -75,7 +75,7 @@ TEST(calculateSyndrome, no_invalid_syndromes_data_errors)
     double p = 0.1;
     for (auto l : ls)
     {
-        CubicCode code = CubicCode(l, p, p, true, 1);
+        CubicCode code(l, p, p, true, 1);
         auto &syndromeIndices = code.getSyndromeIndices();
         auto &syndrome = code.getSyndrome();
         for (int j = 0; j < 5; ++j)
@@ -100,7 +100,7 @@ TEST(calculateSyndrome, no_invalid_syndromes_meas_errors)
     double p = 0.1;
     for (auto l : ls)
     {
-        CubicCode code = CubicCode(l, p, p, true, 1);
+        CubicCode code(l, p, p, true, 1);
         auto &syndromeIncdices = code.getSyndromeIndices();
         auto &syndrome = code.getSyndrome();
         for (int j = 0; j < 5; ++j)
@@ -124,7 +124,7 @@ TEST(calculateSyndrome, no_invalid_syndromes_both_errors)
     double p = 0.1;
     for (auto l : ls)
     {
-        CubicCode code = CubicCode(l, p, p, true, 1);
+        CubicCode code(l, p, p, true, 1);
         auto &syndromeIndices = code.getSyndromeIndices();
         auto &syndrome = code.getSyndrome();
         for (int j = 0; j < 5; ++j)
@@ -146,7 +146,7 @@ TEST(calculateSyndrome, no_invalid_syndromes_both_errors)
 
 TEST(calculateSyndrome, no_syndrome_stabilizer_errors)
 {
-    CubicCode code = CubicCode(4, 0.1, 0.1, true, 1);
+    CubicCode code(4, 0.1, 0.1, true, 1);
     auto &syndrome = code.getSyndrome();
     std::vector<std::set<int>> stabErrors = {
         {0, 1, 5, 21}, 
@@ -166,7 +166,7 @@ TEST(calculateSyndrome, no_syndrome_stabilizer_errors)
 
 TEST(calculateSyndrome, correct_syndrome_one_error)
 {
-    CubicCode code = CubicCode(4, 0.1, 0.1, true, 1);
+    CubicCode code(4, 0.1, 0.1, true, 1);
     auto &syndrome = code.getSyndrome();
     std::set<int> error = {0};
     code.setError(error);
@@ -186,7 +186,7 @@ TEST(calculateSyndrome, correct_syndrome_one_error)
 
 TEST(calculateSyndrome, correct_syndrome_two_errors)
 {
-    CubicCode code = CubicCode(4, 0.1, 0.1, true, 1);
+    CubicCode code(4, 0.1, 0.1, true, 1);
     auto &syndrome = code.getSyndrome();
     std::set<int> error = {0, 1};
     code.setError(error);
@@ -206,7 +206,7 @@ TEST(calculateSyndrome, correct_syndrome_two_errors)
 
 TEST(calculateSyndrome, correct_syndrome_three_errors)
 {
-    CubicCode code = CubicCode(4, 0.1, 0.1, true, 1);
+    CubicCode code(4, 0.1, 0.1, true, 1);
     auto &syndrome = code.getSyndrome();
     std::set<int> error = {0, 1, 5};
     code.setError(error);
@@ -230,7 +230,7 @@ TEST(buildLogical, logical_correct_weight)
     double p = 0.1;
     for (auto l : ls)
     {
-        CubicCode code = CubicCode(l, p, p, true, 1);
+        CubicCode code(l, p, p, true, 1);
         auto logicals = code.getLogicals();
         int expectedWeight = l - 1;
         EXPECT_EQ(logicals[0].size(), expectedWeight);
@@ -239,7 +239,7 @@ TEST(buildLogical, logical_correct_weight)
 
 TEST(checkCorrection, handles_logical_X_errors)
 {
-    CubicCode code = CubicCode(4, 0.1, 0.1, true, 1);
+    CubicCode code(4, 0.1, 0.1, true, 1);
     std::vector<std::set<int>> errors = {{0, 2, 4, 6, 9, 12, 14, 17, 20}, {21, 23, 25, 27, 30, 33, 35, 38, 41}, {42, 43, 44, 45, 46, 47, 48, 49, 50}};
     auto &syndrome = code.getSyndrome();
     for (auto &error : errors)
@@ -256,7 +256,7 @@ TEST(checkCorrection, handles_logical_X_errors)
 
 TEST(checkCorrection, handles_stabilizer_errors)
 {
-    CubicCode code = CubicCode(4, 0.1, 0.1, true, 1);
+    CubicCode code(4, 0.1, 0.1, true, 1);
     std::vector<std::set<int>> errors = {{0, 1, 5, 21}, {28, 29, 30, 31, 37, 46}, {36, 37, 38, 39, 49}};
     auto &syndrome = code.getSyndrome();
     for (auto &error : errors)
@@ -280,7 +280,7 @@ TEST(sweep, runs_without_errors)
                 vstr sweepDirections = {"xyz", "xz", "-xy", "yz", "xy", "-yz", "-xyz", "-xz"};
         for (auto &sweepDirection
             : sweepDirections) {
-            CubicCode code = CubicCode(l, p, p, true, 1);
+            CubicCode code(l, p, p, true, 1);
             for (int i = 0; i < l; ++i)
             {
                 code.generateDataError(false);
@@ -299,7 +299,7 @@ TEST(sweep, corrects_single_qubit_errors)
     {
         vstr sweepDirections = {"xyz", "xy", "yz", "xz", "-xyz", "-xy", "-yz", "-xz"};
         int numberOfFaces = 3 * pow(l - 1, 3) - 4 * pow(l - 1, 2) + 2 * (l - 1);
-        CubicCode code = CubicCode(l, 0.1, 0.1, true, 1);
+        CubicCode code(l, 0.1, 0.1, true, 1);
         auto &syndrome = code.getSyndrome();
         auto &lattice = code.getLattice();
         auto &faceToVertices = lattice.getFaceToVertices();
@@ -330,7 +330,7 @@ TEST(sweep, corrects_two_qubit_errors)
     vstr sweepDirections = {"xyz", "xy", "yz", "xz", "-xyz", "-xy", "-yz", "-xz"};
     for (auto const l : ls)
     {
-        CubicCode code = CubicCode(l, 0.1, 0.1, true, 1);
+        CubicCode code(l, 0.1, 0.1, true, 1);
         auto &syndrome = code.getSyndrome();
         int numberOfFaces = 3 * pow(l - 1, 3) - 4 * pow(l - 1, 2) + 2 * (l - 1);
         auto &lattice = code.getLattice();
@@ -366,7 +366,7 @@ TEST(sweep, corrects_two_qubit_errors)
 
 TEST(sweep, all_directions_sweep_correctly)
 {
-    CubicCode code = CubicCode(4, 0.1, 0.1, true, 1);
+    CubicCode code(4, 0.1, 0.1, true, 1);
     vstr sweepDirections = {"xyz", "xy", "xz", "yz", "-xyz", "-xy", "-xz", "-yz"};
     auto &syndrome = code.getSyndrome();
     vvint expectedSyndromes = {{29, 40, 122}, {29, 40, 122}, {29, 40, 122}, {122, 141}, {10, 29}, {122, 141}, {29, 40, 122}, {10, 29}};
@@ -417,9 +417,9 @@ TEST(sweep, multiple_sweeps_per_syndrome)
     int l = 4;
     double p = 0.1;
     int testRate = 2;
-    CubicCode highRateCode = CubicCode(l, p, p, true, testRate);
-    CubicCode lowRateCode = CubicCode(l, p, p, true, 1);
-    CubicCode sanityCode = CubicCode(l, p, p, true, 1);
+    CubicCode highRateCode(l, p, p, true, testRate);
+    CubicCode lowRateCode(l, p, p, true, 1);
+    CubicCode sanityCode(l, p, p, true, 1);
     std::vector<std::set<int>> testErrors = {{0}, {0, 1}, {0, 1, 2}, {0, 1, 2, 3},{22}, {1}, {17}, {41, 42, 43}, {50, 27, 47, 11, 1}, {20, 10}, {11, 15, 6, 2, 22, 45, 40, 21, 0, 3, 33, 5}};
     for (auto &error : testErrors)
     {

@@ -80,6 +80,7 @@ public:
   virtual void sweep(const std::string &direction, bool greedy) = 0;
   virtual vstr findSweepEdges(const int vertexIndex, const std::string &direction) = 0;
   virtual void buildLogicals() = 0;
+  virtual ~Code() = default;
 
 };
 

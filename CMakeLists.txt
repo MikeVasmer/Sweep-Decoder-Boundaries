@@ -19,6 +19,8 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 endif()
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -Wall")
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -Wall -mmacosx-version-min=10.5")
+# SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -mmacosx-version-min=10.5")
 
 set(SOURCE_FILES main.cpp)
 add_executable(SweepDecoder ${SOURCE_FILES})

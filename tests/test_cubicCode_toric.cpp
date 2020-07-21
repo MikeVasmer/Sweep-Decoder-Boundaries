@@ -37,7 +37,7 @@ TEST(generateDataError, statistics_correct)
     double p = 0.5;
     int l = 24;
     double tolerance = 0.02;
-    CubicCode code = CubicCode(l, p, 0, false, 1);
+    CubicCode code(l, p, 0, false, 1);
     code.generateDataError(false);
     int errorCount = code.getError().size();
     EXPECT_NEAR(pow(l, 3) * 3 * p, errorCount, pow(l, 3) * 3 * p * tolerance);
@@ -48,7 +48,7 @@ TEST(generateMeasError, statistics_correct)
     double q = 0.5;
     int l = 24;
     double tolerance = 0.02;
-    CubicCode code = CubicCode(l, 0, q, false, 1);
+    CubicCode code(l, 0, q, false, 1);
     code.generateMeasError();
     auto &syndrome = code.getSyndrome();
     int errorCount = 0;
