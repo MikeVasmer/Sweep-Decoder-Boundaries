@@ -66,7 +66,7 @@ void CubicCode::buildSweepIndices()
     }
     else
     {
-        sweepIndices.reserve(pow(l, 3));
+        sweepIndices.assign(pow(l, 3), 0);
         std::iota(std::begin(sweepIndices), std::end(sweepIndices), 0);
     }
 }
